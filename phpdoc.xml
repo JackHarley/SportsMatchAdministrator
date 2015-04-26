@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdoc>
+    <title>
+        Sports Match Administrator Documentation
+    </title>
+
+    <parser>
+        <target>phpdoc/parser</target>
+    </parser>
+    <transformer>
+        <target>phpdoc</target>
+    </transformer>
+    <files>
+        <directory>./lib/sma</directory>
+    </files>
+</phpdoc>

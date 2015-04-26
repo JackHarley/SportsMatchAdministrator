@@ -1,0 +1,36 @@
+<?php
+
+// Site Details
+define("SITE_NAME", "Sports Match Administrator");
+define("BASE_URL", "http://dev.jackpharley.com/sma");
+define("BASE_LINKS_URL", BASE_URL . "/index.php"); // don't change this setting unless using rewrite rules
+define("BASE_VIEW_PATH", __DIR__  . "/views/xenplatform");
+define("BASE_VIEW_URL", BASE_URL . "/views/xenplatform");
+define("BASE_ASSETS_PATH", BASE_URL . "/assets");
+define("BASE_ASSETS_URL", BASE_URL . "/assets");
+
+// Timezone
+define("TIMEZONE", "UTC");
+
+// Primary Database Details
+define("DB_HOST", "localhost");
+define("DB_PORT", 3306);
+define("DB_USERNAME", "username");
+define("DB_PASSWORD", "password");
+define("DB_NAME", "sma");
+
+// Caching server (Memcached) details
+define("CACHE_SERVER_HOST", "127.0.0.1");
+define("CACHE_SERVER_PORT", 11211);
+define("CACHE_ENABLED", true);
+
+// Caching settings
+define("CHECK_FOR_VIEW_UPDATES", true);
+define("ENABLE_VIEW_CACHING", true);
+
+// White-listed IP addresses for running update.php (runs a git pull to update source code), comma separated
+define("UPDATE_IP_ADDRESSES", "127.0.0.1,300.300.300.300");
+
+// Development options
+define("SHOW_REQUEST_TIMES", false);
+define("DISPLAY_ERRORS", false);

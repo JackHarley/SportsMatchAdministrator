@@ -1,0 +1,57 @@
+{% extends "base.twig" %}
+
+{% block pageTitle %}Home{% endblock %}
+
+{% block body %}
+<div class="container">
+	<div class="row">
+		<div class="col-lg-12">
+			<h2><span class="glyphicon glyphicon-home"></span> Home</h2>
+
+			<p>
+				Welcome to {{ site_name }}. Please use the buttons below to begin.
+			</p>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-lg-6">
+			<div class="panel panel-primary">
+				<div class="panel-heading"><span class="glyphicon glyphicon-eye-open"></span> Public</div>
+
+				<div class="panel-body">
+					<p><a class="btn btn-default"><span class="glyphicon glyphicon-tasks"></span> View League Tables</a></p>
+
+					<p><a class="btn btn-default"><span class="glyphicon glyphicon-file"></span> View Recent Match Reports</a></p>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-lg-6">
+			<div class="panel panel-primary">
+				<div class="panel-heading"><span class="glyphicon glyphicon-copyright-mark"></span> Coaches</div>
+
+				<div class="panel-body">
+					<a class="btn btn-default"><span class="glyphicon glyphicon-list-alt"></span> Submit Match Report</a>
+				</div>
+			</div>
+
+			<div class="panel panel-primary">
+				<div class="panel-heading"><span class="glyphicon glyphicon-king"></span> Head Coaches</div>
+
+				<div class="panel-body">
+					<a class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> Register Team</a>
+				</div>
+			</div>
+
+			<div class="panel panel-primary">
+				<div class="panel-heading"><span class="glyphicon glyphicon-wrench"></span> Administrators</div>
+
+				<div class="panel-body">
+					<a class="btn btn-default"><span class="glyphicon glyphicon-dashboard"></span> View Admin Dashboard</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

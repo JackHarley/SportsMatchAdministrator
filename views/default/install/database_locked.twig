@@ -1,0 +1,24 @@
+{% extends "base.twig" %}
+
+{% block pageTitle %}Database Locked{% endblock %}
+
+{% block body %}
+<div class="container">
+	<div class="row">
+		<div class="col-lg-12">
+			<h2><span class="glyphicon glyphicon-wrench"></span> Initial Setup</h2>
+
+			<p class="text-danger">
+				<strong>The database is currently locked to prevent an unauthorised user from deleting your data.</strong>
+			</p>
+
+			<p>
+				Please delete the <code>/install/LOCK</code> file from your site directory and then reload this page to re-install the software.
+			</p>
+
+			<p>
+				<a href="javascript:window.location.reload()" class="btn btn-info btn-lg"><span class="glyphicon glyphicon-refresh"></span> Reload</a>
+			</p>
+		</div>
+	</div>
+{% endblock %}

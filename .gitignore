@@ -1,0 +1,8 @@
+.DS_Store
+/config.php
+.idea
+/cache/*
+/install/*
+!.gitkeep
+/phpdoc
+node_modules
