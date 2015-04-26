@@ -31,7 +31,8 @@ class Installer {
 		else {
 			InstallerModel::installDatabase(true);
 			$adminGroupId = current(UserGroup::get(null, "Root Admin"))->id;
-			User::add($_POST["email"], $_POST["full-name"], $_POST["password"], $adminGroupId);
+			User::add($_POST["email"], $_POST["full-name"], $_POST["phone-number"],
+					$_POST["password"], $adminGroupId);
 			View::load("install/complete.twig");
 		}
 	}

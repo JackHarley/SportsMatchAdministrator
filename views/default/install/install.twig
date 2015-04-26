@@ -2,6 +2,10 @@
 
 {% block pageTitle %}Install Database{% endblock %}
 
+{% block css %}
+	<link href="{{ base_view_url }}/css/install-checks.css" rel="stylesheet">
+{% endblock %}
+
 {% block body %}
 	<div class="container">
 		<div class="row">
@@ -34,6 +38,11 @@
 							<div class="form-group">
 								<label for="email">Email Address:</label>
 								<input type="email" id="email" class="form-control" name="email" placeholder="address@example.com">
+							</div>
+
+							<div class="form-group">
+								<label for="phone-number">Phone Number:</label>
+								<input type="text" id="phone-number" class="form-control" name="phone-number" placeholder="081 234 5678">
 							</div>
 
 							<div class="form-group">

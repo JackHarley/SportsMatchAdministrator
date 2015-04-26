@@ -37,6 +37,11 @@ class User {
 	public $email;
 
 	/**
+	 * @var string phone number
+	 */
+	public $phoneNumber;
+
+	/**
 	 * @var string password hash
 	 */
 	public $passwordHash;
@@ -172,13 +177,14 @@ class User {
 	 *
 	 * @param string $email
 	 * @param string $fullName
+	 * @param string $phoneNumber
 	 * @param string $password
 	 * @param int $groupId initial user group id
 	 * @return int new user id
 	 * @throws EmailAddressAlreadyRegisteredException if the supplied email already exists as
 	 * a user account
 	 */
-	public static function add($email, $fullName, $password, $groupId) {
+	public static function add($email, $fullName, $phoneNumber, $password, $groupId) {
 		if (static::checkIfEmailAddressExists($email))
 			throw new EmailAddressAlreadyRegisteredException();
 
@@ -187,8 +193,8 @@ class User {
 
 		(new InsertQuery(Database::getConnection()))
 				->into("users")
-				->fields(["email", "full_name", "password_hash", "group_id"])
-				->values("(?,?,?,?)", [$email, $fullName, $passwordHash, $groupId])
+				->fields(["email", "full_name", "phone_number", "password_hash", "group_id"])
+				->values("(?,?,?,?,?)", [$email, $fullName, $phoneNumber, $passwordHash, $groupId])
 				->prepare()
 				->execute();
 

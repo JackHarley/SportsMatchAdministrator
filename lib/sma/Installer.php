@@ -148,6 +148,30 @@ class Installer {
 		}
 		$checks[] = $check;
 
+		// Check cache directory writable
+		$check = new ServerCheck("Cache Directory");
+		if (is_writable(__DIR__ . "/../../cache")) {
+			$check->status = ServerCheck::SUCCESS;
+			$check->message = "Writable";
+		}
+		else {
+			$check->status = ServerCheck::FAILURE;
+			$check->message = "Not Writable, CHMOD/CHOWN the /cache folder before continuing";
+		}
+		$checks[] = $check;
+
+		// Check install directory writable
+		$check = new ServerCheck("Install Directory");
+		if (is_writable(__DIR__ . "/../../install")) {
+			$check->status = ServerCheck::SUCCESS;
+			$check->message = "Writable";
+		}
+		else {
+			$check->status = ServerCheck::FAILURE;
+			$check->message = "Not Writable, CHMOD/CHOWN the /install folder before continuing";
+		}
+		$checks[] = $check;
+
 		return $checks;
 	}
 
@@ -250,6 +274,7 @@ class Installer {
 			  `email` varchar(254) NOT NULL,
 			  `password_hash` varchar(255) NOT NULL,
 			  `full_name` varchar(64) NOT NULL,
+			  `phone_number` varchar(32) NOT NULL,
 			  `group_id` bigint(20) unsigned NOT NULL,
 			  PRIMARY KEY (`id`),
 			  UNIQUE KEY (`email`)
