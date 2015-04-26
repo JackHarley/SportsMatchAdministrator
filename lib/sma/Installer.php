@@ -7,6 +7,7 @@
  */
 namespace sma;
 
+use PDO;
 use sma\exceptions\DatabaseLockedException;
 use sma\models\Permission;
 use sma\models\ServerCheck;
@@ -120,6 +121,30 @@ class Installer {
 		else {
 			$check->status = ServerCheck::FAILURE;
 			$check->message = "Not Supported! Requires PHP >= 5.3.7, DO NOT CONTINUE WITHOUT UPGRADING!";
+		}
+		$checks[] = $check;
+
+		// Check PHP MySQL extension
+		$check = new ServerCheck("PHP MySQL");
+		if (extension_loaded("mysql")) {
+			$check->status = ServerCheck::SUCCESS;
+			$check->message = "Extension Loaded";
+		}
+		else {
+			$check->status = ServerCheck::FAILURE;
+			$check->message = "Please install the PHP5 MySQL extension before continuing";
+		}
+		$checks[] = $check;
+
+		// Check MySQL server
+		$check = new ServerCheck("MySQL Server");
+		if (Database::getConnection()->getAttribute(PDO::ATTR_SERVER_VERSION)) {
+			$check->status = ServerCheck::SUCCESS;
+			$check->message = Database::getConnection()->getAttribute(PDO::ATTR_SERVER_VERSION);
+		}
+		else {
+			$check->status = ServerCheck::FAILURE;
+			$check->message = "Please install MySQL Server before continuing";
 		}
 		$checks[] = $check;
 
