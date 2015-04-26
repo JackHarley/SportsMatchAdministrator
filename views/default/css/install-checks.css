@@ -1,0 +1,31 @@
+/**
+ * Sports Match Administrator
+ *
+ * Copyright © 2014, Jack P. Harley, jackpharley.com
+ * All Rights Reserved
+ */
+
+/* Make headers fixed width */
+#install-checks th {
+	width: 100px;
+}
+
+/* Success */
+#install-checks td.success {
+	color: #468847;
+	background-color: #dff0d8;
+}
+
+#install-checks td.success::before {
+	content: "✔ ";
+}
+
+/* Failure */
+#install-checks td.failure {
+	color: #883e3f;
+	background-color: #f0d5d2;
+}
+
+#install-checks td.failure::before {
+	content: "✘ ";
+}

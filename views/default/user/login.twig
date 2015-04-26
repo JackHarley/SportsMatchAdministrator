@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>{{ site_name }} - Login</title>
+
+		<link href="{{ base_view_url }}/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+		<link href="{{ base_view_url }}/css/main.css" rel="stylesheet">
+		<link href="{{ base_view_url }}/css/login.css" rel="stylesheet">
+
+		<link rel="icon" type="image/png" href="{{ base_assets_url }}/logo-blue.png">
+	</head>
+
+	<body>
+		<div class="container">
+			{% if alerts %}
+				{% for alert in alerts %}
+					<div class="alert alert-{{alert.type}} alert-dismissable">
+						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+						<strong>{% if alert.type == "danger" %}Error{% else %}{{alert.type}}{% endif %}!</strong> {{alert.message}}
+					</div>
+				{% endfor %}
+			{% endif %}
+		</div>
+
+		<div class="container">
+			<form class="login-form" method="post" action="">
+				<a href="{{ base_links_url }}">
+					<img src="{{ base_assets_url }}/logo-blue.png">
+				</a>
+
+				<h2 class="login-form-heading">
+					<span class="glyphicon glyphicon-log-in"></span> Login
+				</h2>
+
+				<input type="text" class="form-control" name="email" placeholder="Email Address" autofocus>
+				<input type="password" class="form-control" name="password" placeholder="Password">
+
+				<label class="checkbox">
+					<input type="checkbox" name="remember-me" value="yes"> Remember Me
+				</label>
+
+				<button class="btn btn-lg btn-primary btn-block" type="submit">Login <span class="glyphicon glyphicon-chevron-right"></span></button>
+			</form>
+
+			<div class="login-form">
+				<a href="{{ base_links_url }}" class="btn btn-lg btn-warning btn-block"><span class="glyphicon glyphicon-chevron-left"></span> Back</a>
+			</div>
+		</div> <!-- /container -->
+
+		<div id="footer">
+			<div class="container">
+				<p class="text-muted">
+					Powered by Sports Match Administrator.<br>Copyright © 2015, <a href="https://jackpharley.com" target="_blank">Jack P. Harley</a>.<br>
+					{% if show_request_times %}Request completed in {{ request_time() }}s, {{ database_queries() }} DB queries prepared{% endif %}
+				</p>
+			</div>
+		</div>
+	</body>
+</html>

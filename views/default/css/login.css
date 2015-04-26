@@ -1,0 +1,70 @@
+/**
+ * Sports Match Administrator
+ *
+ * Copyright © 2014, Jack P. Harley, jackpharley.com
+ * All Rights Reserved
+ */
+
+body {
+	padding-top: 40px;
+	padding-bottom: 40px;
+	background-color: #2558a3;
+}
+
+.login-form {
+	background-color: #eee;
+	max-width: 330px;
+	padding: 15px;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	border-radius: 8px;
+	margin: 0 auto 30px;
+}
+.login-form a img {
+	margin: 0 auto;
+	display: block;
+	width: 150px;
+}
+.login-form .login-form-heading {
+	margin-bottom: 20px;
+	text-align: center;
+}
+.login-form .login-form-heading,
+.login-form .checkbox {
+	margin-bottom: 10px;
+}
+.login-form .checkbox {
+	margin-left: 20px;
+	font-weight: normal;
+}
+.login-form .form-control {
+	position: relative;
+	font-size: 16px;
+	height: auto;
+	padding: 10px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+.login-form .form-control:focus {
+	z-index: 2;
+}
+.login-form input[type="text"] {
+	margin-bottom: -1px;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+.login-form input[type="password"] {
+	margin-bottom: 10px;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+}
+
+#footer {
+	background-color: #3a61a3;
+	color: #b8c6ff;
+}
+
+.text-muted, .text-muted a, .text-muted a:visited, .text-muted a:hover, .text-muted a:active {
+	color: #b8c6ff;
+}
