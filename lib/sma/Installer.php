@@ -192,7 +192,7 @@ class Installer {
 		$db = Database::getConnection();
 
 		if ($overwriteExisting) {
-			$tables = ["users", "user_groups", "permissions", "group_permissions",
+			$tables = ["users", "user_groups", "permissions", "group_permissions", "autologins",
 					"database_version"];
 			$tableString = "`" . implode("`, `", $tables) . "`";
 			$db->query("DROP TABLE IF EXISTS " . $tableString);
@@ -253,13 +253,13 @@ class Installer {
 		foreach($allPermissions as $permission)
 			$allPermissionIds[] = $permission->id;
 
-		UserGroup::add("Root Admin", true);
+		UserGroup::add("Root Admin", true, true);
 		UserGroup::add("Committee", [
 			"AccessAdminDashboard"
 		]);
 		UserGroup::add("Head Coach");
 		UserGroup::add("Coach");
-		UserGroup::add("Guest");
+		UserGroup::add("Guest", [], true);
 	}
 
 	/**
@@ -276,15 +276,17 @@ class Installer {
 			  `full_name` varchar(64) NOT NULL,
 			  `phone_number` varchar(32) NOT NULL,
 			  `group_id` bigint(20) unsigned NOT NULL,
+			  `organization_id` bigint(20) unsigned DEFAULT NULL,
 			  PRIMARY KEY (`id`),
-			  UNIQUE KEY (`email`)
+			  UNIQUE KEY `email` (`email`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 			CREATE TABLE `user_groups` (
 			  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			  `name` varchar(64) NOT NULL,
+			  `special` tinyint(1) unsigned NOT NULL,
 			  PRIMARY KEY (`id`),
-			  UNIQUE KEY (`name`)
+			  UNIQUE KEY `name` (`name`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 			CREATE TABLE `permissions` (
@@ -300,6 +302,16 @@ class Installer {
 			  `group_id` bigint(20) unsigned NOT NULL,
 			  `permission_id` bigint(20) unsigned NOT NULL,
 			  UNIQUE KEY `group_permission` (`group_id`,`permission_id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+			CREATE TABLE `autologins` (
+			  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			  `user_id` bigint(20) unsigned NOT NULL,
+			  `browser_parameters_hash` char(64) NOT NULL,
+			  `key_hash` varchar(255) NOT NULL,
+			  `epoch_created` bigint(20) unsigned NOT NULL,
+			  `epoch_last_used` bigint(20) DEFAULT NULL,
+			  PRIMARY KEY (`id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 QUERY
 		);

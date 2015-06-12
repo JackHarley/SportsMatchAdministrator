@@ -8,6 +8,8 @@ define("BASE_VIEW_PATH", __DIR__  . "/views/default");
 define("BASE_VIEW_URL", BASE_URL . "/views/default");
 define("BASE_ASSETS_PATH", BASE_URL . "/assets");
 define("BASE_ASSETS_URL", BASE_URL . "/assets");
+define("SSL", false); // set to true if your entire site uses SSL (it should)
+define("COOKIE_DOMAIN", "dev.jackpharley.com"); // usually your domain with no www. before it
 
 // Timezone
 define("TIMEZONE", "UTC");

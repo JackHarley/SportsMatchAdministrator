@@ -7,6 +7,7 @@
  */
 namespace sma\models;
 
+use PDO;
 use sma\Database;
 use sma\exceptions\NoSuchObjectException;
 use sma\query\InsertQuery;
@@ -30,9 +31,14 @@ class UserGroup {
 	public $name;
 
 	/**
+	 * @var bool true if the group is special, i.e. cannot be deleted
+	 */
+	public $special;
+
+	/**
 	 * @var \sma\models\Permission[] granted permissions
 	 */
-	public $permissions = [];
+	protected $grantedPermissions = [];
 
 	/**
 	 * Add a user group
@@ -40,15 +46,16 @@ class UserGroup {
 	 * @param string $name group name
 	 * @param array|boolean $permissionNames array of permission names to grant or boolean true to
 	 * grant all available permissions
+	 * @param bool $special set to true if this is a special group (i.e. not deletable)
 	 * @return int group id
 	 */
-	public static function add($name, $permissionNames=[]) {
+	public static function add($name, $permissionNames=[], $special=false) {
 		$db = Database::getConnection();
 
 		(new InsertQuery($db))
 			->into("user_groups")
-			->fields("name")
-			->values("(?)", $name)
+			->fields(["name", "special"])
+			->values("(?,?)", [$name, $special])
 			->prepare()
 			->execute();
 
@@ -83,7 +90,7 @@ class UserGroup {
 	public static function get($id=null, $name=null) {
 		$q = (new SelectQuery(Database::getConnection()))
 				->from("user_groups ug")
-				->fields(["ug.id AS group_id", "ug.name AS group_name"])
+				->fields(["ug.id AS group_id", "ug.name AS group_name", "ug.special AS group_special"])
 				->join("LEFT JOIN user_groups_permissions ugp ON ug.id = ugp.group_id")
 				->join("LEFT JOIN permissions p ON p.id = ugp.permission_id")
 				->fields(["p.id AS permission_id", "p.type AS permission_type",
@@ -106,6 +113,7 @@ class UserGroup {
 				$group = new self;
 				$group->id = $data->group_id;
 				$group->name = $data->group_name;
+				$group->special = $data->group_special;
 				$groups[$group->id] = $group;
 			}
 
@@ -120,5 +128,31 @@ class UserGroup {
 		}
 
 		return $groups;
+	}
+
+	/**
+	 * Get the permissions of the group
+	 *
+	 * @return \sma\models\Permission[] granted permissions
+	 */
+	public function getGrantedPermissions() {
+		if (!$this->grantedPermissions) {
+			$q = (new SelectQuery(Database::getConnection()))
+					->from("user_groups_permissions ugp")
+					->where("group_id = ?", $this->id)
+					->join("LEFT JOIN permissions p ON p.id=ugp.permission_id")
+					->fields(["p.id", "p.type", "p.name", "p.description"]);
+			$stmt = $q->prepare();
+			$stmt->execute();
+
+			while($row = $stmt->fetch(PDO::FETCH_NUM)) {
+				$permission = new Permission();
+				list($permission->id, $permission->type, $permission->name,
+						$permission->description) = $row;
+				$this->grantedPermissions[] = $permission;
+			}
+		}
+
+		return $this->grantedPermissions;
 	}
 }

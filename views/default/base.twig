@@ -39,11 +39,26 @@
 					</ul>
 
 					<ul class="nav navbar-nav navbar-right">
-						<li><a href="{{ base_links_url }}/user/login">Login</a></li>
+						{% if visitor.id == 0 %}
+							<li><a href="{{ base_links_url }}/user/login">Login</a></li>
+						{% else %}
+							<li><a href="{{ base_links_url }}/user/logout">Logout</a></li>
+						{% endif %}
 					</ul>
 				</div><!--/.nav-collapse -->
 			</div>
 		</nav>
+
+		<div class="container">
+			{% if alerts %}
+				{% for alert in alerts %}
+					<div class="alert alert-{{alert.type}} alert-dismissable">
+						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+						<strong>{% if alert.type == "danger" %}Error{% else %}{{alert.type}}{% endif %}!</strong> {{alert.message}}
+					</div>
+				{% endfor %}
+			{% endif %}
+		</div>
 
 		{% block body %}{% endblock %}
 

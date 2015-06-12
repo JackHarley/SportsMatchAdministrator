@@ -7,8 +7,7 @@
  */
 namespace sma;
 
-use sma\models\forums\User;
-use sma\models\promotions\Nomination;
+use sma\models\User;
 use sma\query\QueryCounter;
 use Twig_Loader_Filesystem;
 use Twig_Environment;
@@ -110,6 +109,10 @@ class View {
 		$invalidFormFields = Controller::getInvalidFormFields();
 		if (!empty($invalidFormFields))
 			$twig->addGlobal("invalidFormFields", $invalidFormFields);
+
+		if (Installer::getDatabaseStatus() == Installer::DATABASE_STATUS_INSTALLED) {
+			$twig->addGlobal("visitor", User::getVisitor());
+		}
 
 		return $twig;
 	}

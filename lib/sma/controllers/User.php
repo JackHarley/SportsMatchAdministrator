@@ -28,6 +28,9 @@ class User {
 	}
 
 	public static function login() {
+		if (UserModel::getVisitor()->id != 0)
+			Controller::redirect(array_key_exists("r", $_GET) ? urlencode($_GET["r"]) : "");
+
 		if (empty($_POST)) {
 			View::load("user/login.twig", [
 				"redirectTo" => (array_key_exists("r", $_GET) ? urlencode($_GET["r"]) : "")
@@ -40,7 +43,7 @@ class User {
 				), true);
 			}
 			try {
-				UserModel::attemptLogin($_POST["email"], $_POST["password"], isset($_POST["remember"]));
+				UserModel::attemptLogin($_POST["email"], $_POST["password"], isset($_POST["remember-me"]));
 				Controller::addAlert(new Alert("success", "You have been logged in successfully"));
 				Controller::redirect((array_key_exists("r", $_GET)) ? $_GET["r"] : "");
 			}
