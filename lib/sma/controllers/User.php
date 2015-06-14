@@ -2,7 +2,7 @@
 /**
  * Sports Match Administrator
  *
- * Copyright © 2014, Jack P. Harley, jackpharley.com
+ * Copyright © 2014-2015, Jack P. Harley, jackpharley.com
  * All Rights Reserved
  */
 namespace sma\controllers;
@@ -22,8 +22,7 @@ class User {
 			Controller::redirect("/user/login");
 
 		View::load("user/index.twig", array(
-			"username" => $visitor->username,
-			"email" => $visitor->email
+			"visitor" => $visitor
 		));
 	}
 
@@ -48,14 +47,18 @@ class User {
 				Controller::redirect((array_key_exists("r", $_GET)) ? $_GET["r"] : "");
 			}
 			catch (Exception $e) {
-				Controller::addAlert(new Alert("error", "The login credentials you entered were incorrect, please try again"));
+				Controller::addAlert(new Alert("danger", "The login credentials you entered were incorrect, please try again"));
 				Controller::redirect("/user/login");
 			}
 		}
 	}
 
 	public static function logout() {
-		UserModel::logout();
+		if ((array_key_exists("target", $_GET)) && ($_GET["target"] == "all"))
+			UserModel::logoutAll();
+		else
+			UserModel::logout();
+
 		Controller::redirect("");
 	}
 }

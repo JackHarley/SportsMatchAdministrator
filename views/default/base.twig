@@ -1,3 +1,10 @@
+{#
+	Sports Match Administrator
+
+	Copyright © 2014-2015, Jack P. Harley, jackpharley.com
+	All Rights Reserved
+#}
+
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -42,6 +49,7 @@
 						{% if visitor.id == 0 %}
 							<li><a href="{{ base_links_url }}/user/login">Login</a></li>
 						{% else %}
+							<li><a href="{{ base_links_url }}/user">Logged in as {{ visitor.fullName }} ({{ visitor.group.name }})</a></li>
 							<li><a href="{{ base_links_url }}/user/logout">Logout</a></li>
 						{% endif %}
 					</ul>
@@ -49,12 +57,12 @@
 			</div>
 		</nav>
 
-		<div class="container">
+		<div id="alerts" class="container">
 			{% if alerts %}
 				{% for alert in alerts %}
 					<div class="alert alert-{{alert.type}} alert-dismissable">
 						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-						<strong>{% if alert.type == "danger" %}Error{% else %}{{alert.type}}{% endif %}!</strong> {{alert.message}}
+						<strong>{% if alert.type == "danger" %}Error{% else %}{{ alert.type|capitalize }}{% endif %}!</strong> {{ alert.message }}
 					</div>
 				{% endfor %}
 			{% endif %}

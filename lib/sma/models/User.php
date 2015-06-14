@@ -2,7 +2,7 @@
 /**
  * Sports Match Administrator
  *
- * Copyright © 2014, Jack P. Harley, jackpharley.com
+ * Copyright © 2014-2015, Jack P. Harley, jackpharley.com
  * All Rights Reserved
  */
 namespace sma\models;
@@ -291,6 +291,15 @@ class User {
 	public static function logout() {
 		$user = static::getVisitor();
 		$user->deleteAutologins(static::generateBrowserParametersHash()); // only current browser
+		unset($_SESSION["user_id"]);
+	}
+
+	/**
+	 * Logout the current visitor from all devices (clear autologins)
+	 */
+	public static function logoutAll() {
+		$user = static::getVisitor();
+		$user->deleteAutologins();
 		unset($_SESSION["user_id"]);
 	}
 

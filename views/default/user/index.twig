@@ -1,0 +1,73 @@
+{#
+	Sports Match Administrator
+
+	Copyright © 2014-2015, Jack P. Harley, jackpharley.com
+	All Rights Reserved
+#}
+
+{% extends "base.twig" %}
+
+{% block pageTitle %}User{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12">
+				<h2><span class="glyphicon glyphicon-user"></span> You are logged in as {{ visitor.fullName }}</h2>
+			</div>
+		</div>
+
+		<div class="clearfix" style="height: 20px;"></div>
+
+		<div class="row">
+			<div class="col-lg-6 col-md-7 col-sm-9 col-xs-12">
+				<div class="panel panel-primary">
+					<div class="panel-heading">Your User Information</div>
+
+					<table class="table table-striped">
+						<tr>
+							<th>Email:</th>
+							<td>{{ visitor.email }}</td>
+						</tr>
+
+						<tr>
+							<th>Full Name:</th>
+							<td>{{ visitor.fullName }}</td>
+						</tr>
+
+						<tr>
+							<th>Phone Number:</th>
+							<td>{{ visitor.phoneNumber }}</td>
+						</tr>
+
+						<tr>
+							<th>Assigned User Group:</th>
+							<td>{{ visitor.group.name }}</td>
+						</tr>
+
+						<tr>
+							<th>Organization:</th>
+							<td>{% if visitor.organization %}{{ visitor.organization.name }}{% else %}N/A{% endif %}</td>
+						</tr>
+
+					</table>
+				</div>
+			</div>
+
+			<div class="col-lg-6 col-md-7 col-sm-9 col-xs-12">
+				<div class="panel panel-primary">
+					<div class="panel-heading">Actions</div>
+
+					<div class="panel-body">
+						<p style="font-style: italic">
+							If you wish to change your password or user information please contact a system administrator.
+						</p>
+
+						<a href="{{ base_links_url }}/user/logout" class="btn btn-block btn-warning"><span class="glyphicon glyphicon-log-out"></span> Logout from This Computer</a>
+						<a href="{{ base_links_url }}/user/logout?target=all" class="btn btn-block btn-danger"><span class="glyphicon glyphicon-log-out"></span> Logout from All Devices</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

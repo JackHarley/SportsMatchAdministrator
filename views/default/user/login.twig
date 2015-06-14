@@ -1,3 +1,10 @@
+{#
+	Sports Match Administrator
+
+	Copyright © 2014-2015, Jack P. Harley, jackpharley.com
+	All Rights Reserved
+#}
+
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -16,18 +23,17 @@
 
 	<body>
 		<div class="container">
-			{% if alerts %}
-				{% for alert in alerts %}
-					<div class="alert alert-{{alert.type}} alert-dismissable">
-						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-						<strong>{% if alert.type == "danger" %}Error{% else %}{{alert.type}}{% endif %}!</strong> {{alert.message}}
-					</div>
-				{% endfor %}
-			{% endif %}
-		</div>
-
-		<div class="container">
 			<form class="login-form" method="post" action="">
+				<div>
+					{% if alerts %}
+						{% for alert in alerts %}
+							<div class="alert alert-{{ alert.type }} alert-dismissable">
+								<strong>{% if alert.type == "danger" %}Error{% else %}{{ alert.type|capitalize }}{% endif %}!</strong> {{alert.message}}
+							</div>
+						{% endfor %}
+					{% endif %}
+				</div>
+
 				<a href="{{ base_links_url }}">
 					<img src="{{ base_assets_url }}/logo-blue.png">
 				</a>
@@ -40,7 +46,7 @@
 				<input type="password" class="form-control" name="password" placeholder="Password">
 
 				<label class="checkbox">
-					<input type="checkbox" name="remember-me" value="yes"> Remember Me
+					<input checked type="checkbox" name="remember-me" value="yes"> Remember Me<br> <i>(Uncheck this if you are on a public computer)</i>
 				</label>
 
 				<button class="btn btn-lg btn-primary btn-block" type="submit">Login <span class="glyphicon glyphicon-chevron-right"></span></button>

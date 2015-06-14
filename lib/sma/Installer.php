@@ -2,7 +2,7 @@
 /**
  * Sports Match Administrator
  *
- * Copyright © 2014, Jack P. Harley, jackpharley.com
+ * Copyright © 2014-2015, Jack P. Harley, jackpharley.com
  * All Rights Reserved
  */
 namespace sma;
@@ -192,8 +192,22 @@ class Installer {
 		$db = Database::getConnection();
 
 		if ($overwriteExisting) {
-			$tables = ["users", "user_groups", "permissions", "group_permissions", "autologins",
-					"database_version"];
+			$tables = [
+				"autologins",
+				"database_version",
+				"league_sections",
+				"leagues",
+				"match_reports",
+				"matches",
+				"matches_players",
+				"organizations",
+				"permissions",
+				"players",
+				"teams",
+				"user_groups",
+				"user_groups_permissions",
+				"users"
+			];
 			$tableString = "`" . implode("`, `", $tables) . "`";
 			$db->query("DROP TABLE IF EXISTS " . $tableString);
 		}
@@ -269,22 +283,59 @@ class Installer {
 		$db = Database::getConnection();
 
 		$db->query(<<<QUERY
-			CREATE TABLE `users` (
+			CREATE TABLE `autologins` (
 			  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-			  `email` varchar(254) NOT NULL,
-			  `password_hash` varchar(255) NOT NULL,
-			  `full_name` varchar(64) NOT NULL,
-			  `phone_number` varchar(32) NOT NULL,
-			  `group_id` bigint(20) unsigned NOT NULL,
-			  `organization_id` bigint(20) unsigned DEFAULT NULL,
-			  PRIMARY KEY (`id`),
-			  UNIQUE KEY `email` (`email`)
+			  `user_id` bigint(20) unsigned NOT NULL,
+			  `browser_parameters_hash` char(64) NOT NULL,
+			  `key_hash` varchar(255) NOT NULL,
+			  `epoch_created` bigint(20) unsigned NOT NULL,
+			  `epoch_last_used` bigint(20) unsigned DEFAULT NULL,
+			  PRIMARY KEY (`id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-			CREATE TABLE `user_groups` (
+			CREATE TABLE `league_sections` (
 			  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-			  `name` varchar(64) NOT NULL,
-			  `special` tinyint(1) unsigned NOT NULL,
+			  `letter` varchar(4) NOT NULL,
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+			CREATE TABLE `leagues` (
+			  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			  `name` varchar(32) NOT NULL,
+			  `manager_id` bigint(20) unsigned NOT NULL,
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+			CREATE TABLE `match_reports` (
+			  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			  `match_id` bigint(20) unsigned NOT NULL,
+			  `user_id` bigint(20) unsigned NOT NULL,
+			  `epoch` bigint(20) unsigned NOT NULL,
+			  `home_score` tinyint unsigned NOT NULL,
+			  `away_score` tinyint unsigned NOT NULL,
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+			CREATE TABLE `matches` (
+			  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			  `date` date NOT NULL,
+			  `home_team_id` bigint(20) unsigned NOT NULL,
+			  `away_team_id` bigint(20) unsigned NOT NULL,
+			  `home_score` tinyint unsigned NOT NULL,
+			  `away_score` tinyint unsigned NOT NULL,
+			  `winner_team_id` bigint(20) unsigned DEFAULT NULL,
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+			CREATE TABLE `matches_players` (
+			  `match_id` bigint(20) unsigned NOT NULL,
+			  `player_id` bigint(20) unsigned NOT NULL,
+			  `team_id` bigint(20) unsigned NOT NULL
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+			CREATE TABLE `organizations` (
+			  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			  `name` varchar(128) NOT NULL,
 			  PRIMARY KEY (`id`),
 			  UNIQUE KEY `name` (`name`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -298,20 +349,48 @@ class Installer {
 			  UNIQUE KEY `name` (`name`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+			CREATE TABLE `players` (
+			  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			  `full_name` varchar(128) NOT NULL,
+			  `organization_id` bigint(20) unsigned NOT NULL,
+			  `team_id` bigint(20) unsigned NOT NULL,
+			  `exempt` tinyint(1) unsigned NOT NULL,
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+			CREATE TABLE `teams` (
+			  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			  `ordinal` tinyint unsigned NOT NULL,
+			  `organization_id` bigint(20) unsigned NOT NULL,
+			  PRIMARY KEY (`id`),
+			  UNIQUE KEY `organization_ordinal` (`organization_id`,`ordinal`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+			CREATE TABLE `user_groups` (
+			  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			  `name` varchar(64) NOT NULL,
+			  `special` tinyint(1) unsigned NOT NULL,
+			  PRIMARY KEY (`id`),
+			  UNIQUE KEY `name` (`name`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 			CREATE TABLE `user_groups_permissions` (
 			  `group_id` bigint(20) unsigned NOT NULL,
 			  `permission_id` bigint(20) unsigned NOT NULL,
+			  `granted` tinyint(4) NOT NULL,
 			  UNIQUE KEY `group_permission` (`group_id`,`permission_id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-			CREATE TABLE `autologins` (
+			CREATE TABLE `users` (
 			  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-			  `user_id` bigint(20) unsigned NOT NULL,
-			  `browser_parameters_hash` char(64) NOT NULL,
-			  `key_hash` varchar(255) NOT NULL,
-			  `epoch_created` bigint(20) unsigned NOT NULL,
-			  `epoch_last_used` bigint(20) DEFAULT NULL,
-			  PRIMARY KEY (`id`)
+			  `email` varchar(254) NOT NULL,
+			  `password_hash` varchar(255) NOT NULL,
+			  `full_name` varchar(64) NOT NULL,
+			  `phone_number` varchar(32) NOT NULL,
+			  `group_id` bigint(20) unsigned NOT NULL,
+			  `organization_id` bigint(20) unsigned DEFAULT NULL,
+			  PRIMARY KEY (`id`),
+			  UNIQUE KEY `email` (`email`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 QUERY
 		);

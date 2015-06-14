@@ -39,7 +39,7 @@ Pure PHP Files
 /**
  * Project
  *
- * Copyright © 2014, Jack P. Harley, jackpharley.com
+ * Copyright © 2014-2015, Jack P. Harley, jackpharley.com
  * All Rights Reserved
  */
 ```
