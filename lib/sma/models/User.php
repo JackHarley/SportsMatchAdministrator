@@ -272,9 +272,11 @@ class User {
 		if (!isset($email) || (!isset($password)))
 			throw new LoginCredentialsInvalidException();
 
-		$user = static::get(null, $email);
-		if (!$user)
+		$users = static::get(null, $email);
+		if (empty($users))
 			throw new LoginCredentialsInvalidException();
+
+		$user = $users[0];
 
 		if (!password_verify($password, $user->passwordHash))
 			throw new LoginCredentialsInvalidException();
@@ -314,7 +316,7 @@ class User {
 				self::attemptAutologin();
 
 			if (array_key_exists("user_id", $_SESSION)) {
-				static::$visitor = self::get($_SESSION["user_id"]);
+				static::$visitor = self::get($_SESSION["user_id"])[0];
 			}
 			else {
 				$guestGroup = current(UserGroup::get(null, "Guest"));
@@ -355,11 +357,11 @@ class User {
 	}
 
 	/**
-	 * Get a user
+	 * Get objects
 	 *
-	 * @param int $id user id
+	 * @param int $id id
 	 * @param string $email email
-	 * @return \sma\models\User user
+	 * @return \sma\models\User[] users
 	 */
 	public static function get($id, $email=null) {
 		$q = (new SelectQuery(Database::getConnection()))
@@ -367,8 +369,7 @@ class User {
 				->fields(["u.id", "u.email", "u.password_hash", "u.full_name", "u.phone_number",
 						"u.group_id", "u.organization_id"])
 				->join("LEFT JOIN user_groups ug ON ug.id = u.group_id")
-				->fields(["ug.name AS group_name", "ug.special AS group_special"])
-				->limit(1);
+				->fields(["ug.name AS group_name", "ug.special AS group_special"]);
 
 		if ($id)
 			$q->where("u.id = ?", $id);
@@ -377,18 +378,18 @@ class User {
 
 		$stmt = $q->prepare();
 		$stmt->execute();
-		$row = $stmt->fetch(PDO::FETCH_NUM);
 
-		if (!$row)
-			return null;
+		$users = [];
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$user = new self;
+			$user->group = new UserGroup();
+			list($user->id, $user->email, $user->passwordHash, $user->fullName, $user->phoneNumber,
+					$user->groupId, $user->organizationId, $user->group->name,
+					$user->group->special) = $row;
+			$users[] = $user;
+		}
 
-		$user = new self;
-		$user->group = new UserGroup();
-		list($user->id, $user->email, $user->passwordHash, $user->fullName, $user->phoneNumber,
-				$user->groupId, $user->organizationId, $user->group->name,
-				$user->group->special) = $row;
-
-		return $user;
+		return $users;
 	}
 
 	/**
