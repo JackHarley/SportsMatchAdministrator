@@ -251,7 +251,7 @@ class Installer {
 	}
 
 	/**
-	 * Creates a /install/LOCK file to prevent reinstallation (which would destroy the database)
+	 * Creates a /install/LOCK file to prevent re-installation (which would destroy the database)
 	 */
 	protected static function lockDatabase() {
 		if (!is_file(__DIR__ . "/../../install/LOCK"))
