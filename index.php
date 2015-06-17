@@ -45,10 +45,7 @@ Router::setRoutes([
 		"/user/login" => ["User", "login"],
 		"/user/logout" => ["User", "logout"],
 		"/user" => ["User", "index"],
-		"/admin/permissions/group" => ["admin\UserGroupPermissions", "group"],
-		"/admin/permissions" => ["admin\UserGroupPermissions", "index"],
-		"/admin/maintenance" => ["admin\Maintenance", "index"],
-		"/admin" => ["admin\Dashboard", "index"],
+		"/acp" => ["acp\Dashboard", "index"],
 		"" => ["Index", "index"]
 ]);
 

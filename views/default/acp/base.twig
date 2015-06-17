@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+
+		<title>{{ site_name }} - Admin Control Panel</title>
+		<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+		<link href="{{ base_view_url }}/acp/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+		<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+		<link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css" />
+		<link href="{{ base_view_url }}/acp/dist/css/AdminLTE.min.css" rel="stylesheet" type="text/css" />
+		<link href="{{ base_view_url }}/acp/dist/css/skins/skin-blue.min.css" rel="stylesheet" type="text/css" />
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+	</head>
+
+	<body class="skin-blue sidebar-mini">
+		<div class="wrapper">
+
+			<!-- Main Header -->
+			<header class="main-header">
+
+				<!-- Logo -->
+				<a href="{{ base_links_url }}/acp" class="logo">
+					<span class="logo-mini"><i class='fa fa-cog'></i></span>
+					<span class="logo-lg"><b>Admin CP</b></span>
+				</a>
+
+				<!-- Header Navbar -->
+				<nav class="navbar navbar-static-top" role="navigation">
+					<!-- Sidebar toggle button-->
+					<a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+						<span class="sr-only">Toggle navigation</span>
+					</a>
+
+					<!-- Navbar Right Menu -->
+					<div class="navbar-custom-menu">
+						<ul class="nav navbar-nav">
+
+							<!-- Notifications Menu -->
+							<li class="dropdown notifications-menu">
+								<!-- Menu toggle button -->
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+									<i class="fa fa-bell-o"></i>
+									<span class="label label-warning">10</span>
+								</a>
+								<ul class="dropdown-menu">
+									<li class="header">You have 10 notifications</li>
+									<li>
+										<!-- Inner Menu: contains the notifications -->
+										<ul class="menu">
+											<li><!-- start notification -->
+												<a href="#">
+													<i class="fa fa-users text-aqua"></i> 5 new members joined today
+												</a>
+											</li><!-- end notification -->
+										</ul>
+									</li>
+									<li class="footer"><a href="#">View all</a></li>
+								</ul>
+							</li>
+
+							<!-- User Account Menu -->
+							<li class="dropdown user user-menu">
+								<!-- Menu Toggle Button -->
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+
+									<!-- hidden-xs hides the username on small devices so only the image appears. -->
+									<span>{{ visitor.fullName }} ({{ visitor.group.name }})</span>
+								</a>
+								<ul class="dropdown-menu">
+									<!-- Menu Body -->
+									<li class="user-body">
+										<p>
+											{{ visitor.fullName }} - {{ visitor.group.name }}
+											<small>{% if visitor.organization %}{{ visitor.organization.name }}{% endif %}</small>
+										</p>
+									</li>
+
+									<!-- Menu Footer-->
+									<li class="user-footer">
+										<div class="pull-right">
+											<a href="{{ base_links_url }}/user/logout" class="btn btn-default btn-flat">Logout</a>
+										</div>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</nav>
+			</header>
+
+			<!-- Left side column. contains the logo and sidebar -->
+			<aside class="main-sidebar">
+
+				<!-- sidebar: style can be found in sidebar.less -->
+				<section class="sidebar">
+
+					<!-- Sidebar user panel (optional) -->
+					<div class="user-panel" style="height: 60px;">
+						<div class="pull-left info">
+							<p>
+								{{ visitor.fullName }}<br>
+								({{ visitor.group.name }})
+							</p>
+						</div>
+					</div>
+
+					<!-- Sidebar Menu -->
+					<ul class="sidebar-menu">
+						<li class="header"></li>
+
+						<!-- Optionally, you can add icons to the links -->
+						<li class="active"><a><i class='fa fa-dashboard'></i> <span>Dashboard</span></a></li>
+						<li><a href="#"><i class='fa fa-user'></i> <span>Users</span></a></li>
+						<li><a href="#"><i class='fa fa-users'></i> <span>User Groups</span></a></li>
+						<li><a href="#"><i class='fa fa-building'></i> <span>Organizations</span></a></li>
+						<li><a href="#"><i class='fa fa-futbol-o'></i> <span>Teams</span></a></li>
+						<li><a href="#"><i class='fa fa-list'></i> <span>Leagues</span></a></li>
+					</ul><!-- /.sidebar-menu -->
+				</section>
+				<!-- /.sidebar -->
+			</aside>
+
+			<!-- Content Wrapper. Contains page content -->
+			<div class="content-wrapper">
+				{% block page %}
+				{% endblock %}
+			</div><!-- /.content-wrapper -->
+
+			<!-- Main Footer -->
+			<footer class="main-footer">
+				<!-- To the right -->
+				<div class="pull-right hidden-xs">
+					{% if show_request_times %}
+						Request completed in {{ request_time() }}s<br>
+						{{ database_queries() }} DB queries prepared
+					{% endif %}
+				</div>
+
+				<!-- Default to the left -->
+				Powered by Sports Match Administrator.<br>
+				<b>Copyright © 2014-2015, <a href="https://jackpharley.com" target="_blank">Jack P. Harley</a></b>
+			</footer>
+		</div><!-- ./wrapper -->
+
+		<script src="{{ base_view_url }}/acp/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+		<script src="{{ base_view_url }}/acp/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+		<script src="{{ base_view_url }}/acp/dist/js/app.min.js" type="text/javascript"></script>
+	</body>
+</html>

@@ -5,7 +5,7 @@
  * Copyright © 2014-2015, Jack P. Harley, jackpharley.com
  * All Rights Reserved
  */
-namespace sma\controllers\admin;
+namespace sma\controllers\acp;
 
 use sma\Controller;
 use sma\View;
@@ -13,8 +13,8 @@ use sma\View;
 class Dashboard {
 
 	public static function index() {
-		Controller::requirePermissions(["AdminAccessDashboard"]);
+		//Controller::requirePermissions(["AdminAccessDashboard"]);
 
-		View::load("admin/dashboard.twig");
+		View::load("acp/dashboard/index.twig");
 	}
 }
