@@ -8,7 +8,7 @@
 namespace sma;
 
 use sma\models\Alert;
-use sma\models\forums\User;
+use sma\models\User;
 
 /**
  * Controller
@@ -21,16 +21,6 @@ class Controller {
 	 * @var \sma\models\Alert[] alerts generated during execution
 	 */
 	private static $alerts = [];
-
-	/**
-	 * @var string[] saved form data
-	 */
-	private static $formFields = [];
-
-	/**
-	 * @var string[] invalid form fields
-	 */
-	private static $invalidFormFields = [];
 
 	/**
 	 * This is a static class, it may not be instantiated
@@ -91,68 +81,6 @@ class Controller {
 	}
 
 	/**
-	 * Get saved form data
-	 *
-	 * @return string[] form data
-	 */
-	public static function getFormFields() {
-		return static::$formFields;
-	}
-
-	/**
-	 * Save form fields to a cookie
-	 *
-	 * @param mixed[] $inputArray Input array (POST, GET, COOKIE, ...)
-	 * @param string[] $formFieldsToSave field names to save
-	 */
-	public static function saveFormFieldsToCookie($inputArray, $formFieldsToSave) {
-		if (empty($inputArray) || empty($formFieldsToSave))
-			return;
-		$fields = array_intersect_key($inputArray, array_flip($formFieldsToSave));
-		if (!empty($fields))
-			setcookie("formFields", serialize($fields), time()+60*60, "/");
-	}
-
-	/**
-	 * Load saved form data from a cookie
-	 */
-	public static function loadFormFieldsFromCookie() {
-		if (isset($_COOKIE["formFields"])) {
-			static::$formFields = unserialize($_COOKIE["formFields"]);
-			setcookie("formFields", "null", time()-60*60, "/");
-		}
-	}
-
-	/**
-	 * Get invalid form fields
-	 *
-	 * @return string[] field names
-	 */
-	public static function getInvalidFormFields() {
-		return static::$invalidFormFields;
-	}
-
-	/**
-	 * Save invalid form fields to a cookie
-	 *
-	 * @param string[] $invalidFields field names
-	 */
-	public static function saveInvalidFormFieldsToCookie($invalidFields) {
-		if (!empty($invalidFields))
-			setcookie("invalidFormFields", serialize($invalidFields), time()+60*60, "/");
-	}
-
-	/**
-	 * Load invalid form fields from a cookie
-	 */
-	public static function loadInvalidFormFieldsFromCookie() {
-		if (isset($_COOKIE["invalidFormFields"])) {
-			static::$invalidFormFields = unserialize($_COOKIE["invalidFormFields"]);
-			setcookie("invalidFormFields", "null", time()-60*60, "/");
-		}
-	}
-
-	/**
 	 * Redirect the user to the login page if not logged in
 	 */
 	public static function requireLoggedInUser() {
@@ -179,11 +107,10 @@ class Controller {
 	 * Check if all required fields are entered and redirect otherwise
 	 *
 	 * @param string $type input type (post or get)
-	 * @param string[] $fields required fieldnames
+	 * @param string[] $fields required field names
 	 * @param string $redirectPath path to redirect to in case of missing fields
-	 * @param string[] $saveFields names of fields to save in case of redirecting
 	 */
-	public static function requireFields($type, $fields, $redirectPath="", $saveFields=[]) {
+	public static function requireFields($type, $fields, $redirectPath="") {
 		switch($type) {
 			case "post":
 				$arrayToCheck = $_POST;
@@ -195,19 +122,11 @@ class Controller {
 				$arrayToCheck = [];
 		}
 
-		$missingFields = [];
-
 		foreach($fields as $name) {
 			if ((!array_key_exists($name, $arrayToCheck)) || (trim($arrayToCheck[$name]) === "")) {
-				$missingFields[] = $name;
+				static::addAlert(new Alert("danger", "You did not complete all of the required fields, please try again"));
+				static::redirect($redirectPath);
 			}
-		}
-
-		if (sizeof($missingFields) > 0) {
-			self::addAlert(new Alert("error", "You did not complete all of the required fields, please try again"));
-			self::saveInvalidFormFieldsToCookie($missingFields);
-			self::saveFormFieldsToCookie($arrayToCheck, $saveFields);
-			self::redirect($redirectPath);
 		}
 	}
 }

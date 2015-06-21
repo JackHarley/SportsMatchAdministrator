@@ -13,8 +13,8 @@ use sma\View;
 class Dashboard {
 
 	public static function index() {
-		//Controller::requirePermissions(["AdminAccessDashboard"]);
+		Controller::requirePermissions(["AdminAccessDashboard"]);
 
-		View::load("acp/dashboard/index.twig");
+		View::load("acp/index.twig");
 	}
 }

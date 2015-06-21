@@ -102,14 +102,6 @@ class View {
 		if (!empty($alerts))
 			$twig->addGlobal("alerts", $alerts);
 
-		$formFields = Controller::getFormFields();
-		if (!empty($formFields))
-			$twig->addGlobal("formFields", $formFields);
-
-		$invalidFormFields = Controller::getInvalidFormFields();
-		if (!empty($invalidFormFields))
-			$twig->addGlobal("invalidFormFields", $invalidFormFields);
-
 		if (Installer::getDatabaseStatus() == Installer::DATABASE_STATUS_INSTALLED) {
 			$twig->addGlobal("visitor", User::getVisitor());
 		}

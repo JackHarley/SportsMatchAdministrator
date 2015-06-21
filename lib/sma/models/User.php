@@ -111,7 +111,7 @@ class User {
 			$permissions = [$permissions];
 
 		foreach($permissions as $requiredPermission) {
-			foreach($this->grantedPermissions as $grantedPermission) {
+			foreach($this->getGrantedPermissions() as $grantedPermission) {
 				if ($requiredPermission == $grantedPermission->name)
 					continue 2;
 			}
@@ -363,17 +363,17 @@ class User {
 	 * @param string $email email
 	 * @return \sma\models\User[] users
 	 */
-	public static function get($id, $email=null) {
+	public static function get($id=null, $email=null) {
 		$q = (new SelectQuery(Database::getConnection()))
 				->from("users u")
 				->fields(["u.id", "u.email", "u.password_hash", "u.full_name", "u.phone_number",
 						"u.group_id", "u.organization_id"])
 				->join("LEFT JOIN user_groups ug ON ug.id = u.group_id")
-				->fields(["ug.name AS group_name", "ug.special AS group_special"]);
+				->fields(["ug.id AS user_group_id", "ug.name AS group_name", "ug.special AS group_special"]);
 
 		if ($id)
 			$q->where("u.id = ?", $id);
-		else if ($email)
+		if ($email)
 			$q->where("u.email = ?", $email);
 
 		$stmt = $q->prepare();
@@ -384,7 +384,7 @@ class User {
 			$user = new self;
 			$user->group = new UserGroup();
 			list($user->id, $user->email, $user->passwordHash, $user->fullName, $user->phoneNumber,
-					$user->groupId, $user->organizationId, $user->group->name,
+					$user->groupId, $user->organizationId, $user->group->id, $user->group->name,
 					$user->group->special) = $row;
 			$users[] = $user;
 		}

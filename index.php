@@ -45,6 +45,12 @@ Router::setRoutes([
 		"/user/login" => ["User", "login"],
 		"/user/logout" => ["User", "logout"],
 		"/user" => ["User", "index"],
+		"/acp/organization/add" => ["acp\Organization", "add"],
+		"/acp/organization/delete" => ["acp\Organization", "delete"],
+		"/acp/organization" => ["acp\Organization", "index"],
+		"/acp/user/add" => ["acp\User", "add"],
+		"/acp/user/delete" => ["acp\User", "delete"],
+		"/acp/user" => ["acp\User", "index"],
 		"/acp" => ["acp\Dashboard", "index"],
 		"" => ["Index", "index"]
 ]);
