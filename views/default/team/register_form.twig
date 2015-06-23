@@ -1,0 +1,93 @@
+{#
+	Sports Match Administrator
+
+	Copyright © 2014-2015, Jack P. Harley, jackpharley.com
+	All Rights Reserved
+#}
+
+{% extends "base.twig" %}
+
+{% block pageTitle %}Register Team{% endblock %}
+
+{% block javascript %}
+	<script type="text/javascript">
+		var highestInput = 1;
+
+		function addPlayerInput() {
+			highestInput++;
+			$("#players-inputs").append('<input type="text" name="player'+highestInput+'" id="player'+highestInput+'" class="form-control" placeholder="Player Name" style="margin-bottom: 5px;">');
+		}
+	</script>
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12">
+				<h2><span class="fa fa-futbol-o"></span> Team Registration</h2>
+			</div>
+		</div>
+
+		<p>
+			Please use the form below to register teams for the coming season, if you need to edit an already registered team please click the Edit Team button beside the team you wish to edit.
+		</p>
+
+		<div class="clearfix" style="height: 20px;"></div>
+
+		<div class="row">
+			<div class="col-lg-6 col-md-7 col-sm-9 col-xs-12">
+				<div class="panel panel-primary">
+					<div class="panel-heading"><span class="fa fa-plus"></span> Register Team</div>
+
+					<div class="panel-body">
+						<form action="" method="post">
+							<label for="organization-id">Organization:</label>
+							<select {% if not visitor.checkPermissions("RegisterTeamsForAnyOrganization") %}disabled{% endif %} name="organization-id" id="organization-id" class="form-control">
+								{% for organization in organizations %}
+									<option {% if organization.id == visitor.organizationId %}selected{% endif %} value="{{ organization.id }}">{{ organization.name }}</option>
+								{% endfor %}
+							</select>
+
+							<br>
+
+							<label for="ordinal">Team Identifier:</label><br>
+							<p><i>This should be the number describing this teams position within the organization, e.g. the Firsts should be 1, the Seconds should be 2...</i></p>
+							<input class="form-control" type="number" name="ordinal" id="ordinal" placeholder="1">
+
+							<div class="clearfix" style="height: 20px;"></div>
+
+							<h4>Players:</h4>
+							<p>
+								<i>Please enter the full names of the players who will be assigned to this team below, one per box. Click the Add Another button to add another box. Please ensure you spell all names correctly!</i>
+							</p>
+
+							<div id="players-inputs">
+								<input type="text" name="player1" id="player1" class="form-control" placeholder="Player Name" style="margin-bottom: 5px;">
+							</div>
+
+							<button type="button" onclick="addPlayerInput()" class="btn btn-block btn-info"><span class="fa fa-plus"></span> Add Another</button>
+
+							<div class="clearfix" style="height: 20px;"></div>
+
+							<h4>Make sure everything is correct...</h4>
+							<p>
+								Double check everything above then click the Register button to register this team.
+							</p>
+
+							<button type="submit" class="btn btn-lg btn-primary btn-block"><span class="fa fa-save"></span> Register!</button>
+						</form>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-6 col-md-7 col-sm-9 col-xs-12">
+				<div class="panel panel-primary">
+					<div class="panel-heading"><span class="fa fa-list"></span> Your Registered Teams</div>
+
+					<div class="panel-body">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

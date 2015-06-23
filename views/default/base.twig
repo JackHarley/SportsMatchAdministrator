@@ -15,6 +15,7 @@
 		<title>{{ site_name }} - {% block pageTitle %}{% endblock %}</title>
 
 		<!-- Bootstrap core CSS -->
+		<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
 		<link href="{{ base_view_url }}/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 		<link href="{{ base_view_url }}/css/main.css" rel="stylesheet">
 		{% block css %}{% endblock %}
@@ -86,5 +87,7 @@
 		<script src="{{ base_view_url }}/bootstrap/dist/js/bootstrap.min.js"></script>
 		<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 		<script src="{{ base_view_url }}/bootstrap/dist/js/ie10-viewport-bug-workaround.js"></script>
+
+		{% block javascript %}{% endblock %}
 	</body>
 </html>

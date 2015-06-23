@@ -9,6 +9,7 @@ namespace sma\models;
 
 use PDO;
 use sma\Database;
+use sma\exceptions\DuplicateException;
 use sma\query\DeleteQuery;
 use sma\query\InsertQuery;
 use sma\query\SelectQuery;
@@ -77,8 +78,12 @@ class Organization {
 	 *
 	 * @param string $name
 	 * @return int object id
+	 * @throws \sma\exceptions\DuplicateException if name already exists
 	 */
 	public static function add($name) {
+		if (count(self::get(null, $name)) > 0)
+			throw new DuplicateException();
+
 		(new InsertQuery(Database::getConnection()))
 				->into("organizations")
 				->fields("name")

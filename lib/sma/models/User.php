@@ -104,16 +104,22 @@ class User {
 	 * Check if the user satisfies a set of permissions
 	 *
 	 * @param \sma\models\Permission|\sma\models\Permission[] $permissions permissions to check
+	 * @param string $requirement 'all' to require all permissions listed, 'any' to require at least
+	 * one of them
 	 * @return bool true if the user satisfies the permissions, false otherwise
 	 */
-	public function checkPermissions($permissions) {
+	public function checkPermissions($permissions, $requirement="all") {
 		if (!is_array($permissions))
 			$permissions = [$permissions];
 
 		foreach($permissions as $requiredPermission) {
 			foreach($this->getGrantedPermissions() as $grantedPermission) {
-				if ($requiredPermission == $grantedPermission->name)
-					continue 2;
+				if ($requiredPermission == $grantedPermission->name) {
+					if ($requirement == "any")
+						return true;
+					else
+						continue 2;
+				}
 			}
 			return false;
 		}

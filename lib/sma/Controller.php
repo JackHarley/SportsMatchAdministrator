@@ -96,10 +96,12 @@ class Controller {
 	 * Check if user has proper permissions and throw exception if not
 	 *
 	 * @param \sma\models\Permission|\sma\models\Permission[] $permissions required permissions
+	 * @param string $requirement 'all' to require all permissions listed, 'any' to require at least
+	 * one of them
 	 */
-	public static function requirePermissions($permissions) {
+	public static function requirePermissions($permissions, $requirement="all") {
 		static::requireLoggedInUser();
-		if (!User::getVisitor()->checkPermissions($permissions))
+		if (!User::getVisitor()->checkPermissions($permissions, $requirement))
 			ErrorHandler::forbidden();
 	}
 

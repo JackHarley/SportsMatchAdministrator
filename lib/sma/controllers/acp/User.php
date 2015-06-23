@@ -17,7 +17,7 @@ use sma\View;
 class User {
 
 	public static function index() {
-		Controller::requirePermissions(["AdminAccessDashboard"]);
+		Controller::requirePermissions(["AdminAccessDashboard", "AdminUsers"]);
 		View::load("acp/user.twig", [
 			"objects" => UserModel::get(),
 			"groups" => UserGroup::get(),
@@ -26,6 +26,7 @@ class User {
 	}
 
 	public static function add() {
+		Controller::requirePermissions(["AdminAccessDashboard", "AdminUsers"]);
 		Controller::requireFields("post", ["name"], "/acp/organization");
 
 		if (count(OrganizationModel::get(null, $_POST["name"])) > 0) {
@@ -40,6 +41,8 @@ class User {
 	}
 
 	public static function delete() {
+		Controller::requirePermissions(["AdminAccessDashboard", "AdminUsers"]);
+
 		if (!array_key_exists("id", $_GET))
 			Controller::redirect("/acp/organization");
 

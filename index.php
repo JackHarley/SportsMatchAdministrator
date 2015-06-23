@@ -45,6 +45,7 @@ Router::setRoutes([
 		"/user/login" => ["User", "login"],
 		"/user/logout" => ["User", "logout"],
 		"/user" => ["User", "index"],
+		"/team/register" => ["Team", "register"],
 		"/acp/organization/add" => ["acp\Organization", "add"],
 		"/acp/organization/delete" => ["acp\Organization", "delete"],
 		"/acp/organization" => ["acp\Organization", "index"],

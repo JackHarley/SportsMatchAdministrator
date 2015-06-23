@@ -396,7 +396,16 @@ QUERY
 		);
 
 		Permission::add("Admin", "AdminAccessDashboard", "Access the admin dashboard");
-		Permission::add("Admin", "AdminAccessUserGroupPermissions", "Access the admin area for user group permissions and edit them");
+		Permission::add("Admin", "AdminUsers", "Administrate users");
+		Permission::add("Admin", "AdminUserGroups", "Administrate user groups and their assigned permissions");
+		Permission::add("Admin", "AdminOrganizations", "Administrate organizations");
+		Permission::add("Admin", "AdminTeams", "Administrate teams");
+		Permission::add("Admin", "AdminPlayers", "Administrate players");
+		Permission::add("Admin", "AdminAllLeagues", "Administrate all leagues (users always have permission to administrate leagues they are assigned as the manager of)");
+
 		Permission::add("Admin", "AdminAccessMaintenance", "Access the admin maintenance area and use the maintenance tools");
+
+		Permission::add("Team", "RegisterTeamsForOwnOrganization", "Register teams for their own organization");
+		Permission::add("Team", "RegisterTeamsForAnyOrganization", "Register teams for any organization");
 	}
 }
