@@ -352,7 +352,6 @@ class Installer {
 			CREATE TABLE `players` (
 			  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			  `full_name` varchar(128) NOT NULL,
-			  `organization_id` bigint(20) unsigned NOT NULL,
 			  `team_id` bigint(20) unsigned NOT NULL,
 			  `exempt` tinyint(1) unsigned NOT NULL,
 			  PRIMARY KEY (`id`)

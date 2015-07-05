@@ -52,7 +52,7 @@
 
 							<label for="ordinal">Team Identifier:</label><br>
 							<p><i>This should be the number describing this teams position within the organization, e.g. the Firsts should be 1, the Seconds should be 2...</i></p>
-							<input class="form-control" type="number" name="ordinal" id="ordinal" placeholder="1">
+							<input class="form-control" type="number" name="ordinal" id="ordinal" value="1">
 
 							<div class="clearfix" style="height: 20px;"></div>
 
@@ -80,14 +80,28 @@
 				</div>
 			</div>
 
-			<div class="col-lg-6 col-md-7 col-sm-9 col-xs-12">
-				<div class="panel panel-primary">
-					<div class="panel-heading"><span class="fa fa-list"></span> Your Registered Teams</div>
+			{% if visitor.organizationId %}
+				<div class="col-lg-6 col-md-7 col-sm-9 col-xs-12">
+					<div class="panel panel-primary">
+						<div class="panel-heading"><span class="fa fa-list"></span> Registered Teams For {{ visitor.organization.name }}</div>
 
-					<div class="panel-body">
+						<table class="table">
+							<tr>
+								<th>Identifier</th>
+								<th>Players</th>
+							</tr>
+							{% for team in teams %}
+								<tr>
+									<td>{{ team.ordinal }}</td>
+									<td>{% for player in team.getPlayers() %}{{ player.fullName }}{% if not loop.last %}, {% endif %}{% endfor %}</td>
+								</tr>
+							{% else %}
+
+							{% endfor %}
+						</table>
 					</div>
 				</div>
-			</div>
+			{% endif %}
 		</div>
 	</div>
 {% endblock %}

@@ -55,6 +55,15 @@ class Team {
 	}
 
 	/**
+	 * Get players
+	 *
+	 * @return \sma\models\Player[] players
+	 */
+	public function getPlayers() {
+		return Player::get(null, null, $this->id);
+	}
+
+	/**
 	 * Get objects
 	 *
 	 * @param int $id id
@@ -107,7 +116,7 @@ class Team {
 		(new InsertQuery(Database::getConnection()))
 				->into("teams")
 				->fields(["organization_id", "ordinal"])
-				->values("(?,?)", [$ordinal, $organizationId])
+				->values("(?,?)", [$organizationId, $ordinal])
 				->prepare()
 				->execute();
 

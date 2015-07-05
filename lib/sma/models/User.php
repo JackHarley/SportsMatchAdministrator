@@ -8,6 +8,7 @@
 namespace sma\models;
 
 use PDO;
+use sma\controllers\acp\Organization;
 use sma\Database;
 use sma\exceptions\EmailAddressAlreadyRegisteredException;
 use sma\exceptions\LoginCredentialsInvalidException;
@@ -375,7 +376,9 @@ class User {
 				->fields(["u.id", "u.email", "u.password_hash", "u.full_name", "u.phone_number",
 						"u.group_id", "u.organization_id"])
 				->join("LEFT JOIN user_groups ug ON ug.id = u.group_id")
-				->fields(["ug.id AS user_group_id", "ug.name AS group_name", "ug.special AS group_special"]);
+				->fields(["ug.id AS user_group_id", "ug.name AS group_name", "ug.special AS group_special"])
+				->join("LEFT JOIN organizations o ON o.id = u.organization_id")
+				->fields(["o.id AS org_id", "o.name AS organization_name"]);
 
 		if ($id)
 			$q->where("u.id = ?", $id);
@@ -389,9 +392,10 @@ class User {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$user = new self;
 			$user->group = new UserGroup();
+			$user->organization = new Organization();
 			list($user->id, $user->email, $user->passwordHash, $user->fullName, $user->phoneNumber,
 					$user->groupId, $user->organizationId, $user->group->id, $user->group->name,
-					$user->group->special) = $row;
+					$user->group->special, $user->organization->id, $user->organization->name) = $row;
 			$users[] = $user;
 		}
 

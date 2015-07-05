@@ -184,11 +184,10 @@ CREATE TABLE `permissions` (
 
 players
 -------------------------
-Players (from the teams)
+**Registered** Players (from the teams)
 
 * **id** - Primary key identifier
 * **full_name** - Player full name
-* **organization_id** - Organization the player is from
 * **team_id** - Team the player is attached to as primary
 * **exempt** - If true, the player can play in any league without generating alerts
 
@@ -196,7 +195,6 @@ Players (from the teams)
 CREATE TABLE `players` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `full_name` varchar(128) NOT NULL,
-  `organization_id` bigint(20) unsigned NOT NULL,
   `team_id` bigint(20) unsigned NOT NULL,
   `exempt` tinyint(1) unsigned NOT NULL,
   PRIMARY KEY (`id`)
