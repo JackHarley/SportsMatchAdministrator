@@ -8,6 +8,7 @@
 namespace sma\controllers\acp;
 
 use sma\Controller;
+use sma\exceptions\EmailAddressAlreadyRegisteredException;
 use sma\models\Alert;
 use sma\models\Organization;
 use sma\models\User as UserModel;
@@ -27,36 +28,42 @@ class User {
 
 	public static function add() {
 		Controller::requirePermissions(["AdminAccessDashboard", "AdminUsers"]);
-		Controller::requireFields("post", ["name"], "/acp/organization");
+		Controller::requireFields("post", ["email", "password", "full-name", "phone-number", "group", "organization"], "/acp/user");
 
-		if (count(OrganizationModel::get(null, $_POST["name"])) > 0) {
-			Controller::addAlert(new Alert("danger", "Organization name is already used, please choose an alternative name and try again"));
-			Controller::redirect("/acp/organization");
+		if (count(UserModel::get(null, $_POST["email"])) > 0) {
+			Controller::addAlert(new Alert("danger", "Email is already registered, please use a different one and try again."));
+			Controller::redirect("/acp/user");
 		}
 
+		try {
+			UserModel::add($_POST["email"], $_POST["full-name"], $_POST["phone-number"], $_POST["password"], $_POST["group"], $_POST["organization"]);
+		}
+		catch (EmailAddressAlreadyRegisteredException $e) {
+			Controller::addAlert(new Alert("danger", "Email is already registered, please use a different one and try again."));
+			Controller::redirect("/acp/user");
+		}
 
-		OrganizationModel::add($_POST["name"]);
-		Controller::addAlert(new Alert("success", "Organization added successfully"));
-		Controller::redirect("/acp/organization");
+		Controller::addAlert(new Alert("success", "User added successfully"));
+		Controller::redirect("/acp/user");
 	}
 
 	public static function delete() {
 		Controller::requirePermissions(["AdminAccessDashboard", "AdminUsers"]);
 
 		if (!array_key_exists("id", $_GET))
-			Controller::redirect("/acp/organization");
+			Controller::redirect("/acp/user");
 
-		$orgs = OrganizationModel::get($_GET["id"]);
+		$users = UserModel::get($_GET["id"]);
 
-		if (!empty($orgs)) {
-			current($orgs)->delete();
-			Controller::addAlert(new Alert("success", "Organization deleted successfully"));
+		if (!empty($users)) {
+			current($users)->delete();
+			Controller::addAlert(new Alert("success", "User deleted successfully"));
 		}
 		else {
 			Controller::addAlert(new Alert("danger",
-					"The organization you attempted to delete does not exist"));
+					"The user you attempted to delete does not exist"));
 		}
 
-		Controller::redirect("/acp/organization");
+		Controller::redirect("/acp/user");
 	}
 }

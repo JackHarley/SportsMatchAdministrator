@@ -85,6 +85,18 @@ class User {
 	protected static $visitor;
 
 	/**
+	 * Delete the user
+	 */
+	public function delete() {
+		(new DeleteQuery(Database::getConnection()))
+				->from("users")
+				->where("id = ?", $this->id)
+				->limit(1)
+				->prepare()
+				->execute();
+	}
+
+	/**
 	 * Get the permissions of the user
 	 *
 	 * @throws \sma\exceptions\RequiredDataNotAvailableException user is not yet initialized
