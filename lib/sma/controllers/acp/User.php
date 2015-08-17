@@ -20,9 +20,9 @@ class User {
 	public static function index() {
 		Controller::requirePermissions(["AdminAccessDashboard", "AdminUsers"]);
 		View::load("acp/user.twig", [
-			"objects" => UserModel::get(),
-			"groups" => UserGroup::get(),
-			"organizations" => Organization::get()
+				"objects" => UserModel::get(),
+				"groups" => UserGroup::get(),
+				"organizations" => Organization::get()
 		]);
 	}
 
@@ -44,6 +44,25 @@ class User {
 		}
 
 		Controller::addAlert(new Alert("success", "User added successfully"));
+		Controller::redirect("/acp/user");
+	}
+
+	public static function edit() {
+		Controller::requirePermissions(["AdminAccessDashboard", "AdminUsers"]);
+
+		if (empty($_POST)) {
+			View::load("acp/user_edit.twig", [
+					"object" => current(UserModel::get($_GET["id"])),
+					"groups" => UserGroup::get(),
+					"organizations" => Organization::get()
+			]);
+		}
+		else {
+			UserModel::update($_POST["id"], $_POST["email"], $_POST["full-name"], $_POST["phone-number"],
+					$_POST["password"], $_POST["group"], $_POST["organization"]);
+		}
+
+		Controller::addAlert(new Alert("success", "User updated successfully"));
 		Controller::redirect("/acp/user");
 	}
 

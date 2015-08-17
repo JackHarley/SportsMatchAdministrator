@@ -1,0 +1,77 @@
+{#
+	Sports Match Administrator
+
+	Copyright © 2014-2015, Jack P. Harley, jackpharley.com
+	All Rights Reserved
+#}
+
+{% extends "acp/base.twig" %}
+
+{% block page %}
+	<!-- Content Header (Page header) -->
+	<section class="content-header">
+		<h1>Users</h1>
+	</section>
+
+	<!-- Main content -->
+	<section class="content">
+		<div class="row">
+
+			<!-- one column -->
+			<div class="col-sm-12 col-xs-12">
+				<div class="box box-primary">
+					<div class="box-header with-border">
+						<h3 class="box-title"><i class="fa fa-pencil-square-o"></i> Update User</h3>
+					</div><!-- /.box-header -->
+
+					<!-- form start -->
+					<form role="form" action="{{ base_links_url }}/acp/user/edit" method="post">
+						<input type="hidden" name="id" value="{{ object.id }}">
+
+						<div class="box-body">
+							<div class="form-group">
+								<label for="email">Email Address</label>
+								<input type="text" class="form-control" id="email" name="email" value="{{ object.email }}">
+							</div>
+							<div class="form-group">
+								<label for="password">Password (leave blank to not change)</label>
+								<input type="password" class="form-control" id="password" name="password" placeholder="Password">
+								<input type="password" class="form-control" id="confirm-password" name="confirm-password" placeholder="Confirm Password">
+							</div>
+							<div class="form-group">
+								<label for="full-name">Full Name</label>
+								<input type="text" class="form-control" id="full-name" name="full-name" value="{{ object.fullName }}">
+							</div>
+							<div class="form-group">
+								<label for="phone-number">Phone Number</label>
+								<input type="text" class="form-control" id="phone-number" name="phone-number" value="{{ object.phoneNumber }}">
+							</div>
+							<div class="form-group">
+								<label for="group">User Group</label>
+								<select id="group" name="group" class="form-control">
+									{% for group in groups %}
+										<option {% if group.id == object.groupId %}selected{% endif %} value="{{ group.id }}">{{ group.name }}</option>
+									{% endfor %}
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="organization">Organization</label>
+								<select id="organization" name="organization" class="form-control">
+									<option value="0">No Organization</option>
+									{% for organization in organizations %}
+										<option {% if organization.id == object.organizationId %}selected{% endif %} value="{{ organization.id }}">{{ organization.name }}</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div><!-- /.box-body -->
+
+						<div class="box-footer">
+							<button type="submit" class="btn btn-primary"><i class="fa fa-pencil-square-o"></i> Update</button>
+						</div>
+					</form>
+				</div><!-- /.box -->
+			</div><!-- /.col -->
+
+		</div><!-- ./row -->
+	</section><!-- /.content -->
+{% endblock %}

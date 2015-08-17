@@ -71,7 +71,7 @@ class Player {
 				->from("players p")
 				->fields(["p.id", "p.full_name", "p.team_id", "p.exempt"])
 				->join("LEFT JOIN teams t ON t.id=p.team_id")
-				->fields(["t.id AS te_id", "t.ordinal", "t.organization_id"])
+				->fields(["t.id AS te_id", "t.designation", "t.organization_id"])
 				->join("LEFT JOIN organizations o ON o.id=t.organization_id")
 				->fields(["o.id AS org_id", "o.name AS organization_name"]);
 
@@ -92,7 +92,7 @@ class Player {
 			$player->team->organization = new Organization();
 
 			list($player->id, $player->fullName, $player->teamId, $player->exempt, $player->team->id,
-					$player->team->ordinal, $player->team->organizationId, $player->team->organization->id,
+					$player->team->designation, $player->team->organizationId, $player->team->organization->id,
 					$player->team->organization->name) = $row;
 			$players[] = $player;
 		}

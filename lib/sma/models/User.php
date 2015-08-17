@@ -446,4 +446,46 @@ class User {
 
 		return Database::getConnection()->lastInsertId();
 	}
+
+	/**
+	 * Update a user
+	 *
+	 * @param int $id user id
+	 * @param string $email
+	 * @param string $fullName
+	 * @param string $phoneNumber
+	 * @param string $password
+	 * @param int $groupId initial user group id
+	 * @param int $organizationId organization user is from
+	 */
+	public static function update($id, $email=null, $fullName=null, $phoneNumber=null, $password=null,
+			$groupId=null, $organizationId=null) {
+
+		$q = (new UpdateQuery(Database::getConnection()))
+				->table("users")
+				->where("id = ?", $id)
+				->limit(1);
+
+		if ($password) {
+			$passwordHash = password_hash($password, self::HASHING_ALGORITHM,
+					["cost" => self::HASHING_COST]);
+			$q->set("password_hash = ?", $passwordHash);
+		}
+		if ($email)
+			$q->set("email = ?", $email);
+		if ($fullName)
+			$q->set("full_name = ?", $fullName);
+		if ($phoneNumber)
+			$q->set("phone_number = ?", $phoneNumber);
+		if ($groupId)
+			$q->set("group_id = ?", $groupId);
+		if ($organizationId !== null) {
+			if ($organizationId === 0)
+				$q->set("organization_id = NULL");
+			else
+				$q->set("organization_id = ?", $organizationId);
+		}
+
+		$q->prepare()->execute();
+	}
 }

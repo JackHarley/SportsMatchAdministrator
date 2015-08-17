@@ -50,6 +50,7 @@ Router::setRoutes([
 		"/acp/organization/delete" => ["acp\Organization", "delete"],
 		"/acp/organization" => ["acp\Organization", "index"],
 		"/acp/user/add" => ["acp\User", "add"],
+		"/acp/user/edit" => ["acp\User", "edit"],
 		"/acp/user/delete" => ["acp\User", "delete"],
 		"/acp/user" => ["acp\User", "index"],
 		"/acp/league/add" => ["acp\League", "add"],
