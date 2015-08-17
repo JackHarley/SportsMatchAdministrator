@@ -362,7 +362,7 @@ class Installer {
 			  `designation` varchar(32) NOT NULL,
 			  `organization_id` bigint(20) unsigned NOT NULL,
 			  PRIMARY KEY (`id`),
-			  UNIQUE KEY `organization_ordinal` (`organization_id`,`ordinal`)
+			  UNIQUE KEY `organization_designation` (`organization_id`,`designation`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 			CREATE TABLE `user_groups` (
