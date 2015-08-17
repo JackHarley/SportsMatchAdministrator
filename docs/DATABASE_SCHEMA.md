@@ -206,13 +206,13 @@ teams
 Teams
 
 * **id** - Primary key identifier
-* **ordinal** - Number identifying the team in the case of multiple teams per organization, e.g. 1 for Firsts, 2 for Seconds, etc.
+* **designation** - Team designation, e.g. Senior 1, Senior 2, Junior 1, Junior 2, Minor A
 * **organization_id** - Organization the team belongs to
 
 ```sql
 CREATE TABLE `teams` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `ordinal` tinyint unsigned NOT NULL,
+  `designation` varchar(32) NOT NULL,
   `organization_id` bigint(20) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `organization_ordinal` (`organization_id`,`ordinal`)

@@ -359,7 +359,7 @@ class Installer {
 
 			CREATE TABLE `teams` (
 			  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-			  `ordinal` tinyint unsigned NOT NULL,
+			  `designation` varchar(32) NOT NULL,
 			  `organization_id` bigint(20) unsigned NOT NULL,
 			  PRIMARY KEY (`id`),
 			  UNIQUE KEY `organization_ordinal` (`organization_id`,`ordinal`)

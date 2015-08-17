@@ -37,7 +37,7 @@ class Team {
 			else
 				$organizationId = User::getVisitor()->organizationId;
 
-			$teamId = TeamModel::add($organizationId, $_POST["ordinal"]);
+			$teamId = TeamModel::add($organizationId, $_POST["designation"]);
 
 			// add the players
 			for ($i = 1; array_key_exists("player" . $i, $_POST); $i++) {

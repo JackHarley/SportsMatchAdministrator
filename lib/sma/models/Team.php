@@ -27,10 +27,9 @@ class Team {
 	public $id;
 
 	/**
-	 * @var int integer identifying the team in the case of multiple teams per organization,
-	 * e.g. 1 for Firsts, 2 for Seconds, etc.
+	 * @var string team designation e.g. Senior 1, Senior 2, Junior A, Junior B
 	 */
-	public $ordinal;
+	public $designation;
 
 	/**
 	 * @var \sma\models\Organization organization
@@ -68,13 +67,13 @@ class Team {
 	 *
 	 * @param int $id id
 	 * @param int $organizationId organization id to fetch teams for
-	 * @param int $ordinal ordinal
+	 * @param string $designation designation
 	 * @return \sma\models\Team[] teams
 	 */
-	public static function get($id=null, $organizationId=null, $ordinal=null) {
+	public static function get($id=null, $organizationId=null, $designation=null) {
 		$q = (new SelectQuery(Database::getConnection()))
 				->from("teams t")
-				->fields(["t.id", "t.ordinal", "t.organization_id"])
+				->fields(["t.id", "t.designation", "t.organization_id"])
 				->join("LEFT JOIN organizations o ON o.id=t.organization_id")
 				->fields(["o.id AS org_id", "o.name AS organization_name"]);
 
@@ -82,8 +81,8 @@ class Team {
 			$q->where("t.id = ?", $id);
 		if ($organizationId)
 			$q->where("t.organization_id = ?", $organizationId);
-		if ($ordinal)
-			$q->where("t.ordinal = ?", $ordinal);
+		if ($designation)
+			$q->where("t.designation = ?", $designation);
 
 		$stmt = $q->prepare();
 		$stmt->execute();
@@ -92,7 +91,7 @@ class Team {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$team = new self;
 			$team->organization = new Organization();
-			list($team->id, $team->ordinal, $team->organizationId, $team->organization->id,
+			list($team->id, $team->designation, $team->organizationId, $team->organization->id,
 					$team->organization->name) = $row;
 			$teams[] = $team;
 		}
@@ -104,19 +103,19 @@ class Team {
 	 * Add a new team
 	 *
 	 * @param int $organizationId organization
-	 * @param int $ordinal ordinal
+	 * @param string $designation designation
 	 * @return int new id
-	 * @throws \sma\exceptions\DuplicateException if a team already exists with the same ordinal
+	 * @throws \sma\exceptions\DuplicateException if a team already exists with the same designation
 	 * for the specified organization
 	 */
-	public static function add($organizationId, $ordinal) {
-		if (count(self::get(null, $organizationId, $ordinal)) > 0)
+	public static function add($organizationId, $designation) {
+		if (count(self::get(null, $organizationId, $designation)) > 0)
 			throw new DuplicateException();
 
 		(new InsertQuery(Database::getConnection()))
 				->into("teams")
-				->fields(["organization_id", "ordinal"])
-				->values("(?,?)", [$organizationId, $ordinal])
+				->fields(["organization_id", "designation"])
+				->values("(?,?)", [$organizationId, $designation])
 				->prepare()
 				->execute();
 

@@ -50,9 +50,9 @@
 
 							<br>
 
-							<label for="ordinal">Team Identifier:</label><br>
-							<p><i>This should be the number describing this teams position within the organization, e.g. the Firsts should be 1, the Seconds should be 2...</i></p>
-							<input class="form-control" type="number" name="ordinal" id="ordinal" value="1">
+							<label for="designation">Team Designation:</label><br>
+							<p><i>This should be used to indicate the team's position within your organization: e.g. Senior 1, Senior 2, Junior A, Junior B, U-13 A, U-13 B</i></p>
+							<input class="form-control" type="text" name="designation" id="designation" placeholder="U-13 A">
 
 							<div class="clearfix" style="height: 20px;"></div>
 
@@ -93,12 +93,12 @@
 
 						<table class="table">
 							<tr>
-								<th>Identifier</th>
+								<th>Designation</th>
 								<th>Players</th>
 							</tr>
 							{% for team in teams %}
 								<tr>
-									<td>{{ team.ordinal }}</td>
+									<td>{{ team.designation }}</td>
 									<td>{% for player in team.getPlayers() %}{{ player.fullName }}{% if not loop.last %}, {% endif %}{% endfor %}</td>
 								</tr>
 							{% else %}
