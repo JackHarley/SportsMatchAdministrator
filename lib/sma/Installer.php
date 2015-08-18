@@ -364,6 +364,8 @@ class Installer {
 			  `designation` varchar(32) NOT NULL,
 			  `organization_id` bigint(20) unsigned NOT NULL,
 			  `league_section_id` bigint(20) unsigned DEFAULT NULL,
+			  `epoch_registered` bigint(20) unsigned NOT NULL,
+			  `registrant_id` bigint(20) unsigned NOT NULL,
 			  PRIMARY KEY (`id`),
 			  UNIQUE KEY `organization_designation` (`organization_id`,`designation`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;

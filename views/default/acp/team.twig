@@ -1,0 +1,116 @@
+{#
+	Sports Match Administrator
+
+	Copyright © 2014-2015, Jack P. Harley, jackpharley.com
+	All Rights Reserved
+#}
+
+{% extends "acp/base.twig" %}
+
+{% block javascript %}
+	<script src="{{ base_view_url }}/acp/plugins/datatables/jquery.dataTables.min.js" type="text/javascript"></script>
+	<script src="{{ base_view_url }}/acp/plugins/datatables/dataTables.bootstrap.min.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+		$(function () {
+			$('#team-table').DataTable({
+				"paging": true,
+				"lengthChange": false,
+				"searching": false,
+				"ordering": true,
+				"info": true,
+				"autoWidth": false
+			});
+		});
+	</script>
+
+{% endblock %}
+
+{% block page %}
+	<!-- Content Header (Page header) -->
+	<section class="content-header">
+		<h1>Teams</h1>
+	</section>
+
+	<!-- Main content -->
+	<section class="content">
+		<div class="row">
+			<div class="col-sm-6 col-xs-6">
+				<div class="box box-info">
+					<div class="box-header with-border">
+						<h3 class="box-title"><i class="fa fa-question-circle"></i> Teams In Detail</h3>
+					</div><!-- /.box-header -->
+					<!-- form start -->
+					<div class="box-body">
+						Teams or squads are a group of players who will play in a league during the year. Movement of players between teams should be minimised. Teams can be registered by an authorised person from each organisation. Organisations can register multiple teams. Once a team is registered it will appear on the "Unassigned Teams" list and can then be assigned to a league for the season.
+					</div>
+				</div><!-- /.box -->
+			</div>
+			<div class="col-sm-6 col-xs-6">
+				<div class="box box-success">
+					<div class="box-header with-border">
+						<h3 class="box-title"><i class="fa fa-plus"></i> Register Team</h3>
+					</div><!-- /.box-header -->
+					<!-- form start -->
+					<form role="form" action="{{ base_links_url }}/acp/team/add" method="post">
+						<div class="box-body">
+							<p>
+								Teams can be registered by visiting the team registration area on the main website, click the button below to proceed to the team registration area.
+							</p>
+						</div><!-- /.box-body -->
+
+						<div class="box-footer">
+							<a class="btn btn-success" href="{{ base_links_url }}/team/register"><i class="fa fa-plus"></i> Register Team</a>
+						</div>
+					</form>
+				</div><!-- /.box -->
+			</div><!-- /.col -->
+		</div>
+		<div class="row">
+			<div class="col-sm-12 col-xs-12">
+				<div class="box box-primary">
+					<div class="box-header with-border">
+						<h3 class="box-title"><i class="fa fa-list"></i></h3>
+					</div><!-- /.box-header -->
+
+					<div class="box-body">
+						<table id="team-table" class="table table-bordered table-striped">
+							<thead>
+								<tr>
+									<th>Date Registered</th>
+									<th>Organization</th>
+									<th>Designation</th>
+									<th># Players</th>
+									<th>Assigned League and Section</th>
+									<th>Registrant</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for object in objects %}
+									<tr>
+										<td>{{ object.epochRegistered|epochtodatetime }}</td>
+										<td>{{ object.organization.name }}</td>
+										<td>{{ object.designation }}</td>
+										<td>{{ object.getPlayers()|length }}</td>
+										<td>
+											{% if object.leagueSectionId %}
+												{{ object.getLeagueSection().getLeague().name }} - Section {{ object.getLeagueSection().letter }}
+											{% else %}
+												<i>Not Assigned</i>
+											{% endif %}
+										</td>
+										<td>{{ object.registrant.fullName }}</td>
+										<td class="text-right">
+											<a class="btn-sm btn-primary" href="{{ base_links_url }}/acp/team/manage?id={{ object.id }}"><i class="fa fa-edit"></i> Manage</a>
+										</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div><!-- /.box -->
+			</div><!-- /.col -->
+		</div><!-- ./row -->
+	</section><!-- /.content -->
+{% endblock %}

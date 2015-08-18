@@ -52,6 +52,21 @@ class Team {
 	public $leagueSectionId;
 
 	/**
+	 * @var \sma\models\User registrant
+	 */
+	public $registrant;
+
+	/**
+	 * @var int registrant id
+	 */
+	public $registrantId;
+
+	/**
+	 * @var int epoch registered
+	 */
+	public $epochRegistered;
+
+	/**
 	 * Delete the team
 	 */
 	public function delete() {
@@ -79,7 +94,7 @@ class Team {
 	 */
 	public function getLeagueSection() {
 		if (!$this->leagueSection)
-			$this->leagueSection = LeagueSection::get($this->leagueSectionId);
+			$this->leagueSection = current(LeagueSection::get($this->leagueSectionId));
 		return $this->leagueSection;
 	}
 
@@ -97,9 +112,12 @@ class Team {
 
 		$q = (new SelectQuery(Database::getConnection()))
 				->from("teams t")
-				->fields(["t.id", "t.designation", "t.organization_id"])
+				->fields(["t.id", "t.designation", "t.organization_id", "t.league_section_id",
+						"t.registrant_id", "t.epoch_registered"])
 				->join("LEFT JOIN organizations o ON o.id=t.organization_id")
-				->fields(["o.id AS org_id", "o.name AS organization_name"]);
+				->fields(["o.id AS org_id", "o.name AS organization_name"])
+				->join("LEFT JOIN users u ON u.id=t.registrant_id")
+				->fields(["u.id AS u_id", "u.full_name"]);
 
 		if ($id)
 			$q->where("t.id = ?", $id);
@@ -121,8 +139,10 @@ class Team {
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$team = new self;
 			$team->organization = new Organization();
-			list($team->id, $team->designation, $team->organizationId, $team->organization->id,
-					$team->organization->name) = $row;
+			$team->registrant = new User();
+			list($team->id, $team->designation, $team->organizationId, $team->leagueSectionId,
+					$team->registrantId, $team->epochRegistered, $team->organization->id,
+					$team->organization->name, $team->registrant->id, $team->registrant->fullName) = $row;
 			$teams[] = $team;
 		}
 
@@ -134,18 +154,19 @@ class Team {
 	 *
 	 * @param int $organizationId organization
 	 * @param string $designation designation
+	 * @param int $registrantId registrant
 	 * @return int new id
 	 * @throws \sma\exceptions\DuplicateException if a team already exists with the same designation
 	 * for the specified organization
 	 */
-	public static function add($organizationId, $designation) {
+	public static function add($organizationId, $designation, $registrantId) {
 		if (count(self::get(null, $organizationId, $designation)) > 0)
 			throw new DuplicateException();
 
 		(new InsertQuery(Database::getConnection()))
 				->into("teams")
-				->fields(["organization_id", "designation"])
-				->values("(?,?)", [$organizationId, $designation])
+				->fields(["organization_id", "designation", "registrant_id", "epoch_registered"])
+				->values("(?,?,?,?)", [$organizationId, $designation, $registrantId, time()])
 				->prepare()
 				->execute();
 

@@ -7,6 +7,25 @@
 
 {% extends "acp/base.twig" %}
 
+{% block javascript %}
+	<script src="{{ base_view_url }}/acp/plugins/datatables/jquery.dataTables.min.js" type="text/javascript"></script>
+	<script src="{{ base_view_url }}/acp/plugins/datatables/dataTables.bootstrap.min.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+		$(function () {
+			$('#team-table').DataTable({
+				"paging": false,
+				"lengthChange": false,
+				"searching": false,
+				"ordering": true,
+				"info": true,
+				"autoWidth": false
+			});
+		});
+	</script>
+
+{% endblock %}
+
 {% block page %}
 	<!-- Content Header (Page header) -->
 	<section class="content-header">
@@ -16,43 +35,105 @@
 	<!-- Main content -->
 	<section class="content">
 		<div class="row">
-			<div class="col-md-3 col-sm-6 col-xs-12">
-				<div class="info-box">
-					<span class="info-box-icon bg-aqua"><i class="fa fa-building"></i></span>
-					<div class="info-box-content">
-						<span class="info-box-text">Organizations</span>
-						<span class="info-box-number">1,410</span>
-					</div><!-- /.info-box-content -->
-				</div><!-- /.info-box -->
+			<div class="col-sm-6 col-xs-6">
+				<div class="box box-primary">
+					<div class="box-header with-border">
+						<h3 class="box-title">Welcome to the Admin Control Panel (ACP)</h3>
+					</div><!-- /.box-header -->
+					<div class="box-body">
+						<p>
+							From here you can add new users, manage teams, create and administer leagues, alter various users' permissions on the site and much more.
+						</p>
+						<p>
+							Use the navigation bar on the left or click on one of the below icons to get started.
+						</p>
+					</div><!-- /.box-body -->
+				</div><!-- /.box -->
 			</div><!-- /.col -->
-			<div class="col-md-3 col-sm-6 col-xs-12">
-				<div class="info-box">
-					<span class="info-box-icon bg-green"><i class="fa fa-futbol-o"></i></span>
-					<div class="info-box-content">
-						<span class="info-box-text">Registered Teams</span>
-						<span class="info-box-number">410</span>
-					</div><!-- /.info-box-content -->
-				</div><!-- /.info-box -->
-			</div><!-- /.col -->
-			<div class="col-md-3 col-sm-6 col-xs-12">
-				<div class="info-box">
-					<span class="info-box-icon bg-yellow"><i class="fa fa-file"></i></span>
-					<div class="info-box-content">
-						<span class="info-box-text">Submitted Match Reports</span>
-						<span class="info-box-number">13,648</span>
-					</div><!-- /.info-box-content -->
-				</div><!-- /.info-box -->
-			</div><!-- /.col -->
-			<div class="col-md-3 col-sm-6 col-xs-12">
+
+				<div class="col-md-3 col-sm-6 col-xs-12">
+					<div class="info-box">
+						<span class="info-box-icon bg-aqua"><i class="fa fa-building"></i></span>
+						<div class="info-box-content">
+							<span class="info-box-text">Organizations</span>
+							<span class="info-box-number">{{ organizationCount }}</span>
+						</div><!-- /.info-box-content -->
+					</div><!-- /.info-box -->
+				</div><!-- /.col -->
+				<div class="col-md-3 col-sm-6 col-xs-12">
+					<div class="info-box">
+						<span class="info-box-icon bg-green"><i class="fa fa-futbol-o"></i></span>
+						<div class="info-box-content">
+							<span class="info-box-text">Registered Teams</span>
+							<span class="info-box-number">{{ teamCount }}</span>
+						</div><!-- /.info-box-content -->
+					</div><!-- /.info-box -->
+				</div><!-- /.col -->
+				<!--<div class="col-md-3 col-sm-6 col-xs-12">
+					<div class="info-box">
+						<span class="info-box-icon bg-yellow"><i class="fa fa-file"></i></span>
+						<div class="info-box-content">
+							<span class="info-box-text">Submitted Match Reports</span>
+							<span class="info-box-number">13,648</span>
+						</div><!-- /.info-box-content -->
+					</div><!-- /.info-box -->
+			<!--</div><!-- /.col -->
+			<!--<div class="col-md-3 col-sm-6 col-xs-12">
 				<div class="info-box">
 					<span class="info-box-icon bg-red"><i class="fa fa-bell-o"></i></span>
 					<div class="info-box-content">
 						<span class="info-box-text">Issues</span>
 						<span class="info-box-number">93,139</span>
 					</div><!-- /.info-box-content -->
-				</div><!-- /.info-box -->
+			<!--</div><!-- /.info-box -->
+			<!--</div><!-- /.col -->
+			<!--</div><!-- /.row -->
+
+
+		<div class="row">
+			<div class="col-sm-8 col-xs-12">
+				<div class="box box-{% if unassignedTeams %}danger{% else %}success{% endif %}">
+					<div class="box-header with-border">
+						<h3 class="box-title"><i class="fa fa-list"></i> Teams Awaiting Assignation to a League</h3>
+					</div><!-- /.box-header -->
+
+					<div class="box-body">
+						{% if unassignedTeams %}
+							<p>
+								These teams have been registered but not yet assigned to a league section, click "Manage" beside a team to begin the process of assigning it to a league.
+							</p>
+
+							<table id="team-table" class="table table-bordered table-striped">
+								<thead>
+								<tr>
+									<th>Date Registered</th>
+									<th>Organization / Designation</th>
+									<th># Players</th>
+									<th>Registrant</th>
+									<th></th>
+								</tr>
+								</thead>
+								<tbody>
+								{% for object in unassignedTeams %}
+									<tr>
+										<td>{{ object.epochRegistered|epochtodatetime }}</td>
+										<td>{{ object.organization.name }} / {{ object.designation }}</td>
+										<td>{{ object.getPlayers()|length }}</td>
+										<td>{{ object.registrant.fullName }}</td>
+										<td class="text-right">
+											<a class="btn-sm btn-danger" href="{{ base_links_url }}/acp/team/manage?id={{ object.id }}"><i class="fa fa-edit"></i> Manage</a>
+										</td>
+									</tr>
+								{% endfor %}
+								</tbody>
+							</table>
+						{% else %}
+							<p>All registered teams have been assigned to a league!</p>
+						{% endif %}
+					</div>
+				</div><!-- /.box -->
 			</div><!-- /.col -->
-		</div><!-- /.row -->
+		</div><!-- ./row -->
 
 	</section><!-- /.content -->
 {% endblock %}
