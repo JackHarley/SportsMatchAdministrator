@@ -9,9 +9,8 @@ session_start();
 define("START_REQUEST", microtime(true));
 
 require_once(__DIR__ . "/config.php");
-require_once(__DIR__ . "/lib/sma/Autoloader.php");
-require_once(__DIR__ . "/lib/Twig/Autoloader.php");
-require_once(__DIR__ . "/lib/password_compat/password.php");
+require_once(__DIR__ . "/app/Autoloader.php");
+require_once(__DIR__ . "/vendor/autoload.php");
 
 use sma\Autoloader;
 use sma\Router;

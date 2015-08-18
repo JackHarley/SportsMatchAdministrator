@@ -3,6 +3,7 @@
 .idea
 /cache/*
 /install/*
+/vendor/*
 !.gitkeep
 /phpdoc
 node_modules
