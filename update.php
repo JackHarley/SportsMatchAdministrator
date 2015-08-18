@@ -16,4 +16,4 @@ if (!in_array($_SERVER["REMOTE_ADDR"], $allowedIps)) {
 	die();
 }
 
-shell_exec("cd " . __DIR__ . " && git reset --hard HEAD && git pull origin master && rm -rf cache/twig");
+shell_exec("cd " . __DIR__ . " && git reset --hard HEAD && git pull origin master && rm -rf cache/twig && php composer.phar update");
