@@ -33,6 +33,19 @@ class League {
 		Controller::redirect("/acp/league");
 	}
 
+	public static function manage() {
+		$league = current(LeagueModel::get($_GET["id"]));
+
+		// check permissions
+		$visitor = User::getVisitor();
+		if ($visitor->id != $league->managerId)
+			Controller::requirePermissions(["AdminAllLeagues"]);
+
+		View::load("acp/league_manage.twig", [
+			"league" => $league
+		]);
+	}
+
 	public static function delete() {
 		Controller::requirePermissions(["AdminAccessDashboard", "AdminAllLeagues"]);
 		if (!array_key_exists("id", $_GET))

@@ -33,7 +33,7 @@ class Controller {
 	 * @param string $path new location
 	 * @param bool $external redirect to external location
 	 */
-	public static function redirect($path, $external = false) {
+	public static function redirect($path, $external=false) {
 		if (!$external) {
 			static::saveAlertsToCookie();
 			header('Location: ' . BASE_LINKS_URL . $path);

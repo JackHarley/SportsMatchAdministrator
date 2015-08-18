@@ -54,8 +54,11 @@ Router::setRoutes([
 		"/acp/user/delete" => ["acp\User", "delete"],
 		"/acp/user" => ["acp\User", "index"],
 		"/acp/league/add" => ["acp\League", "add"],
+		"/acp/league/manage" => ["acp\League", "manage"],
 		"/acp/league/delete" => ["acp\League", "delete"],
 		"/acp/league" => ["acp\League", "index"],
+		"/acp/section/add" => ["acp\LeagueSection", "add"],
+		"/acp/section/delete" => ["acp\LeagueSection", "delete"],
 		"/acp" => ["acp\Dashboard", "index"],
 		"" => ["Index", "index"]
 ]);

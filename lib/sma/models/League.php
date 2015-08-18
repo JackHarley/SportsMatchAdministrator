@@ -41,6 +41,11 @@ class League {
 	public $managerId;
 
 	/**
+	 * @var \sma\models\LeagueSection[] league sections
+	 */
+	protected $sections;
+
+	/**
 	 * Delete the league
 	 */
 	public function delete() {
@@ -61,6 +66,17 @@ class League {
 		if (!$this->manager)
 			$this->manager = current(User::get($this->managerId));
 		return $this->manager;
+	}
+
+	/**
+	 * Get sections
+	 *
+	 * @return \sma\models\LeagueSection[] league sections
+	 */
+	public function getSections() {
+		if (!$this->sections)
+			$this->sections = LeagueSection::get(null, $this->id);
+		return $this->sections;
 	}
 
 	/**

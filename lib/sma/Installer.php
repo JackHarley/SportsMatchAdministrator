@@ -296,7 +296,9 @@ class Installer {
 			CREATE TABLE `league_sections` (
 			  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			  `letter` varchar(4) NOT NULL,
-			  PRIMARY KEY (`id`)
+			  `league_id` bigint(20) unsigned NOT NULL,
+			  PRIMARY KEY (`id`),
+			  UNIQUE KEY `league_letter` (`letter`,`league_id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 			CREATE TABLE `leagues` (
@@ -361,6 +363,7 @@ class Installer {
 			  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			  `designation` varchar(32) NOT NULL,
 			  `organization_id` bigint(20) unsigned NOT NULL,
+			  `league_section_id` bigint(20) unsigned DEFAULT NULL,
 			  PRIMARY KEY (`id`),
 			  UNIQUE KEY `organization_designation` (`organization_id`,`designation`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;

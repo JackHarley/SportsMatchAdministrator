@@ -42,6 +42,16 @@ class Team {
 	public $organizationId;
 
 	/**
+	 * @var \sma\models\LeagueSection league section team is assigned to
+	 */
+	protected $leagueSection;
+
+	/**
+	 * @var int league section id
+	 */
+	public $leagueSectionId;
+
+	/**
 	 * Delete the team
 	 */
 	public function delete() {
@@ -63,14 +73,28 @@ class Team {
 	}
 
 	/**
+	 * Get league section
+	 *
+	 * @return \sma\models\LeagueSection
+	 */
+	public function getLeagueSection() {
+		if (!$this->leagueSection)
+			$this->leagueSection = LeagueSection::get($this->leagueSectionId);
+		return $this->leagueSection;
+	}
+
+	/**
 	 * Get objects
 	 *
 	 * @param int $id id
 	 * @param int $organizationId organization id to fetch teams for
 	 * @param string $designation designation
+	 * @param int|bool $leagueSectionId league section or boolean false to fetch unassigned teams only
 	 * @return \sma\models\Team[] teams
 	 */
-	public static function get($id=null, $organizationId=null, $designation=null) {
+	public static function get($id=null, $organizationId=null, $designation=null,
+			$leagueSectionId=null) {
+
 		$q = (new SelectQuery(Database::getConnection()))
 				->from("teams t")
 				->fields(["t.id", "t.designation", "t.organization_id"])
@@ -83,6 +107,12 @@ class Team {
 			$q->where("t.organization_id = ?", $organizationId);
 		if ($designation)
 			$q->where("t.designation = ?", $designation);
+		if ($leagueSectionId !== null) {
+			if ($leagueSectionId === false)
+				$q->where("t.league_section_id IS NULL");
+			else
+				$q->where("t.league_section_id = ?", $leagueSectionId);
+		}
 
 		$stmt = $q->prepare();
 		$stmt->execute();

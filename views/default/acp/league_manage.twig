@@ -1,0 +1,109 @@
+{#
+	Sports Match Administrator
+
+	Copyright © 2014-2015, Jack P. Harley, jackpharley.com
+	All Rights Reserved
+#}
+
+{% extends "acp/base.twig" %}
+
+{% block page %}
+	<!-- Content Header (Page header) -->
+	<section class="content-header">
+		<h1>League Management - {{ league.name }}</h1>
+	</section>
+
+	<!-- Main content -->
+	<section class="content">
+		<!-- one column -->
+		<div class="row">
+			<div class="col-sm-6 col-xs-8">
+				<div class="box box-primary">
+					<div class="box-header">
+						<h3 class="box-title">League Details</h3>
+					</div><!-- /.box-header -->
+
+					<div class="box-body">
+						<p>
+							<strong>League Name:</strong> {{ league.name }}<br>
+							<strong>League Manager:</strong> {{ league.getManager().fullName }} - {{ league.getManager().phoneNumber }} - {{ league.getManager().email }}
+						</p>
+					</div><!-- /.box-body -->
+				</div><!-- /.box -->
+			</div><!-- /.col -->
+		</div><!-- /.row -->
+
+		<div class="row">
+			<div class="col-sm-6 col-xs-6">
+				<div class="box box-primary">
+					<div class="box-header with-border">
+						<h3 class="box-title"><i class="fa fa-question-circle"></i> What is a League Section?</h3>
+					</div><!-- /.box-header -->
+					<!-- form start -->
+					<div class="box-body">
+						Leagues are divided into sections/groups of teams which will play each other in the initial round, and then the top teams can be entered into the next stage. If your league is small enough that there is time for them to all play each other, you can simply create a single section and assign all of your teams to it.
+					</div>
+				</div><!-- /.box -->
+			</div>
+
+			<div class="col-sm-6 col-xs-6">
+				<div class="box box-primary">
+					<div class="box-header with-border">
+						<h3 class="box-title"><i class="fa fa-plus"></i> Add Section</h3>
+					</div><!-- /.box-header -->
+					<!-- form start -->
+					<form role="form" action="{{ base_links_url }}/acp/section/add" method="post">
+						<input type="hidden" name="league_id" value="{{ league.id }}">
+
+						<div class="box-body">
+							<p>
+								The section will be given the next available alphabetic letter (A, B, C...) as an identifier. For example if you currently have one section designated as "Section A" then your next section will be designated as "Section B"
+							</p>
+						</div><!-- /.box-body -->
+
+						<div class="box-footer">
+							<button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> Add Section</button>
+						</div>
+					</form>
+				</div><!-- /.box -->
+			</div><!-- /.col -->
+		</div><!-- ./row -->
+
+		<div class="row">
+			{% for section in league.sections %}
+			<div class="col-sm-4 col-xs-6">
+				<div class="box box-primary">
+					<div class="box-header with-border">
+						<h3 class="box-title">Section {{ section.letter }}</h3>
+					</div><!-- /.box-header -->
+					<!-- form start -->
+					<div class="box-body">
+						<p>
+							<strong>Assigned Teams:</strong>
+						</p>
+
+						<ul>
+							{% for team in section.getAssignedTeams() %}
+								<li>{{ team.organization.name }} - {{ team.designation }}</li>
+							{% else %}
+								<li><i>There are no teams assigned to this section</i></li>
+							{% endfor %}
+						</ul>
+
+						<p style="font-style: italic;">
+							To assign teams to this section please go to the Unassigned Teams page and assign them to <strong>"{{ league.name }} - Section {{ section.letter }}"</strong>
+						</p>
+					</div>
+
+					<div class="box-footer">
+						<p class="text-right">
+							<a {% if section.getAssignedTeams() %}disabled{% endif %} href="{{ base_links_url }}/acp/section/delete?id={{ section.id }}" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> Delete Section {{ section.letter }}</a>
+						</p>
+					</div>
+				</div><!-- /.box -->
+			</div>
+			{% endfor %}
+		</div>
+
+	</section><!-- /.content -->
+{% endblock %}
