@@ -13,6 +13,7 @@ use sma\exceptions\DuplicateException;
 use sma\query\DeleteQuery;
 use sma\query\InsertQuery;
 use sma\query\SelectQuery;
+use sma\query\UpdateQuery;
 
 /**
  * Player
@@ -122,5 +123,23 @@ class Player {
 				->execute();
 
 		return Database::getConnection()->lastInsertId();
+	}
+
+	/**
+	 * Update a player
+	 *
+	 * @param int $id player id to update
+	 * @param string $fullName full name
+	 */
+	public static function update($id, $fullName=null) {
+		$q = (new UpdateQuery(Database::getConnection()))
+				->table("players")
+				->where("id = ?", $id)
+				->limit(1);
+
+		if ($fullName)
+			$q->set("full_name = ?", $fullName);
+
+		$q->prepare()->execute();
 	}
 }

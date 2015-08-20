@@ -47,29 +47,6 @@
 					<div class="navbar-custom-menu">
 						<ul class="nav navbar-nav">
 
-							<!-- Notifications Menu -->
-							<li class="dropdown notifications-menu">
-								<!-- Menu toggle button -->
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-									<i class="fa fa-bell-o"></i>
-									<span class="label label-warning">10</span>
-								</a>
-								<ul class="dropdown-menu">
-									<li class="header">You have 10 notifications</li>
-									<li>
-										<!-- Inner Menu: contains the notifications -->
-										<ul class="menu">
-											<li><!-- start notification -->
-												<a href="#">
-													<i class="fa fa-users text-aqua"></i> 5 new members joined today
-												</a>
-											</li><!-- end notification -->
-										</ul>
-									</li>
-									<li class="footer"><a href="#">View all</a></li>
-								</ul>
-							</li>
-
 							<!-- User Account Menu -->
 							<li class="dropdown user user-menu">
 								<!-- Menu Toggle Button -->
@@ -90,7 +67,8 @@
 									<!-- Menu Footer-->
 									<li class="user-footer">
 										<div class="pull-right">
-											<a href="{{ base_links_url }}/user/logout" class="btn btn-default btn-flat">Logout</a>
+											<a href="{{ base_links_url }}" class="btn btn-primary btn-flat">Back to Site Home</a>
+											<a href="{{ base_links_url }}/user/logout" class="btn btn-danger btn-flat">Logout</a>
 										</div>
 									</li>
 								</ul>
@@ -108,8 +86,6 @@
 
 					<!-- Sidebar Menu -->
 					<ul class="sidebar-menu">
-						<li class="header"></li>
-
 						<!-- Optionally, you can add icons to the links -->
 						<li {% if "/acp" is exactcurrentpath %}class="active"{% endif %}>
 							<a href="{{ base_links_url }}/acp"><i class='fa fa-dashboard'></i> <span>Dashboard</span></a>
@@ -150,7 +126,7 @@
 								{% if alert.type == "success" %}
 									<h4><i class="icon fa fa-check"></i> Success!</h4>
 								{% elseif alert.type == "info" %}
-									<h4><i class="icon fa fa-info"></i> Just so you know!</h4>
+									<h4><i class="icon fa fa-info"></i> Important!</h4>
 								{% elseif alert.type == "warning" %}
 									<h4><i class="icon fa fa-warning"></i> Warning!</h4>
 								{% elseif alert.type == "danger" %}

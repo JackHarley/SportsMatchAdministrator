@@ -13,7 +13,6 @@ Requirements
 * PHP >= 5.4.0
 * MySQL >= 5.0 *(MariaDB >= 10.0 recommended)*
 
-
 Installation
 --------------------------
 1. Copy files to web directory
@@ -22,4 +21,4 @@ Installation
 
 Legal
 --------------------------
-This project is exclusive copyright of Jack P. Harley (jackpharley.com) and all rights are reserved unless otherwise specified in a licensing agreement signed by Jack P. Harley.
+This project is exclusive copyright of Jack P. Harley (jackpharley.com) and all rights are reserved unless otherwise specified in a licensing agreement signed by Jack P. Harley. If you are interested in purchasing a license in order to use the software please email me at jackpharley@gmail.com.

@@ -1,0 +1,130 @@
+{#
+	Sports Match Administrator
+
+	Copyright © 2014-2015, Jack P. Harley, jackpharley.com
+	All Rights Reserved
+#}
+
+{% extends "acp/base.twig" %}
+
+{% block javascript %}
+	<script type="text/javascript">
+		var highestInput = {{ team.getPlayers()|length }};
+
+		function addPlayerInput() {
+			highestInput++;
+			$("#players-inputs").append('<input type="text" name="player'+highestInput+'" id="player'+highestInput+'" class="form-control" placeholder="Player Name" style="margin-bottom: 5px;">');
+		}
+	</script>
+{% endblock %}
+
+{% block page %}
+	<!-- Content Header (Page header) -->
+	<section class="content-header">
+		<h1>Team Management - {{ team.organization.name }} {{  team.designation }}</h1>
+	</section>
+
+	<!-- Main content -->
+	<section class="content">
+		<!-- one column -->
+		<div class="row">
+			<div class="col-sm-12">
+				{% if not team.leagueSectionId %}
+					<div class="alert alert-info">
+						<h4><i class="icon fa fa-info"></i> Important!</h4>
+
+						This team has not yet been assigned to a league section, please ensure you assign it as soon as you are ready to do so.
+					</div>
+				{% endif %}
+			</div>
+
+			<div class="col-sm-6 col-xs-12">
+				<div class="box box-primary">
+					<div class="box-header">
+						<h3 class="box-title">Update Team Details and Assign to League</h3>
+					</div><!-- /.box-header -->
+
+					<div class="box-body">
+						<form method="post" action="">
+							<input type="hidden" name="id" value="{{ team.id }}">
+
+							<p>
+								<label for="organization">Organization:</label>
+								<select disabled class="form-control" id="organization" name="organization">
+									<option>{{ team.organization.name }}</option>
+								</select><br>
+
+								<label for="designation">Designation:</label>
+								<input class="form-control" type="text" id="designation" name="designation" value="{{ team.designation }}"><br>
+
+								<label for="section">Assigned League:</label>
+								<select class="form-control" id="section" name="section">
+									<option value="0">
+										Not Assigned
+									</option>
+
+									{% for section in sections %}
+										<option {% if section.id==team.leagueSectionId %}selected{% endif %} value="{{ section.id }}">{{ section.getLeague().name }} - Section {{ section.letter }}</option>
+									{% endfor %}
+								</select><br>
+
+								<strong>Team ID:</strong> {{ team.id }}<br>
+								<strong>Date Registered:</strong> {{ team.epochRegistered|epochtodatetime }}<br>
+								<strong>Registrant:</strong> {{ team.registrant.fullName }}
+							</p>
+
+							<p>
+								<strong>Please ensure you click the button below when you are finished to save your changes</strong>
+							</p>
+
+							<button type="submit" class="btn btn-success btn-block"><i class="icon fa fa-save"></i> Save Changes</button>
+						</form>
+					</div><!-- /.box-body -->
+				</div><!-- /.box -->
+			</div><!-- /.col -->
+
+			<div class="col-sm-6 col-xs-12">
+				<div class="box box-primary">
+					<div class="box-header">
+						<h3 class="box-title">Manage Players</h3>
+					</div><!-- /.box-header -->
+
+					<div class="box-body">
+						<p>
+							To update a player's name simply change the name in the box and click Update, to delete a player completely click the Delete button beside the correct player. <span class="text-danger"><strong>Please note that deleting a player is irreversible!</strong></span>
+						</p>
+
+						{% for player in team.getPlayers() %}
+							<form method="post" action="{{ base_links_url }}/acp/player/update">
+								<input type="hidden" name="id" value="{{ player.id }}">
+								<div class="input-group" style="margin-bottom: 5px;">
+									<input type="text" class="form-control" id="name" name="name" value="{{ player.fullName }}">
+									<span class="input-group-btn">
+										<button type="submit" class="btn btn-info"><i class="icon fa fa-save"></i> Update</button>
+										<a class="btn btn-danger" href="{{ base_links_url }}/acp/player/delete?id={{ player.id }}"><i class="icon fa fa-trash"></i> Delete</a>
+									</span>
+								</div>
+							</form>
+						{% endfor %}
+
+						<br>
+
+						<p>
+							<strong>Add Extra Player</strong><br>
+							To add a new player simply enter their full name below and click the Add button
+						</p>
+						<form method="post" action="{{ base_links_url }}/acp/player/add">
+							<input type="hidden" name="team" value="{{ team.id }}">
+							<div class="input-group">
+								<input type="text" class="form-control" id="name" name="name" placeholder="Player Name">
+								<span class="input-group-btn">
+									<button type="submit" class="btn btn-info"><i class="icon fa fa-plus"></i> Add Player</button>
+								</span>
+							</div>
+						</form>
+					</div><!-- /.box-body -->
+				</div><!-- /.box -->
+			</div><!-- /.col -->
+		</div><!-- /.row -->
+	</section><!-- /.content -->
+{% endblock %}

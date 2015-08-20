@@ -13,6 +13,7 @@ use sma\exceptions\DuplicateException;
 use sma\query\DeleteQuery;
 use sma\query\InsertQuery;
 use sma\query\SelectQuery;
+use sma\query\UpdateQuery;
 
 /**
  * Team
@@ -171,5 +172,35 @@ class Team {
 				->execute();
 
 		return Database::getConnection()->lastInsertId();
+	}
+
+	/**
+	 * Update a team
+	 *
+	 * @param int $id team id to update
+	 * @param int $organizationId organization
+	 * @param string $designation designation
+	 * @param int $leagueSectionId league section
+	 */
+	public static function update($id, $organizationId=null, $designation=null,
+			$leagueSectionId=null) {
+
+		$q = (new UpdateQuery(Database::getConnection()))
+				->table("teams")
+				->where("id = ?", $id)
+				->limit(1);
+
+		if ($organizationId)
+			$q->set("organization_id = ?", $organizationId);
+		if ($designation)
+			$q->set("designation = ?", $designation);
+		if ($leagueSectionId !== null) {
+			if ($leagueSectionId == 0)
+				$q->set("league_section_id = NULL");
+			else
+				$q->set("league_section_id = ?", $leagueSectionId);
+		}
+
+		$q->prepare()->execute();
 	}
 }

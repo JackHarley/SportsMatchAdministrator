@@ -9,6 +9,7 @@ namespace sma\controllers\acp;
 
 use sma\Controller;
 use sma\models\Alert;
+use sma\models\LeagueSection;
 use sma\models\Team as TeamModel;
 use sma\View;
 
@@ -23,8 +24,15 @@ class Team {
 
 	public static function manage() {
 		Controller::requirePermissions(["AdminAccessDashboard", "AdminTeams"]);
+
+		if (!empty($_POST)) {
+			TeamModel::update($_POST["id"], null, $_POST["designation"], $_POST["section"]);
+			Controller::addAlert(new Alert("success", "Team details updated successfully"));
+		}
+
 		View::load("acp/team_manage.twig", [
-				"object" => TeamModel::get($_GET["id"])
+				"team" => current(TeamModel::get($_GET["id"])),
+				"sections" => LeagueSection::get()
 		]);
 	}
 }
