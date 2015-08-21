@@ -381,7 +381,6 @@ class Installer {
 			CREATE TABLE `user_groups_permissions` (
 			  `group_id` bigint(20) unsigned NOT NULL,
 			  `permission_id` bigint(20) unsigned NOT NULL,
-			  `granted` tinyint(4) NOT NULL,
 			  UNIQUE KEY `group_permission` (`group_id`,`permission_id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

@@ -380,9 +380,10 @@ class User {
 	 *
 	 * @param int $id id
 	 * @param string $email email
+	 * @param int $groupId user group id
 	 * @return \sma\models\User[] users
 	 */
-	public static function get($id=null, $email=null) {
+	public static function get($id=null, $email=null, $groupId=null) {
 		$q = (new SelectQuery(Database::getConnection()))
 				->from("users u")
 				->fields(["u.id", "u.email", "u.password_hash", "u.full_name", "u.phone_number",
@@ -396,6 +397,8 @@ class User {
 			$q->where("u.id = ?", $id);
 		if ($email)
 			$q->where("u.email = ?", $email);
+		if ($groupId)
+			$q->where("u.group_id = ?", $groupId);
 
 		$stmt = $q->prepare();
 		$stmt->execute();

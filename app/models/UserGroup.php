@@ -10,8 +10,10 @@ namespace sma\models;
 use PDO;
 use sma\Database;
 use sma\exceptions\NoSuchObjectException;
+use sma\query\DeleteQuery;
 use sma\query\InsertQuery;
 use sma\query\SelectQuery;
+use sma\query\UpdateQuery;
 
 /**
  * User group
@@ -80,6 +82,25 @@ class UserGroup {
 	}
 
 	/**
+	 * Update a group
+	 *
+	 * @param int $id group id to update
+	 * @param string $name group name
+	 */
+	public static function update($id, $name=null) {
+
+		$q = (new UpdateQuery(Database::getConnection()))
+				->table("user_groups")
+				->where("id = ?", $id)
+				->limit(1);
+
+		if ($name)
+			$q->set("name = ?", $name);
+
+		$q->prepare()->execute();
+	}
+
+	/**
 	 * Get user groups
 	 *
 	 * @param int $id group id
@@ -131,6 +152,32 @@ class UserGroup {
 	}
 
 	/**
+	 * Check if the user group satisfies a set of permissions
+	 *
+	 * @param \sma\models\Permission|\sma\models\Permission[] $permissions permissions to check
+	 * @param string $requirement 'all' to require all permissions listed, 'any' to require at least
+	 * one of them
+	 * @return bool true if the user satisfies the permissions, false otherwise
+	 */
+	public function checkPermissions($permissions, $requirement="all") {
+		if (!is_array($permissions))
+			$permissions = [$permissions];
+
+		foreach($permissions as $requiredPermission) {
+			foreach($this->getGrantedPermissions() as $grantedPermission) {
+				if ($requiredPermission == $grantedPermission->name) {
+					if ($requirement == "any")
+						return true;
+					else
+						continue 2;
+				}
+			}
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * Get the permissions of the group
 	 *
 	 * @return \sma\models\Permission[] granted permissions
@@ -154,5 +201,26 @@ class UserGroup {
 		}
 
 		return $this->grantedPermissions;
+	}
+
+	/**
+	 * Get users in group
+	 *
+	 * @return \sma\models\User[] users
+	 */
+	public function getUsers() {
+		return User::get(null, null, $this->id);
+	}
+
+	/**
+	 * Delete group
+	 */
+	public function delete() {
+		(new DeleteQuery(Database::getConnection()))
+				->from("user_groups")
+				->where("id = ?", $this->id)
+				->limit(1)
+				->prepare()
+				->execute();
 	}
 }

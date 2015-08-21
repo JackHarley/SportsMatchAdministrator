@@ -1,0 +1,101 @@
+{#
+	Sports Match Administrator
+
+	Copyright © 2014-2015, Jack P. Harley, jackpharley.com
+	All Rights Reserved
+#}
+
+{% extends "acp/base.twig" %}
+
+{% block javascript %}
+	<script src="{{ base_view_url }}/acp/plugins/datatables/jquery.dataTables.min.js" type="text/javascript"></script>
+	<script src="{{ base_view_url }}/acp/plugins/datatables/dataTables.bootstrap.min.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+		$(function () {
+			$('#user-table').DataTable({
+				"paging": true,
+				"lengthChange": false,
+				"searching": false,
+				"ordering": true,
+				"info": true,
+				"autoWidth": false
+			});
+		});
+	</script>
+{% endblock %}
+
+{% block page %}
+	<!-- Content Header (Page header) -->
+	<section class="content-header">
+		<h1>User Group Management - {{ object.name }}</h1>
+	</section>
+
+	<!-- Main content -->
+	<section class="content">
+		<form action="" method="post">
+			<div class="row">
+				<div class="col-sm-6 col-xs-12">
+					<div class="box box-primary">
+						<div class="box-header">
+							<h3 class="box-title">Group Details</h3>
+						</div><!-- /.box-header -->
+
+						<div class="box-body">
+							<form method="post" action="">
+								<input type="hidden" name="id" value="{{ object.id }}">
+
+								<p>
+									<label for="name">Name:</label>
+									<input {% if object.special %}readonly{% endif %} class="form-control" type="text" id="name" name="name" value="{{ object.name }}"><br>
+
+									<strong>Group ID:</strong> {{ object.id }}<br>
+									<strong>Group is Special?</strong> {% if object.special %}Yes{% else %}No{% endif %}
+								</p>
+							</form>
+						</div><!-- /.box-body -->
+					</div><!-- /.box -->
+				</div><!-- /.col -->
+
+				<div class="col-sm-6 col-xs-12">
+					<div class="box box-primary">
+						<div class="box-header">
+							<h3 class="box-title">Manage Permissions</h3>
+						</div><!-- /.box-header -->
+
+						<div class="box-body">
+							<p>
+								Simply check the boxes beside the permissions you wish to grant to the group and uncheck the permissions you would like to revoke.
+							</p>
+
+							{% for permission in permissions %}
+								<div class="checkbox">
+									<label>
+										<input {% if object.checkPermissions(permission.name) %}checked{% endif %} type="checkbox" name="permission-{{ permission.id }}" value="true">
+										{{ permission.description }}
+									</label>
+								</div>
+							{% endfor %}
+						</div><!-- /.box-body -->
+					</div><!-- /.box -->
+				</div><!-- /.col -->
+
+				<div class="col-sm-12">
+					<div class="box box-success">
+						<div class="box-header">
+							<h3 class="box-title">Save Changes</h3>
+						</div><!-- /.box-header -->
+
+						<div class="box-body">
+							<p>
+								Make sure to click the button below as soon as you are finished making changes.
+							</p>
+
+							<button class="btn btn-success btn-block"><i class="icon fa fa-save"></i> Save Changes</button>
+						</div><!-- /.box-body -->
+					</div><!-- /.box -->
+				</div><!-- /.col -->
+			</div><!-- ./row -->
+		</form>
+	</section><!-- /.content -->
+{% endblock %}

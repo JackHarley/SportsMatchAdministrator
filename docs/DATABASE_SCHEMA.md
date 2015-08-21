@@ -252,7 +252,6 @@ Holds the map of user groups to permissions and the status they have been given 
 
 * **group_id** - User group
 * **permission_id** - Permission
-* **granted** - Grant status of permission, constants are defined in the UserGroupPermission model
 
 * **UNIQUE** key on **group_id, permission_id**
 
@@ -260,7 +259,6 @@ Holds the map of user groups to permissions and the status they have been given 
 CREATE TABLE `user_groups_permissions` (
   `group_id` bigint(20) unsigned NOT NULL,
   `permission_id` bigint(20) unsigned NOT NULL,
-  `granted` tinyint(4) NOT NULL,
   UNIQUE KEY `group_permission` (`group_id`,`permission_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```

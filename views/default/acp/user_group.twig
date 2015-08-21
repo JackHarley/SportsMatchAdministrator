@@ -1,0 +1,113 @@
+{#
+	Sports Match Administrator
+
+	Copyright © 2014-2015, Jack P. Harley, jackpharley.com
+	All Rights Reserved
+#}
+
+{% extends "acp/base.twig" %}
+
+{% block javascript %}
+	<script src="{{ base_view_url }}/acp/plugins/datatables/jquery.dataTables.min.js" type="text/javascript"></script>
+	<script src="{{ base_view_url }}/acp/plugins/datatables/dataTables.bootstrap.min.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+		$(function () {
+			$('#group-table').DataTable({
+				"paging": true,
+				"lengthChange": false,
+				"searching": false,
+				"ordering": true,
+				"info": true,
+				"autoWidth": false
+			});
+		});
+	</script>
+
+{% endblock %}
+
+{% block page %}
+	<!-- Content Header (Page header) -->
+	<section class="content-header">
+		<h1>User Groups</h1>
+	</section>
+
+	<!-- Main content -->
+	<section class="content">
+		<div class="row">
+			<!-- right column -->
+			<div class="col-sm-4 col-xs-12 pull-right">
+
+				<div class="box box-info">
+					<div class="box-header with-border">
+						<h3 class="box-title"><i class="fa fa-question-circle"></i> What are user groups for?</h3>
+					</div><!-- /.box-header -->
+					<!-- form start -->
+					<div class="box-body">
+						User groups allow you to assign different permissions to different groups of people on the site. For example you can grant all permissions to a group for you and other senior members of staff, and then create other groups for people who you want to have restricted access.
+					</div>
+				</div><!-- /.box -->
+
+				<div class="box box-success">
+					<div class="box-header with-border">
+						<h3 class="box-title"><i class="fa fa-plus"></i> Add User Group</h3>
+					</div><!-- /.box-header -->
+					<!-- form start -->
+					<form role="form" action="{{ base_links_url }}/acp/group/add" method="post">
+						<div class="box-body">
+							<p>
+								Simply enter a name for the new group and click Add, you can assign permissions on the next page.
+							</p>
+
+							<div class="form-group">
+								<label for="name">Name</label>
+								<input type="text" class="form-control" id="name" name="name" placeholder="Group Name">
+							</div>
+						</div><!-- /.box-body -->
+
+						<div class="box-footer">
+							<button type="submit" class="btn btn-success"><i class="fa fa-plus"></i> Add</button>
+						</div>
+					</form>
+				</div><!-- /.box -->
+
+			</div><!-- /.col -->
+
+			<!-- left column -->
+			<div class="col-sm-8 col-xs-12">
+				<div class="box box-primary">
+					<div class="box-header with-border">
+						<h3 class="box-title"><i class="fa fa-list"></i></h3>
+					</div><!-- /.box-header -->
+
+					<div class="box-body">
+						<table id="group-table" class="table table-bordered table-striped">
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Name</th>
+									<th>Number of Users</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for object in objects %}
+									<tr>
+										<td>{{ object.id }}</td>
+										<td>{{ object.name }}</td>
+										<td>{{ object.getUsers()|length }}</td>
+										<td class="text-right">
+											<a class="btn-sm btn-primary" href="{{ base_links_url }}/acp/group/manage?id={{ object.id }}"><i class="fa fa-edit"></i> Manage</a>
+											{% if not object.special %}<a class="btn-sm btn-danger" href="{{ base_links_url }}/acp/group/delete?id={{ object.id }}"><i class="fa fa-trash"></i> Delete</a>{% endif %}
+										</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div><!-- /.box -->
+			</div><!-- /.col -->
+
+		</div><!-- ./row -->
+	</section><!-- /.content -->
+{% endblock %}
