@@ -9,6 +9,10 @@ session_start();
 define("START_REQUEST", microtime(true));
 
 require_once(__DIR__ . "/config.php");
+
+if (!defined("ORGANIZATION_WORD"))
+	define("ORGANIZATION_WORD", "organization");
+
 require_once(__DIR__ . "/app/Autoloader.php");
 require_once(__DIR__ . "/vendor/autoload.php");
 

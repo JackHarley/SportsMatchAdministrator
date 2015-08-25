@@ -100,7 +100,7 @@
 						</li>
 
 						<li {% if "/acp/organization" is currentpath %}class="active"{% endif %}>
-							<a href="{{ base_links_url }}/acp/organization"><i class='fa fa-building'></i> <span>Organizations</span></a>
+							<a href="{{ base_links_url }}/acp/organization"><i class='fa fa-building'></i> <span>{{ constant("ORGANIZATION_WORD")|capitalize }}s</span></a>
 						</li>
 
 						<li {% if "/acp/team" is currentpath %}class="active"{% endif %}>

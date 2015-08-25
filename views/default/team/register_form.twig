@@ -41,7 +41,7 @@
 
 					<div class="panel-body">
 						<form action="" method="post">
-							<label for="organization-id">Organization:</label>
+							<label for="organization-id">{{ constant("ORGANIZATION_WORD")|capitalize }}:</label>
 							<select {% if not visitor.checkPermissions("RegisterTeamsForAnyOrganization") %}disabled{% endif %} name="organization-id" id="organization-id" class="form-control">
 								{% for organization in organizations %}
 									<option {% if organization.id == visitor.organizationId %}selected{% endif %} value="{{ organization.id }}">{{ organization.name }}</option>
@@ -51,7 +51,7 @@
 							<br>
 
 							<label for="designation">Team Designation:</label><br>
-							<p><i>This should be used to indicate the team's position within your organization: e.g. Senior 1, Senior 2, Junior A, Junior B, U-13 A, U-13 B</i></p>
+							<p><i>This should be used to indicate the team's position within your {{ constant("ORGANIZATION_WORD") }}: e.g. Senior 1, Senior 2, Junior A, Junior B, U-13 A, U-13 B</i></p>
 							<input class="form-control" type="text" name="designation" id="designation" placeholder="U-13 A">
 
 							<div class="clearfix" style="height: 20px;"></div>
@@ -87,7 +87,7 @@
 
 						<div class="panel-body">
 							<p>
-								These are the teams currently registered for your organization, if any details are incorrect please contact an administrator.
+								These are the teams currently registered for your {{ constant("ORGANIZATION_WORD") }}, if any details are incorrect please contact an administrator.
 							</p>
 						</div>
 

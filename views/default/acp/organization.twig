@@ -29,7 +29,7 @@
 {% block page %}
 	<!-- Content Header (Page header) -->
 	<section class="content-header">
-		<h1>Organizations</h1>
+		<h1>{{ constant("ORGANIZATION_WORD")|capitalize }}s</h1>
 	</section>
 
 	<!-- Main content -->
@@ -38,25 +38,27 @@
 			<!-- right column -->
 			<div class="col-sm-4 col-xs-12 pull-right">
 
-				<div class="box box-info">
-					<div class="box-header with-border">
-						<h3 class="box-title"><i class="fa fa-question-circle"></i> What is an Organization?</h3>
-					</div><!-- /.box-header -->
-					<!-- form start -->
-					<div class="box-body">
-						Organizations are clubs, schools, etc. that participate in your activity. If you were running a league with 6 teams from 4 clubs, then you would need to have the 4 clubs entered into the system as organizations.
-					</div>
-				</div><!-- /.box -->
+				{% if constant("ORGANIZATION_WORD") == "organization" %}
+					<div class="box box-info">
+						<div class="box-header with-border">
+							<h3 class="box-title"><i class="fa fa-question-circle"></i> What is an Organization?</h3>
+						</div><!-- /.box-header -->
+						<!-- form start -->
+						<div class="box-body">
+							Organizations are clubs, schools, etc. that participate in your activity. If you were running a league with 6 teams from 4 clubs, then you would need to have the 4 clubs entered into the system as organizations.
+						</div>
+					</div><!-- /.box -->
+				{% endif %}
 
 				<div class="box box-success">
 					<div class="box-header with-border">
-						<h3 class="box-title"><i class="fa fa-plus"></i> Add Organization</h3>
+						<h3 class="box-title"><i class="fa fa-plus"></i> Add {{ constant("ORGANIZATION_WORD")|capitalize }}</h3>
 					</div><!-- /.box-header -->
 					<!-- form start -->
 					<form role="form" action="{{ base_links_url }}/acp/organization/add" method="post">
 						<div class="box-body">
 								<div class="form-group">
-									<label for="name">Organization Name</label>
+									<label for="name">{{ constant("ORGANIZATION_WORD")|capitalize }} Name</label>
 									<input type="text" class="form-control" id="name" name="name" placeholder="Lorem Ipsum Club">
 								</div>
 						</div><!-- /.box-body -->
