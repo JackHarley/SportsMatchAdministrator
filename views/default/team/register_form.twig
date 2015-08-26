@@ -24,6 +24,11 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-lg-12">
+				<ol class="breadcrumb">
+					<li><a href="{{ base_links_url }}">Home</a></li>
+					<li class="active">Team Registration</li>
+				</ol>
+
 				<h2><span class="fa fa-futbol-o"></span> Team Registration</h2>
 			</div>
 		</div>
@@ -35,7 +40,7 @@
 		<div class="clearfix" style="height: 20px;"></div>
 
 		<div class="row">
-			<div class="col-lg-6 col-md-7 col-sm-9 col-xs-12">
+			<div class="col-lg-6 col-md-6 col-sm-12">
 				<div class="panel panel-primary">
 					<div class="panel-heading"><span class="fa fa-plus"></span> Register Team</div>
 
@@ -92,7 +97,7 @@
 			</div>
 
 			{% if visitor.organizationId %}
-				<div class="col-lg-6 col-md-7 col-sm-9 col-xs-12">
+				<div class="col-lg-6 col-md-6 col-sm-12">
 					<div class="panel panel-primary">
 						<div class="panel-heading"><span class="fa fa-list"></span> Registered Teams For {{ visitor.organization.name }}</div>
 
@@ -106,13 +111,15 @@
 							<tr>
 								<th>League</th>
 								<th>Name</th>
+								<th># Players</th>
 								<th></th>
 							</tr>
 							{% for team in teams %}
 								<tr>
 									<td>{% if team.leagueId %}{{ team.getLeague().name }}{% else %}<i>Not Assigned</i>{% endif %}</td>
 									<td>{{ team.designation }}</td>
-									<td style="text-align: right;"><a class="btn btn-warning btn-sm">Edit/View Player List</a></td>
+									<td>{{ team.getPlayers()|length }}</td>
+									<td style="text-align: right;"><a href="{{ base_links_url }}/team/edit?id={{ team.id }}" class="btn btn-warning btn-sm"><span class="fa fa-edit"></span> Edit/View Player List</a></td>
 								</tr>
 							{% else %}
 

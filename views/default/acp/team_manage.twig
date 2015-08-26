@@ -7,17 +7,6 @@
 
 {% extends "acp/base.twig" %}
 
-{% block javascript %}
-	<script type="text/javascript">
-		var highestInput = {{ team.getPlayers()|length }};
-
-		function addPlayerInput() {
-			highestInput++;
-			$("#players-inputs").append('<input type="text" name="player'+highestInput+'" id="player'+highestInput+'" class="form-control" placeholder="Player Name" style="margin-bottom: 5px;">');
-		}
-	</script>
-{% endblock %}
-
 {% block page %}
 	<!-- Content Header (Page header) -->
 	<section class="content-header">

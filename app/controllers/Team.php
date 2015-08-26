@@ -7,6 +7,7 @@
  */
 namespace sma\controllers;
 
+use sma\ErrorHandler;
 use sma\exceptions\DuplicateException;
 use sma\models\League;
 use sma\models\Player;
@@ -68,5 +69,36 @@ class Team {
 					"team" => TeamModel::get($teamId)[0]
 			]);
 		}
+	}
+
+	public static function edit() {
+		Controller::requirePermissions(["RegisterTeamsForOwnOrganization"]);
+
+		$team = current(TeamModel::get($_GET["id"]));
+		if ($team->organizationId != User::getVisitor()->organizationId)
+			ErrorHandler::forbidden();
+
+		if (!empty($_POST)) {
+			TeamModel::update($_POST["id"], null, $_POST["designation"]);
+			Controller::addAlert(new Alert("success", "Team details updated successfully"));
+		}
+
+		View::load("team/edit.twig", [
+				"team" => current(TeamModel::get($_GET["id"]))
+		]);
+	}
+
+	public static function addplayer() {
+		Controller::requireFields("post", ["name", "team"], "/acp/team");
+		Controller::requirePermissions(["RegisterTeamsForOwnOrganization"]);
+
+		$team = current(TeamModel::get($_GET["team"]));
+		if ($team->organizationId != User::getVisitor()->organizationId)
+			ErrorHandler::forbidden();
+
+		Player::add($_POST["name"], $team->id, false);
+
+		Controller::addAlert(new Alert("success", "Player added successfully"));
+		Controller::redirect("/team/edit?id=" . $team->id);
 	}
 }

@@ -1,0 +1,95 @@
+{#
+	Sports Match Administrator
+
+	Copyright © 2014-2015, Jack P. Harley, jackpharley.com
+	All Rights Reserved
+#}
+
+{% extends "base.twig" %}
+
+{% block body %}
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12">
+				<ol class="breadcrumb">
+					<li><a href="{{ base_links_url }}">Home</a></li>
+					<li><a href="{{ base_links_url }}/team/register">Team Registration</a></li>
+					<li class="active">Edit Team</li>
+				</ol>
+
+				<h2><span class="fa fa-futbol-o"></span> Edit Team - {{ team.organization.name }} {{ team.designation }}</h2>
+			</div>
+		</div>
+
+		<p>
+			On this page you can edit your team's player list and name. Please ensure all the information you enter is accurate
+		</p>
+
+		<div class="clearfix" style="height: 20px;"></div>
+
+		<div class="row">
+			<div class="col-sm-6 col-xs-12">
+				<div class="panel panel-primary">
+					<div class="panel-heading"><span class="fa fa-edit"></span> Update Team Details</div>
+
+					<div class="panel-body">
+						<form method="post" action="">
+							<input type="hidden" name="id" value="{{ team.id }}">
+
+							<p>
+								<label for="designation">Name:</label>
+								<input class="form-control" type="text" id="designation" name="designation" value="{{ team.designation }}"><br>
+
+								<strong>Team ID:</strong> {{ team.id }}<br>
+								<strong>Date Registered:</strong> {{ team.epochRegistered|epochtodatetime }}<br>
+								<strong>Registrant:</strong> {{ team.registrant.fullName }}
+							</p>
+
+							<p>
+								<strong>Please ensure you click the button below when you are finished to save your changes</strong>
+							</p>
+
+							<button type="submit" class="btn btn-success btn-block"><i class="icon fa fa-save"></i> Save Changes</button>
+						</form>
+					</div><!-- /.panel-body -->
+				</div><!-- /.panel -->
+			</div><!-- /.col -->
+
+			<div class="col-sm-6 col-xs-12">
+				<div class="panel panel-primary">
+					<div class="panel-heading"><span class="fa fa-list"></span> Manage Players</div>
+
+					<div class="panel-body">
+						<p>
+							If you need to fix the spelling of a name or delete a name already on the list please contact an administrator directly.
+						</p>
+
+						<ul>
+							{% for player in team.getPlayers() %}
+								<li>{{ player.fullName }}</li>
+							{% else %}
+								<li>There are no players assigned to this team.</li>
+							{% endfor %}
+						</ul>
+
+						<br>
+
+						<p>
+							<strong>Add Extra Player</strong><br>
+							To add a new player simply enter their full name below and click the Add button
+						</p>
+						<form method="post" action="{{ base_links_url }}/team/addplayer">
+							<input type="hidden" name="team" value="{{ team.id }}">
+							<div class="input-group">
+								<input autofocus type="text" class="form-control" id="name" name="name" placeholder="Player Name">
+								<span class="input-group-btn">
+									<button type="submit" class="btn btn-info"><i class="icon fa fa-plus"></i> Add Player</button>
+								</span>
+							</div>
+						</form>
+					</div><!-- /.panel-body -->
+				</div><!-- /.panel -->
+			</div><!-- /.col -->
+		</div><!-- /.row -->
+	</div>
+{% endblock %}

@@ -118,7 +118,7 @@ class Player {
 		(new InsertQuery(Database::getConnection()))
 				->into("players")
 				->fields(["full_name", "team_id", "exempt"])
-				->values("(?,?,?)", [$fullName, $teamId, (int) $exempt])
+				->values("(?,?,?)", [ucwords($fullName), $teamId, (int) $exempt])
 				->prepare()
 				->execute();
 
