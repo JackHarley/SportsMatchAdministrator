@@ -50,9 +50,9 @@
 
 							<br>
 
-							<label for="designation">Team Designation:</label><br>
-							<p><i>This should be used to indicate the team's position within your {{ constant("ORGANIZATION_WORD") }}: e.g. Senior 1, Senior 2, Junior A, Junior B, U-13 A, U-13 B</i></p>
-							<input class="form-control" type="text" name="designation" id="designation" placeholder="U-13 A">
+							<label for="designation">Team Name:</label><br>
+							<p><i>This should be used to indicate the team's position within your {{ constant("ORGANIZATION_WORD") }}: e.g. Senior A, Senior B, Junior A, Junior B, U-13 A, U-13 B</i></p>
+							<input class="form-control" type="text" name="designation" id="designation" placeholder="Senior A">
 
 							<div class="clearfix" style="height: 20px;"></div>
 
@@ -93,7 +93,7 @@
 
 						<table class="table">
 							<tr>
-								<th>Designation</th>
+								<th>Name</th>
 								<th>Players</th>
 							</tr>
 							{% for team in teams %}

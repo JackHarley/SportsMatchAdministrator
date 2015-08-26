@@ -37,7 +37,13 @@ class Team {
 			else
 				$organizationId = User::getVisitor()->organizationId;
 
-			$teamId = TeamModel::add($organizationId, $_POST["designation"], User::getVisitor()->id);
+			try {
+				$teamId = TeamModel::add($organizationId, $_POST["designation"], User::getVisitor()->id);
+			}
+			catch (DuplicateException $e) {
+				Controller::addAlert(new Alert("danger", "You cannot register more than one team with the same name. To edit an existing team please use the edit button beside the team in the Registered Teams box."));
+				Controller::redirect("/team/register");
+			}
 
 			// add the players
 			for ($i = 1; array_key_exists("player" . $i, $_POST); $i++) {
