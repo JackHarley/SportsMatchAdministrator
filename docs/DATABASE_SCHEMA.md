@@ -47,6 +47,26 @@ CREATE TABLE `database_version` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
 
+fixtures
+-------------------------
+Match fixtures with play-by dates
+
+* **id** - Primary key identifier
+* **home_team_id** - Home team
+* **away_team_id** - Away team
+* **play_by_date** - Play by date
+
+```sql
+CREATE TABLE `fixtures` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `home_team_id` bigint(20) unsigned NOT NULL,
+  `away_team_id` bigint(20) unsigned NOT NULL,
+  `league_id` bigint(20) unsigned NOT NULL,
+  `play_by_date` date NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
+
 league_sections
 -------------------------
 Sections of a league, for example if the 1st Division has too many teams for all of them to reasonably play each other, the 1st Division could be split into two sections: A and B, the top teams from each section would then play in a semi-final (and subsequent final) at the end of the season.
@@ -204,6 +224,21 @@ CREATE TABLE `players` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
 
+settings
+-------------------------
+System settings
+
+* **id** - Setting key/id
+- **value** - Setting value
+
+```sql
+CREATE TABLE `settings` (
+  `id` varchar(64) NOT NULL,
+  `value` longtext NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
+
 teams
 -------------------------
 Teams
@@ -211,6 +246,7 @@ Teams
 * **id** - Primary key identifier
 * **designation** - Team designation, e.g. Senior 1, Senior 2, Junior 1, Junior 2, Minor A
 * **organization_id** - Organization the team belongs to
+* **league_id** - League the team is assigned to or null if unassigned
 * **league_section_id** - League section the team is assigned to or null if unassigned
 * **epoch_registered** - Epoch of when the team was initially registered
 * **registrant_id** - User who performed the initial registration
@@ -220,6 +256,7 @@ CREATE TABLE `teams` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `designation` varchar(32) NOT NULL,
   `organization_id` bigint(20) unsigned NOT NULL,
+  `league_id` bigint(20) unsigned DEFAULT NULL,
   `league_section_id` bigint(20) unsigned DEFAULT NULL,
   `epoch_registered` bigint(20) unsigned NOT NULL,
   `registrant_id` bigint(20) unsigned NOT NULL,

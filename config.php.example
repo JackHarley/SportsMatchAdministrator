@@ -11,6 +11,9 @@ define("BASE_ASSETS_URL", BASE_URL . "/assets");
 define("SSL", false); // set to true if your entire site uses SSL (it should)
 define("COOKIE_DOMAIN", "dev.jackpharley.com"); // usually your domain with no www. before it
 
+// Settings
+define("ALLOW_TEAM_REGISTRANTS_TO_SELECT_LEAGUE", false);
+
 // Timezone
 define("TIMEZONE", "UTC");
 

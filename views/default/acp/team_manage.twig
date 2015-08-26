@@ -28,16 +28,6 @@
 	<section class="content">
 		<!-- one column -->
 		<div class="row">
-			<div class="col-sm-12">
-				{% if not team.leagueSectionId %}
-					<div class="alert alert-info">
-						<h4><i class="icon fa fa-info"></i> Important!</h4>
-
-						This team has not yet been assigned to a league section, please ensure you assign it as soon as you are ready to do so.
-					</div>
-				{% endif %}
-			</div>
-
 			<div class="col-sm-6 col-xs-12">
 				<div class="box box-primary">
 					<div class="box-header">
@@ -57,15 +47,31 @@
 								<label for="designation">Name:</label>
 								<input class="form-control" type="text" id="designation" name="designation" value="{{ team.designation }}"><br>
 
-								<label for="section">Assigned League:</label>
-								<select class="form-control" id="section" name="section">
+								<label for="league">
+									Assigned League:<br>
+									<i>Please note that if you alter the league then the section will be reset to unassigned.</i>
+								</label>
+								<select class="form-control" id="league" name="league">
 									<option value="0">
 										Not Assigned
 									</option>
 
-									{% for section in sections %}
-										<option {% if section.id==team.leagueSectionId %}selected{% endif %} value="{{ section.id }}">{{ section.getLeague().name }} - Section {{ section.letter }}</option>
+									{% for league in leagues %}
+										<option {% if league.id==team.leagueId %}selected{% endif %} value="{{ league.id }}">{{ league.name }}</option>
 									{% endfor %}
+								</select><br>
+
+								<label for="section">Assigned League Section:</label>
+								<select {% if not team.leagueId %}disabled{% endif %} class="form-control" id="section" name="section">
+									<option value="0">
+										Not Assigned
+									</option>
+
+									{% if team.leagueId %}
+										{% for section in sections %}
+											<option {% if section.id==team.leagueSectionId %}selected{% endif %} value="{{ section.id }}">Section {{ section.letter }}</option>
+										{% endfor %}
+									{% endif %}
 								</select><br>
 
 								<strong>Team ID:</strong> {{ team.id }}<br>

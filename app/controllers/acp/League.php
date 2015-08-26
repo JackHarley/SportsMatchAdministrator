@@ -11,6 +11,7 @@ use sma\Controller;
 use sma\models\Alert;
 use sma\models\League as LeagueModel;
 use sma\models\User;
+use sma\models\Team;
 use sma\View;
 
 class League {
@@ -42,7 +43,8 @@ class League {
 			Controller::requirePermissions(["AdminAllLeagues"]);
 
 		View::load("acp/league_manage.twig", [
-			"league" => $league
+			"league" => $league,
+			"unassignedTeams" => Team::get(null, null, null, false, $_GET["id"])
 		]);
 	}
 

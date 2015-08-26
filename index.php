@@ -66,6 +66,7 @@ Router::setRoutes([
 		"/acp/league" => ["acp\League", "index"],
 		"/acp/section/add" => ["acp\LeagueSection", "add"],
 		"/acp/section/delete" => ["acp\LeagueSection", "delete"],
+		"/acp/team/assign" => ["acp\Team", "assign"],
 		"/acp/team/manage" => ["acp\Team", "manage"],
 		"/acp/team" => ["acp\Team", "index"],
 		"/acp/player/add" => ["acp\Player", "add"],

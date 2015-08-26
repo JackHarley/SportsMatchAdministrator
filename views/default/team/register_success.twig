@@ -42,6 +42,15 @@
 							<th>{{ constant("ORGANIZATION_WORD")|capitalize }}:</th>
 							<td>{{ team.organization.name }}</td>
 						</tr>
+
+						<tr>
+							<th>League:</th>
+							<td>{% if team.leagueId %}{{ team.getLeague().name }}{% else %}<i>Not Assigned</i>{% endif %}</td>
+						</tr>
+						<tr>
+							<th>League Section:</th>
+							<td>{% if team.leagueSectionId %}{{ team.getLeague().name }} {{ team.getLeagueSection().letter }}{% else %}<i>Not Assigned</i>{% endif %}</td>
+						</tr>
 					</table>
 				</div>
 			</div>

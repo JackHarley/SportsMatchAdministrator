@@ -24,6 +24,10 @@
 		});
 	</script>
 
+	<script src="//cdn.ckeditor.com/4.5.3/basic/ckeditor.js"></script>
+	<script>
+		CKEDITOR.replace("info");
+	</script>
 {% endblock %}
 
 {% block page %}
@@ -91,7 +95,7 @@
 
 
 		<div class="row">
-			<div class="col-sm-8 col-xs-12">
+			<div class="col-sm-6 col-xs-12">
 				<div class="box box-{% if unassignedTeams %}danger{% else %}success{% endif %}">
 					<div class="box-header with-border">
 						<h3 class="box-title"><i class="fa fa-list"></i> Teams Awaiting Assignation to a League</h3>
@@ -105,26 +109,26 @@
 
 							<table id="team-table" class="table table-bordered table-striped">
 								<thead>
-								<tr>
-									<th>Date Registered</th>
-									<th>{{ constant("ORGANIZATION_WORD")|capitalize }} / Name</th>
-									<th># Players</th>
-									<th>Registrant</th>
-									<th></th>
-								</tr>
+									<tr>
+										<th>Date Registered</th>
+										<th>{{ constant("ORGANIZATION_WORD")|capitalize }} / Name</th>
+										<th># Players</th>
+										<th>Registrant</th>
+										<th></th>
+									</tr>
 								</thead>
 								<tbody>
-								{% for object in unassignedTeams %}
-									<tr>
-										<td>{{ object.epochRegistered|epochtodatetime }}</td>
-										<td>{{ object.organization.name }} / {{ object.designation }}</td>
-										<td>{{ object.getPlayers()|length }}</td>
-										<td>{{ object.registrant.fullName }}</td>
-										<td class="text-right">
-											<a class="btn-sm btn-danger" href="{{ base_links_url }}/acp/team/manage?id={{ object.id }}"><i class="fa fa-edit"></i> Manage</a>
-										</td>
-									</tr>
-								{% endfor %}
+									{% for object in unassignedTeams %}
+										<tr>
+											<td>{{ object.epochRegistered|epochtodatetime }}</td>
+											<td>{{ object.organization.name }} / {{ object.designation }}</td>
+											<td>{{ object.getPlayers()|length }}</td>
+											<td>{{ object.registrant.fullName }}</td>
+											<td class="text-right">
+												<a class="btn-sm btn-danger" href="{{ base_links_url }}/acp/team/manage?id={{ object.id }}"><i class="fa fa-edit"></i> Manage</a>
+											</td>
+										</tr>
+									{% endfor %}
 								</tbody>
 							</table>
 						{% else %}
@@ -133,6 +137,32 @@
 					</div>
 				</div><!-- /.box -->
 			</div><!-- /.col -->
+
+			<div class="col-sm-6 col-xs-12">
+				<div class="box box-primary">
+					<div class="box-header with-border">
+						<h3 class="box-title"><i class="fa fa-edit"></i> Information Box</h3>
+					</div><!-- /.box-header -->
+
+					<form method="post" action="">
+						<div class="box-body">
+							<p>
+								Edit the content in the box below as you wish, it will appear on the homepage under a box called "Information". Some possible uses are: news, contact details for administrators, etc.
+							</p>
+
+							<textarea name="info" id="info" rows="5" cols="80" title="Info">
+								{{ info|raw }}
+							</textarea>
+						</div>
+
+						<div class="box-footer">
+							<p class="text-right">
+								<button class="btn btn-primary btn-block" type="submit"><i class="fa fa-save"></i> Save</button>
+							</p>
+						</div>
+					</form>
+				</div><!-- /.box -->
+			</div>
 		</div><!-- ./row -->
 
 	</section><!-- /.content -->

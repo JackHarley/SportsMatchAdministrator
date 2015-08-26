@@ -71,7 +71,7 @@
 
 		<div class="row">
 			{% for section in league.sections %}
-			<div class="col-sm-4 col-xs-6">
+			<div class="col-md-4 col-sm-6 col-xs-12">
 				<div class="box box-warning">
 					<div class="box-header with-border">
 						<h3 class="box-title">Section {{ section.letter }}</h3>
@@ -82,27 +82,74 @@
 							<strong>Assigned Teams:</strong>
 						</p>
 
-						<ul>
+						<table class="table table-bordered">
 							{% for team in section.getAssignedTeams() %}
-								<li>{{ team.organization.name }} - {{ team.designation }}</li>
+								<tr>
+									<td>{{ team.organization.name }}</td>
+									<td>{{ team.designation }}</td>
+									<td class="text-right"><a class="btn btn-xs btn-primary" href="{{ base_links_url }}/acp/team/manage?id={{ team.id }}"><i class="fa fa-edit"></i> Manage Team</a></td>
+								</tr>
 							{% else %}
-								<li><i>There are no teams assigned to this section</i></li>
+								<tr><td>There are no teams assigned to this section</td></tr>
 							{% endfor %}
-						</ul>
-
-						<p style="font-style: italic;">
-							To assign teams to this section please go to the Unassigned Teams page and assign them to <strong>"{{ league.name }} - Section {{ section.letter }}"</strong>
-						</p>
+						</table>
 					</div>
 
 					<div class="box-footer">
 						<p class="text-right">
-							<a {% if section.getAssignedTeams() %}disabled{% endif %} href="{{ base_links_url }}/acp/section/delete?id={{ section.id }}" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> Delete Section {{ section.letter }}</a>
+							<a {% if section.getAssignedTeams() %}disabled{% endif %} href="{{ base_links_url }}/acp/section/delete?id={{ section.id }}" class="btn btn-sm btn-danger btn-block"><i class="fa fa-trash"></i> Delete Section {{ section.letter }}</a>
 						</p>
 					</div>
 				</div><!-- /.box -->
 			</div>
 			{% endfor %}
+		</div>
+
+		<div class="row">
+			<div class="col-sm-6 col-xs-12">
+				<div class="box box-{% if unassignedTeams %}danger{% else %}success{% endif %}">
+					<div class="box-header with-border">
+						<h3 class="box-title"><i class="fa fa-list"></i> Teams Awaiting Assignation to a Section</h3>
+					</div><!-- /.box-header -->
+
+					<div class="box-body">
+						{% if unassignedTeams %}
+							<p>
+								These teams have been registered and assigned to this league, but not assigned to a section, click one of the section buttons beside each team to assign it to that section.
+							</p>
+
+							<table id="team-table" class="table table-bordered table-striped">
+								<thead>
+								<tr>
+									<th>Date Registered</th>
+									<th>{{ constant("ORGANIZATION_WORD")|capitalize }} / Name</th>
+									<th># Players</th>
+									<th>Registrant</th>
+									<th class="text-right">Assign to...</th>
+								</tr>
+								</thead>
+								<tbody>
+								{% for object in unassignedTeams %}
+									<tr>
+										<td>{{ object.epochRegistered|epochtodatetime }}</td>
+										<td>{{ object.organization.name }} / {{ object.designation }}</td>
+										<td>{{ object.getPlayers()|length }}</td>
+										<td>{{ object.registrant.fullName }}</td>
+										<td class="text-right">
+											{% for section in league.sections %}
+												<a class="btn btn-primary" href="{{ base_links_url }}/acp/team/assign?id={{ object.id }}&section={{ section.id }}">{{ section.letter }}</a>
+											{% endfor %}
+										</td>
+									</tr>
+								{% endfor %}
+								</tbody>
+							</table>
+						{% else %}
+							<p>All teams assigned to this league have been assigned to a section.</p>
+						{% endif %}
+					</div>
+				</div><!-- /.box -->
+			</div>
 		</div>
 
 	</section><!-- /.content -->

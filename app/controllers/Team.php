@@ -8,6 +8,7 @@
 namespace sma\controllers;
 
 use sma\exceptions\DuplicateException;
+use sma\models\League;
 use sma\models\Player;
 use sma\models\User;
 use sma\models\Alert;
@@ -26,8 +27,9 @@ class Team {
 			$teams = (User::getVisitor()->organizationId) ? TeamModel::get(null, User::getVisitor()->organizationId) : null;
 
 			View::load("team/register_form.twig", [
-				"organizations" => Organization::get(),
-				"teams" => $teams
+					"organizations" => Organization::get(),
+					"leagues" => League::get(),
+					"teams" => $teams
 			]);
 		}
 		else {
@@ -38,7 +40,10 @@ class Team {
 				$organizationId = User::getVisitor()->organizationId;
 
 			try {
-				$teamId = TeamModel::add($organizationId, $_POST["designation"], User::getVisitor()->id);
+				if (ALLOW_TEAM_REGISTRANTS_TO_SELECT_LEAGUE)
+					$teamId = TeamModel::add($organizationId, $_POST["designation"], User::getVisitor()->id, $_POST["league-id"]);
+				else
+					$teamId = TeamModel::add($organizationId, $_POST["designation"], User::getVisitor()->id);
 			}
 			catch (DuplicateException $e) {
 				Controller::addAlert(new Alert("danger", "You cannot register more than one team with the same name. To edit an existing team please use the edit button beside the team in the Registered Teams box."));
@@ -51,7 +56,7 @@ class Team {
 					try {
 						Player::add($_POST["player" . $i], $teamId, false);
 					}
-					catch(DuplicateException $e) {
+					catch (DuplicateException $e) {
 						Controller::addAlert(new Alert("info", "You entered the name " .
 								$_POST["player" . $i] . " more than once, only the first entry was" .
 								"added to the database"));

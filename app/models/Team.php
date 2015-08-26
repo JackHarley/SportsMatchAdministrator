@@ -43,6 +43,16 @@ class Team {
 	public $organizationId;
 
 	/**
+	 * @var \sma\models\League league team is assigned to
+	 */
+	protected $league;
+
+	/**
+	 * @var int league id
+	 */
+	public $leagueId;
+
+	/**
 	 * @var \sma\models\LeagueSection league section team is assigned to
 	 */
 	protected $leagueSection;
@@ -89,6 +99,17 @@ class Team {
 	}
 
 	/**
+	 * Get league
+	 *
+	 * @return \sma\models\League
+	 */
+	public function getLeague() {
+		if (!$this->league)
+			$this->league = current(League::get($this->leagueId));
+		return $this->league;
+	}
+
+	/**
 	 * Get league section
 	 *
 	 * @return \sma\models\LeagueSection
@@ -106,15 +127,16 @@ class Team {
 	 * @param int $organizationId organization id to fetch teams for
 	 * @param string $designation designation
 	 * @param int|bool $leagueSectionId league section or boolean false to fetch unassigned teams only
+	 * @param int|bool $leagueId league or boolean false to fetch unassigned teams only
 	 * @return \sma\models\Team[] teams
 	 */
 	public static function get($id=null, $organizationId=null, $designation=null,
-			$leagueSectionId=null) {
+			$leagueSectionId=null, $leagueId=null) {
 
 		$q = (new SelectQuery(Database::getConnection()))
 				->from("teams t")
 				->fields(["t.id", "t.designation", "t.organization_id", "t.league_section_id",
-						"t.registrant_id", "t.epoch_registered"])
+						"t.league_id", "t.registrant_id", "t.epoch_registered"])
 				->join("LEFT JOIN organizations o ON o.id=t.organization_id")
 				->fields(["o.id AS org_id", "o.name AS organization_name"])
 				->join("LEFT JOIN users u ON u.id=t.registrant_id")
@@ -132,6 +154,12 @@ class Team {
 			else
 				$q->where("t.league_section_id = ?", $leagueSectionId);
 		}
+		if ($leagueId !== null) {
+			if ($leagueId === false)
+				$q->where("t.league_id IS NULL");
+			else
+				$q->where("t.league_id = ?", $leagueId);
+		}
 
 		$stmt = $q->prepare();
 		$stmt->execute();
@@ -142,7 +170,7 @@ class Team {
 			$team->organization = new Organization();
 			$team->registrant = new User();
 			list($team->id, $team->designation, $team->organizationId, $team->leagueSectionId,
-					$team->registrantId, $team->epochRegistered, $team->organization->id,
+					$team->leagueId, $team->registrantId, $team->epochRegistered, $team->organization->id,
 					$team->organization->name, $team->registrant->id, $team->registrant->fullName) = $row;
 			$teams[] = $team;
 		}
@@ -156,20 +184,28 @@ class Team {
 	 * @param int $organizationId organization
 	 * @param string $designation designation
 	 * @param int $registrantId registrant
+	 * @param int $leagueId league id
 	 * @return int new id
 	 * @throws \sma\exceptions\DuplicateException if a team already exists with the same designation
 	 * for the specified organization
 	 */
-	public static function add($organizationId, $designation, $registrantId) {
+	public static function add($organizationId, $designation, $registrantId, $leagueId=null) {
 		if (count(self::get(null, $organizationId, $designation)) > 0)
 			throw new DuplicateException();
 
-		(new InsertQuery(Database::getConnection()))
-				->into("teams")
-				->fields(["organization_id", "designation", "registrant_id", "epoch_registered"])
-				->values("(?,?,?,?)", [$organizationId, $designation, $registrantId, time()])
-				->prepare()
-				->execute();
+		$q = (new InsertQuery(Database::getConnection()))
+				->into("teams");
+
+		if ($leagueId) {
+			$q->fields(["organization_id", "designation", "registrant_id", "league_id", "epoch_registered"])
+				->values("(?,?,?,?,?)", [$organizationId, $designation, $registrantId, $leagueId, time()]);
+		}
+		else {
+			$q->fields(["organization_id", "designation", "registrant_id", "epoch_registered"])
+				->values("(?,?,?,?)", [$organizationId, $designation, $registrantId, time()]);
+		}
+
+		$q->prepare()->execute();
 
 		return Database::getConnection()->lastInsertId();
 	}
@@ -181,9 +217,10 @@ class Team {
 	 * @param int $organizationId organization
 	 * @param string $designation designation
 	 * @param int $leagueSectionId league section
+	 * @param int $leagueId league id
 	 */
 	public static function update($id, $organizationId=null, $designation=null,
-			$leagueSectionId=null) {
+			$leagueSectionId=null, $leagueId=null) {
 
 		$q = (new UpdateQuery(Database::getConnection()))
 				->table("teams")
@@ -199,6 +236,16 @@ class Team {
 				$q->set("league_section_id = NULL");
 			else
 				$q->set("league_section_id = ?", $leagueSectionId);
+		}
+		if ($leagueId !== null) {
+			$team = current(self::get($id));
+			if ($team->leagueId != $leagueId) // if we are changing the league id then we reset the section
+				$q->set("league_section_id = NULL");
+
+			if ($leagueId == 0)
+				$q->set("league_id = NULL");
+			else
+				$q->set("league_id = ?", $leagueId);
 		}
 
 		$q->prepare()->execute();

@@ -203,6 +203,7 @@ class Installer {
 				"organizations",
 				"permissions",
 				"players",
+				"settings",
 				"teams",
 				"user_groups",
 				"user_groups_permissions",
@@ -359,10 +360,17 @@ class Installer {
 			  PRIMARY KEY (`id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+			CREATE TABLE `settings` (
+			  `id` varchar(64) NOT NULL,
+			  `value` longtext NOT NULL,
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 			CREATE TABLE `teams` (
 			  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			  `designation` varchar(32) NOT NULL,
 			  `organization_id` bigint(20) unsigned NOT NULL,
+			  `league_id` bigint(20) unsigned DEFAULT NULL,
 			  `league_section_id` bigint(20) unsigned DEFAULT NULL,
 			  `epoch_registered` bigint(20) unsigned NOT NULL,
 			  `registrant_id` bigint(20) unsigned NOT NULL,

@@ -29,7 +29,7 @@
 		</div>
 
 		<p>
-			Please use the form below to register teams for the coming season, please ensure all details are correct prior to registration as you will not be able to change details without contacting an administrator.
+			Please use the form below to register teams for the coming season, if you need to edit a team you have already registered please use the edit buttons beside your teams.
 		</p>
 
 		<div class="clearfix" style="height: 20px;"></div>
@@ -49,6 +49,17 @@
 							</select>
 
 							<br>
+
+							{% if constant("ALLOW_TEAM_REGISTRANTS_TO_SELECT_LEAGUE") %}
+								<label for="league-id">League:</label>
+								<select name="league-id" id="league-id" class="form-control">
+									{% for league in leagues %}
+										<option value="{{ league.id }}">{{ league.name }}</option>
+									{% endfor %}
+								</select>
+
+								<br>
+							{% endif %}
 
 							<label for="designation">Team Name:</label><br>
 							<p><i>This should be used to indicate the team's position within your {{ constant("ORGANIZATION_WORD") }}: e.g. Senior A, Senior B, Junior A, Junior B, U-13 A, U-13 B</i></p>
@@ -87,19 +98,21 @@
 
 						<div class="panel-body">
 							<p>
-								These are the teams currently registered for your {{ constant("ORGANIZATION_WORD") }}, if any details are incorrect please contact an administrator.
+								These are the teams currently registered for your {{ constant("ORGANIZATION_WORD") }}, if any details are incorrect please correct them by editing the team in question.
 							</p>
 						</div>
 
 						<table class="table">
 							<tr>
+								<th>League</th>
 								<th>Name</th>
-								<th>Players</th>
+								<th></th>
 							</tr>
 							{% for team in teams %}
 								<tr>
+									<td>{% if team.leagueId %}{{ team.getLeague().name }}{% else %}<i>Not Assigned</i>{% endif %}</td>
 									<td>{{ team.designation }}</td>
-									<td>{% for player in team.getPlayers() %}{{ player.fullName }}{% if not loop.last %}, {% endif %}{% endfor %}</td>
+									<td style="text-align: right;"><a class="btn btn-warning btn-sm">Edit/View Player List</a></td>
 								</tr>
 							{% else %}
 
