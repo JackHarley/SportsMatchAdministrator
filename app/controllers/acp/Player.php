@@ -15,7 +15,7 @@ class Player {
 
 	public static function add() {
 		Controller::requireFields("post", ["name", "team"], "/acp/team");
-		Controller::requirePermissions(["AdminAccessDashboard", "AdminTeams"]);
+		Controller::requirePermissions(["AdminAccessDashboard", "AdminTeams", "AdminPlayers"]);
 
 		PlayerModel::add($_POST["name"], $_POST["team"], false);
 
@@ -25,7 +25,7 @@ class Player {
 
 	public static function update() {
 		Controller::requireFields("post", ["name", "id"], "/acp/team");
-		Controller::requirePermissions(["AdminAccessDashboard", "AdminTeams"]);
+		Controller::requirePermissions(["AdminAccessDashboard", "AdminTeams", "AdminPlayers"]);
 
 		$player = current(PlayerModel::get($_POST["id"]));
 		PlayerModel::update($_POST["id"], $_POST["name"]);
@@ -34,9 +34,20 @@ class Player {
 		Controller::redirect("/acp/team/manage?id=" . $player->teamId);
 	}
 
+	public static function exempt() {
+		Controller::requireFields("get", ["status", "id"], "/acp/team");
+		Controller::requirePermissions(["AdminAccessDashboard", "AdminTeams", "AdminPlayers"]);
+
+		$player = current(PlayerModel::get($_GET["id"]));
+		PlayerModel::update($_GET["id"], null, (bool) $_GET["status"]);
+
+		Controller::addAlert(new Alert("success", "Player updated successfully"));
+		Controller::redirect("/acp/team/manage?id=" . $player->teamId);
+	}
+
 	public static function delete() {
 		Controller::requireFields("get", ["id"], "/acp/team");
-		Controller::requirePermissions(["AdminAccessDashboard", "AdminTeams"]);
+		Controller::requirePermissions(["AdminAccessDashboard", "AdminTeams", "AdminPlayers"]);
 
 		$player = current(PlayerModel::get($_GET["id"]));
 		$player->delete();

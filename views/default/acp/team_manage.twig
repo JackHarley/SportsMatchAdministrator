@@ -17,7 +17,7 @@
 	<section class="content">
 		<!-- one column -->
 		<div class="row">
-			<div class="col-sm-6 col-xs-12">
+			<div class="col-md-6 col-sm-12 col-xs-12">
 				<div class="box box-primary">
 					<div class="box-header">
 						<h3 class="box-title">Update Team Details and Assign to League</h3>
@@ -78,7 +78,7 @@
 				</div><!-- /.box -->
 			</div><!-- /.col -->
 
-			<div class="col-sm-6 col-xs-12">
+			<div class="col-md-6 col-sm-12 col-xs-12">
 				<div class="box box-primary">
 					<div class="box-header">
 						<h3 class="box-title">Manage Players</h3>
@@ -89,18 +89,30 @@
 							To update a player's name simply change the name in the box and click Update, to delete a player completely click the Delete button beside the correct player. <span class="text-danger"><strong>Please note that deleting a player is irreversible!</strong></span>
 						</p>
 
-						{% for player in team.getPlayers() %}
-							<form method="post" action="{{ base_links_url }}/acp/player/update">
-								<input type="hidden" name="id" value="{{ player.id }}">
-								<div class="input-group" style="margin-bottom: 5px;">
-									<input type="text" class="form-control" id="name" name="name" value="{{ player.fullName }}">
-									<span class="input-group-btn">
-										<button type="submit" class="btn btn-info"><i class="icon fa fa-save"></i> Update</button>
-										<a class="btn btn-danger" href="{{ base_links_url }}/acp/player/delete?id={{ player.id }}"><i class="icon fa fa-trash"></i> Delete</a>
-									</span>
-								</div>
-							</form>
-						{% endfor %}
+						<table class="table">
+							{% for player in team.getPlayers() %}
+								<form method="post" action="{{ base_links_url }}/acp/player/update">
+									<tr>
+										<td style="width: 10px; vertical-align: middle;">
+											<i class="icon fa fa-star{% if not player.exempt %}-o{% endif %}"></i>
+										</td>
+										<td>
+											<input type="hidden" name="id" value="{{ player.id }}">
+											<input type="text" class="form-control" id="name" name="name" value="{{ player.fullName }}">
+										</td>
+										<td class="text-right" style="width: 265px;">
+											{% if not player.exempt %}
+												<a class="btn btn-success" href="{{ base_links_url }}/acp/player/exempt?id={{ player.id }}&status=1"><i class="icon fa fa-star"></i> Star</a>
+											{% else %}
+												<a class="btn btn-warning" href="{{ base_links_url }}/acp/player/exempt?id={{ player.id }}&status=0"><i class="icon fa fa-star-o"></i> Unstar</a>
+											{% endif %}
+											<button type="submit" class="btn btn-info"><i class="icon fa fa-save"></i> Update</button>
+											<a class="btn btn-danger" href="{{ base_links_url }}/acp/player/delete?id={{ player.id }}"><i class="icon fa fa-trash"></i> Delete</a>
+										</td>
+									</tr>
+								</form>
+							{% endfor %}
+						</table>
 
 						<br>
 
@@ -121,7 +133,7 @@
 				</div><!-- /.box -->
 			</div><!-- /.col -->
 
-			<div class="col-sm-12">
+			<div class="col-sm-12 col-xs-12">
 				<div class="box box-danger">
 					<div class="box-header">
 						<h3 class="box-title">DangerZone™</h3>

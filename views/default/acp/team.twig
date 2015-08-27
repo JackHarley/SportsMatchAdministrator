@@ -81,6 +81,7 @@
 									<th>{{ constant("ORGANIZATION_WORD")|capitalize }}</th>
 									<th>Name</th>
 									<th># Players</th>
+									<th># Starred/Exempt</th>
 									<th>Assigned League and Section</th>
 									<th>Registrant</th>
 									<th></th>
@@ -93,6 +94,7 @@
 										<td>{{ object.organization.name }}</td>
 										<td>{{ object.designation }}</td>
 										<td>{{ object.getPlayers()|length }}</td>
+										<td>{{ object.getNumberOfExemptPlayers() }}</td>
 										<td>
 											{% if object.leagueSectionId %}
 												{{ object.getLeagueSection().getLeague().name }} - Section {{ object.getLeagueSection().letter }}
