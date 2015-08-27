@@ -8,6 +8,7 @@
 namespace sma\models;
 
 use PDO;
+use sma\models\Team as TeamModel;
 use sma\Database;
 use sma\exceptions\DuplicateException;
 use sma\query\DeleteQuery;
@@ -46,6 +47,17 @@ class Player {
 	 * @var bool exempt status, if true, the player can play in any league without generating alerts
 	 */
 	public $exempt;
+
+	/**
+	 * Get team
+	 *
+	 * @return \sma\models\Team
+	 */
+	public function getTeam() {
+		if (!$this->team)
+			$this->team = TeamModel::get($this->teamId);
+		return $this->team;
+	}
 
 	/**
 	 * Delete the player
@@ -130,8 +142,9 @@ class Player {
 	 *
 	 * @param int $id player id to update
 	 * @param string $fullName full name
+	 * @param bool $exempt exempt status
 	 */
-	public static function update($id, $fullName=null) {
+	public static function update($id, $fullName=null, $exempt=null) {
 		$q = (new UpdateQuery(Database::getConnection()))
 				->table("players")
 				->where("id = ?", $id)
@@ -139,6 +152,8 @@ class Player {
 
 		if ($fullName)
 			$q->set("full_name = ?", $fullName);
+		if ($exempt !== null)
+			$q->set("exempt = ?", (int) $exempt);
 
 		$q->prepare()->execute();
 	}

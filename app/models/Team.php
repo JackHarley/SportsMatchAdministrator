@@ -99,6 +99,22 @@ class Team {
 	}
 
 	/**
+	 * Get number of players marked as exempt
+	 *
+	 * @return int number of exempt players
+	 */
+	public function getNumberOfExemptPlayers() {
+		$q = (new SelectQuery(Database::getConnection()))
+				->from("players")
+				->where("team_id = ?", $this->id)
+				->where("exempt = 1")
+				->fields("COUNT(1)");
+		$stmt = $q->prepare();
+		$stmt->execute();
+		return (int) $stmt->fetchColumn();
+	}
+
+	/**
 	 * Get league
 	 *
 	 * @return \sma\models\League

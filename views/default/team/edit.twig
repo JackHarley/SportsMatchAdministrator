@@ -42,7 +42,9 @@
 
 								<strong>Team ID:</strong> {{ team.id }}<br>
 								<strong>Date Registered:</strong> {{ team.epochRegistered|epochtodatetime }}<br>
-								<strong>Registrant:</strong> {{ team.registrant.fullName }}
+								<strong>Registrant:</strong> {{ team.registrant.fullName }}<br>
+								<strong>League:</strong> {% if team.leagueId %}{{ team.getLeague().name }}{% else %}<i>Not Assigned</i>{% endif %}<br>
+								<strong>League Section:</strong> {% if team.leagueSectionId %}{{ team.getLeague().name }} {{ team.getLeagueSection().letter }}{% else %}<i>Not Assigned</i>{% endif %}
 							</p>
 
 							<p>
@@ -61,16 +63,28 @@
 
 					<div class="panel-body">
 						<p>
-							If you need to fix the spelling of a name or delete a name already on the list please contact an administrator directly.
+							If you need to fix the spelling of a name or delete a name already on the list please contact an administrator directly. You may star up to {{ constant("MAX_EXEMPTS") }} players, these players will be able to play in other leagues without restriction.
 						</p>
 
-						<ul>
+						<table class="table">
 							{% for player in team.getPlayers() %}
-								<li>{{ player.fullName }}</li>
+								<tr>
+									<td style="width: 25px;"><i class="fa fa-star{% if not player.exempt %}-o{% endif %}"></i></td>
+									<td>{{ player.fullName }}</td>
+									<td class="text-right">
+										{% if not player.exempt %}
+											<a href="{{ base_links_url }}/team/updateplayer?id={{ player.id }}&exempt=1" class="btn btn-xs btn-success"><i class="fa fa-star"></i> Star</a>
+										{% else %}
+											<a href="{{ base_links_url }}/team/updateplayer?id={{ player.id }}&exempt=0" class="btn btn-xs btn-warning"><i class="fa fa-star-o"></i> Unstar</a>
+										{% endif %}
+									</td>
+								</tr>
 							{% else %}
-								<li>There are no players assigned to this team.</li>
+								<tr>
+									<td>There are no players assigned to this team.</td>
+								</tr>
 							{% endfor %}
-						</ul>
+						</table>
 
 						<br>
 

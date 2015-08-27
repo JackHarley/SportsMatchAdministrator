@@ -47,15 +47,32 @@ class Team {
 					$teamId = TeamModel::add($organizationId, $_POST["designation"], User::getVisitor()->id);
 			}
 			catch (DuplicateException $e) {
-				Controller::addAlert(new Alert("danger", "You cannot register more than one team with the same name. To edit an existing team please use the edit button beside the team in the Registered Teams box."));
+				Controller::addAlert(new Alert("danger", "You cannot register more than one team with the same name. " .
+						"To edit an existing team please use the edit button beside the team in the Registered Teams box."));
 				Controller::redirect("/team/register");
 			}
 
 			// add the players
+			$exemptsAdded = 0;
 			for ($i = 1; array_key_exists("player" . $i, $_POST); $i++) {
 				if ($_POST["player" . $i]) {
+					if (isset($_POST["player" . $i . "e"])) {
+						if ($exemptsAdded < MAX_EXEMPTS) {
+							$makeExempt = true;
+							$exemptsAdded++;
+						}
+						else {
+							$makeExempt = false;
+							Controller::addAlert(new Alert("warning", "You attempted to star " . $_POST["player" . $i] . " but you had already starred " .
+									MAX_EXEMPTS . " other players, which is the maxmimum allowed, thus " . $_POST["player" . $i] . "was not starred"));
+						}
+					}
+					else {
+						$makeExempt = false;
+					}
+
 					try {
-						Player::add($_POST["player" . $i], $teamId, false);
+						Player::add($_POST["player" . $i], $teamId, $makeExempt);
 					}
 					catch (DuplicateException $e) {
 						Controller::addAlert(new Alert("info", "You entered the name " .
@@ -65,9 +82,9 @@ class Team {
 				}
 			}
 
-			View::load("team/register_success.twig", [
-					"team" => TeamModel::get($teamId)[0]
-			]);
+			Controller::addAlert(new Alert("success",
+					"You have successfully registered your team and its details are shown below. You can come back to this area up until the freeze date and make changes."));
+			Controller::redirect("/team/edit?id=" . $teamId);
 		}
 	}
 
@@ -100,5 +117,26 @@ class Team {
 
 		Controller::addAlert(new Alert("success", "Player added successfully"));
 		Controller::redirect("/team/edit?id=" . $team->id);
+	}
+
+	public static function updateplayer() {
+		Controller::requireFields("get", ["id"], "/acp/team");
+		Controller::requirePermissions(["RegisterTeamsForOwnOrganization"]);
+
+		$player = current(Player::get($_GET["id"]));
+		if ($player->getTeam()->organizationId != User::getVisitor()->organizationId)
+			ErrorHandler::forbidden();
+
+		if (($_GET["exempt"] == 1) && (!$player->exempt)) {
+			if ($player->getTeam()->getNumberOfExemptPlayers() >= MAX_EXEMPTS) {
+				Controller::addAlert(new Alert("danger", "You have already starred the maximum number of players"));
+				Controller::redirect("/team/edit?id=" . $player->getTeam()->id);
+			}
+		}
+
+		Player::update($player->id, null, (bool) $_GET["exempt"]);
+
+		Controller::addAlert(new Alert("success", "Player updated successfully"));
+		Controller::redirect("/team/edit?id=" . $player->getTeam()->id);
 	}
 }
