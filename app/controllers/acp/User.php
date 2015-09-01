@@ -67,7 +67,8 @@ class User {
 	}
 
 	public static function delete() {
-		Controller::requirePermissions(["AdminAccessDashboard", "AdminUsers"]);
+		Controller::requirePermissions(["AdminAccessDashboard", "AdminUsers",
+				"PerformDeletionOperations"]);
 
 		if (!array_key_exists("id", $_GET))
 			Controller::redirect("/acp/user");

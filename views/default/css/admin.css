@@ -1,0 +1,16 @@
+/**
+ * Sports Match Administrator
+ *
+ * Copyright © 2014-2015, Jack P. Harley, jackpharley.com
+ * All Rights Reserved
+ */
+
+/* Data tables */
+.dataTables_filter {
+	float: right;
+	width: 220px;
+}
+
+.dataTables_filter input {
+	margin-left: 10px;
+}

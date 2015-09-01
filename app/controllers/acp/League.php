@@ -60,7 +60,9 @@ class League {
 	}
 
 	public static function delete() {
-		Controller::requirePermissions(["AdminAccessDashboard", "AdminAllLeagues"]);
+		Controller::requirePermissions(["AdminAccessDashboard", "AdminAllLeagues",
+				"PerformDeletionOperations"]);
+
 		if (!array_key_exists("id", $_GET))
 			Controller::redirect("/acp/league");
 

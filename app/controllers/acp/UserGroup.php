@@ -56,7 +56,8 @@ class UserGroup {
 	}
 
 	public static function delete() {
-		Controller::requirePermissions(["AdminAccessDashboard", "AdminUserGroups"]);
+		Controller::requirePermissions(["AdminAccessDashboard", "AdminUserGroups",
+				"PerformDeletionOperations"]);
 
 		if (!array_key_exists("id", $_GET))
 			Controller::redirect("/acp/group");

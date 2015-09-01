@@ -39,7 +39,9 @@ class Organization {
 	}
 
 	public static function delete() {
-		Controller::requirePermissions(["AdminAccessDashboard", "AdminOrganizations"]);
+		Controller::requirePermissions(["AdminAccessDashboard", "AdminOrganizations",
+				"PerformDeletionOperations"]);
+
 		if (!array_key_exists("id", $_GET))
 			Controller::redirect("/acp/organization");
 

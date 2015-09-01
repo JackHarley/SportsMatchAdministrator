@@ -47,7 +47,8 @@ class Player {
 
 	public static function delete() {
 		Controller::requireFields("get", ["id"], "/acp/team");
-		Controller::requirePermissions(["AdminAccessDashboard", "AdminTeams", "AdminPlayers"]);
+		Controller::requirePermissions(["AdminAccessDashboard", "AdminTeams", "AdminPlayers",
+				"PerformDeletionOperations"]);
 
 		$player = current(PlayerModel::get($_GET["id"]));
 		$player->delete();
