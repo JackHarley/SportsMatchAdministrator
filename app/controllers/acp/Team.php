@@ -54,4 +54,16 @@ class Team {
 		Controller::addAlert(new Alert("success", "Team assigned to section successfully"));
 		Controller::redirect("/acp/league/manage?id=" . $section->leagueId);
 	}
+
+	public static function delete() {
+		Controller::requireFields("get", ["id"], "/acp/team");
+		Controller::requirePermissions(["AdminAccessDashboard", "AdminTeams", "AdminPlayers",
+				"PerformDeletionOperations"]);
+
+		$team = current(TeamModel::get($_GET["id"]));
+		$team->delete();
+
+		Controller::addAlert(new Alert("success", "Team deleted successfully"));
+		Controller::redirect("/acp/team");
+	}
 }

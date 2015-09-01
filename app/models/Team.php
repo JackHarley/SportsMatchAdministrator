@@ -87,6 +87,12 @@ class Team {
 	 */
 	public function delete() {
 		(new DeleteQuery(Database::getConnection()))
+				->from("players")
+				->where("team_id = ?", $this->id)
+				->prepare()
+				->execute();
+
+		(new DeleteQuery(Database::getConnection()))
 				->from("teams")
 				->where("id = ?", $this->id)
 				->limit(1)
