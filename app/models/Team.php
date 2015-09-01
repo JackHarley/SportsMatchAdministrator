@@ -63,6 +63,11 @@ class Team {
 	public $leagueSectionId;
 
 	/**
+	 * @var int assigned number for fixtures use
+	 */
+	public $assignedNumber;
+
+	/**
 	 * @var \sma\models\User registrant
 	 */
 	public $registrant;
@@ -152,11 +157,12 @@ class Team {
 		$q = (new SelectQuery(Database::getConnection()))
 				->from("teams t")
 				->fields(["t.id", "t.designation", "t.organization_id", "t.league_section_id",
-						"t.league_id", "t.registrant_id", "t.epoch_registered"])
+						"t.league_id", "t.assigned_number", "t.registrant_id", "t.epoch_registered"])
 				->join("LEFT JOIN organizations o ON o.id=t.organization_id")
 				->fields(["o.id AS org_id", "o.name AS organization_name"])
 				->join("LEFT JOIN users u ON u.id=t.registrant_id")
-				->fields(["u.id AS u_id", "u.full_name"]);
+				->fields(["u.id AS u_id", "u.full_name"])
+				->orderby("t.assigned_number");
 
 		if ($id)
 			$q->where("t.id = ?", $id);
@@ -186,8 +192,9 @@ class Team {
 			$team->organization = new Organization();
 			$team->registrant = new User();
 			list($team->id, $team->designation, $team->organizationId, $team->leagueSectionId,
-					$team->leagueId, $team->registrantId, $team->epochRegistered, $team->organization->id,
-					$team->organization->name, $team->registrant->id, $team->registrant->fullName) = $row;
+					$team->leagueId, $team->assignedNumber, $team->registrantId, $team->epochRegistered,
+					$team->organization->id, $team->organization->name, $team->registrant->id,
+					$team->registrant->fullName) = $row;
 			$teams[] = $team;
 		}
 
@@ -234,9 +241,10 @@ class Team {
 	 * @param string $designation designation
 	 * @param int $leagueSectionId league section
 	 * @param int $leagueId league id
+	 * @param int $assignedNumber assigned number
 	 */
 	public static function update($id, $organizationId=null, $designation=null,
-			$leagueSectionId=null, $leagueId=null) {
+			$leagueSectionId=null, $leagueId=null, $assignedNumber=null) {
 
 		$q = (new UpdateQuery(Database::getConnection()))
 				->table("teams")
@@ -262,6 +270,12 @@ class Team {
 				$q->set("league_id = NULL");
 			else
 				$q->set("league_id = ?", $leagueId);
+		}
+		if ($assignedNumber !== null) {
+			if (!$assignedNumber)
+				$q->set("assigned_number = NULL");
+			else
+				$q->set("assigned_number = ?", $assignedNumber);
 		}
 
 		$q->prepare()->execute();

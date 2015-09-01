@@ -372,6 +372,7 @@ class Installer {
 			  `organization_id` bigint(20) unsigned NOT NULL,
 			  `league_id` bigint(20) unsigned DEFAULT NULL,
 			  `league_section_id` bigint(20) unsigned DEFAULT NULL,
+			  `assigned_number` bigint(20) unsigned DEFAULT NULL,
 			  `epoch_registered` bigint(20) unsigned NOT NULL,
 			  `registrant_id` bigint(20) unsigned NOT NULL,
 			  PRIMARY KEY (`id`),
@@ -413,8 +414,8 @@ QUERY
 		Permission::add("Admin", "AdminTeams", "Administrate teams");
 		Permission::add("Admin", "AdminPlayers", "Administrate players");
 		Permission::add("Admin", "AdminAllLeagues", "Administrate all leagues (users always have permission to administrate leagues they are assigned as the manager of)");
-
 		Permission::add("Admin", "AdminAccessMaintenance", "Access the admin maintenance area and use the maintenance tools");
+		Permission::add("Admin", "PerformDeletionOperations", "Permanently delete data which they have admin access to");
 
 		Permission::add("Team", "RegisterTeamsForOwnOrganization", "Register teams for their own organization");
 		Permission::add("Team", "RegisterTeamsForAnyOrganization", "Register teams for any organization");

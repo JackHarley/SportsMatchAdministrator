@@ -42,6 +42,17 @@ class League {
 		if ($visitor->id != $league->managerId)
 			Controller::requirePermissions(["AdminAllLeagues"]);
 
+		if (!empty($_POST)) {
+			$teams = $league->getAssignedTeams();
+
+			foreach($teams as $team) {
+				if (array_key_exists("team" . $team->id . "number", $_POST))
+					Team::update($team->id, null, null, null, null, $_POST["team" . $team->id . "number"]);
+			}
+
+			Controller::addAlert(new Alert("success", "Team assigned numbers updated successfully"));
+		}
+
 		View::load("acp/league_manage.twig", [
 			"league" => $league,
 			"unassignedTeams" => Team::get(null, null, null, false, $_GET["id"])

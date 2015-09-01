@@ -248,6 +248,7 @@ Teams
 * **organization_id** - Organization the team belongs to
 * **league_id** - League the team is assigned to or null if unassigned
 * **league_section_id** - League section the team is assigned to or null if unassigned
+* **assigned_number** - Assigned number within a league used for fixture creation
 * **epoch_registered** - Epoch of when the team was initially registered
 * **registrant_id** - User who performed the initial registration
 
@@ -258,6 +259,7 @@ CREATE TABLE `teams` (
   `organization_id` bigint(20) unsigned NOT NULL,
   `league_id` bigint(20) unsigned DEFAULT NULL,
   `league_section_id` bigint(20) unsigned DEFAULT NULL,
+  `assigned_number` bigint(20) unsigned DEFAULT NULL,
   `epoch_registered` bigint(20) unsigned NOT NULL,
   `registrant_id` bigint(20) unsigned NOT NULL,
   PRIMARY KEY (`id`),

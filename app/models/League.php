@@ -46,6 +46,11 @@ class League {
 	protected $sections;
 
 	/**
+	 * @var \sma\models\Team[] assigned teams
+	 */
+	protected $assignedTeams;
+
+	/**
 	 * Delete the league
 	 */
 	public function delete() {
@@ -77,6 +82,17 @@ class League {
 		if (!$this->sections)
 			$this->sections = LeagueSection::get(null, $this->id);
 		return $this->sections;
+	}
+
+	/**
+	 * Get assigned teams
+	 *
+	 * @return \sma\models\Team[]
+	 */
+	public function getAssignedTeams() {
+		if (!$this->assignedTeams)
+			$this->assignedTeams = Team::get(null, null, null, null, $this->id);
+		return $this->assignedTeams;
 	}
 
 	/**

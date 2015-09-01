@@ -70,39 +70,45 @@
 		</div><!-- ./row -->
 
 		<div class="row">
-			{% for section in league.sections %}
-			<div class="col-md-4 col-sm-6 col-xs-12">
-				<div class="box box-warning">
-					<div class="box-header with-border">
-						<h3 class="box-title">Section {{ section.letter }}</h3>
-					</div><!-- /.box-header -->
-					<!-- form start -->
-					<div class="box-body">
-						<p>
-							<strong>Assigned Teams:</strong>
-						</p>
+			<form action="" method="post">
+				<input type="hidden" name="league" value="{{ league.id }}">
 
-						<table class="table table-bordered">
-							{% for team in section.getAssignedTeams() %}
-								<tr>
-									<td>{{ team.organization.name }}</td>
-									<td>{{ team.designation }}</td>
-									<td class="text-right"><a class="btn btn-xs btn-primary" href="{{ base_links_url }}/acp/team/manage?id={{ team.id }}"><i class="fa fa-edit"></i> Manage Team</a></td>
-								</tr>
-							{% else %}
-								<tr><td>There are no teams assigned to this section</td></tr>
-							{% endfor %}
-						</table>
-					</div>
+				{% for section in league.sections %}
+					<div class="col-md-4 col-sm-6 col-xs-12">
+						<div class="box box-warning">
+							<div class="box-header with-border">
+								<h3 class="box-title">Section {{ section.letter }}</h3>
+							</div><!-- /.box-header -->
+							<!-- form start -->
+							<div class="box-body">
+								<p>
+									<strong>Assigned Teams:</strong>
+								</p>
 
-					<div class="box-footer">
-						<p class="text-right">
-							<a {% if section.getAssignedTeams() %}disabled{% endif %} href="{{ base_links_url }}/acp/section/delete?id={{ section.id }}" class="btn btn-sm btn-danger btn-block"><i class="fa fa-trash"></i> Delete Section {{ section.letter }}</a>
-						</p>
+								<table class="table table-bordered">
+									{% for team in section.getAssignedTeams() %}
+										<tr>
+											<td><input type="text" name="team{{ team.id }}number" class="form-control" style="width: 35px;" value="{{ team.assignedNumber }}"></td>
+											<td>{{ team.organization.name }}</td>
+											<td>{{ team.designation }}</td>
+											<td class="text-right"><a class="btn btn-xs btn-primary" href="{{ base_links_url }}/acp/team/manage?id={{ team.id }}"><i class="fa fa-edit"></i> Manage Team</a></td>
+										</tr>
+									{% else %}
+										<tr><td>There are no teams assigned to this section</td></tr>
+									{% endfor %}
+								</table>
+							</div>
+
+							<div class="box-footer">
+								<p class="text-right">
+									<button type="submit" class="btn btn-success btn-sm btn-block"><i class="icon fa fa-save"></i> Save Team Numbers</button>
+									<a {% if section.getAssignedTeams() %}disabled{% endif %} href="{{ base_links_url }}/acp/section/delete?id={{ section.id }}" class="btn btn-sm btn-danger btn-block"><i class="fa fa-trash"></i> Delete Section {{ section.letter }}</a>
+								</p>
+							</div>
+						</div><!-- /.box -->
 					</div>
-				</div><!-- /.box -->
-			</div>
-			{% endfor %}
+				{% endfor %}
+			</form>
 		</div>
 
 		<div class="row">
