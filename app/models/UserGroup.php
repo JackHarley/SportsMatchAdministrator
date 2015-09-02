@@ -115,7 +115,8 @@ class UserGroup {
 				->join("LEFT JOIN user_groups_permissions ugp ON ug.id = ugp.group_id")
 				->join("LEFT JOIN permissions p ON p.id = ugp.permission_id")
 				->fields(["p.id AS permission_id", "p.type AS permission_type",
-						"p.name AS permission_name", "p.description AS permission_description"]);
+						"p.name AS permission_name", "p.description AS permission_description"])
+				->orderby("ug.name");
 
 		if ($id)
 			$q->where("ug.id = ?", $id);

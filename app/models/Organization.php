@@ -53,7 +53,8 @@ class Organization {
 	public static function get($id=null, $name=null) {
 		$q = (new SelectQuery(Database::getConnection()))
 				->from("organizations")
-				->fields(["id", "name"]);
+				->fields(["id", "name"])
+				->orderby("name");
 
 		if ($id)
 			$q->where("id = ?", $id);

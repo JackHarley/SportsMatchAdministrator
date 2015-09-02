@@ -86,7 +86,8 @@ class Player {
 				->join("LEFT JOIN teams t ON t.id=p.team_id")
 				->fields(["t.id AS te_id", "t.designation", "t.organization_id"])
 				->join("LEFT JOIN organizations o ON o.id=t.organization_id")
-				->fields(["o.id AS org_id", "o.name AS organization_name"]);
+				->fields(["o.id AS org_id", "o.name AS organization_name"])
+				->orderby("p.full_name");
 
 		if ($id)
 			$q->where("p.id = ?", $id);

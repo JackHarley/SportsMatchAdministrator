@@ -391,7 +391,8 @@ class User {
 				->join("LEFT JOIN user_groups ug ON ug.id = u.group_id")
 				->fields(["ug.id AS user_group_id", "ug.name AS group_name", "ug.special AS group_special"])
 				->join("LEFT JOIN organizations o ON o.id = u.organization_id")
-				->fields(["o.id AS org_id", "o.name AS organization_name"]);
+				->fields(["o.id AS org_id", "o.name AS organization_name"])
+				->orderby("u.full_name");
 
 		if ($id)
 			$q->where("u.id = ?", $id);
