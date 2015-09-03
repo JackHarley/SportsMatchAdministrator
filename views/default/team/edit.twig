@@ -44,7 +44,7 @@
 								<strong>Date Registered:</strong> {{ team.epochRegistered|epochtodatetime }}<br>
 								<strong>Registrant:</strong> {{ team.registrant.fullName }}<br>
 								<strong>League:</strong> {% if team.leagueId %}{{ team.getLeague().name }}{% else %}<i>Not Assigned</i>{% endif %}<br>
-								<strong>League Section:</strong> {% if team.leagueSectionId %}{{ team.getLeague().name }} {{ team.getLeagueSection().letter }}{% else %}<i>Not Assigned</i>{% endif %}
+								<strong>League Section:</strong> {% if team.leagueSectionId %}Section {{ team.getLeagueSection().letter }}{% else %}<i>Not Assigned</i>{% endif %}
 							</p>
 
 							<p>
