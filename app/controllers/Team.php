@@ -91,7 +91,7 @@ class Team {
 	public static function edit() {
 		Controller::requirePermissions(["RegisterTeamsForOwnOrganization"]);
 
-		$team = current(TeamModel::get($_POST["id"]));
+		$team = current(TeamModel::get($_GET["id"]));
 		if ($team->organizationId != User::getVisitor()->organizationId)
 			ErrorHandler::forbidden();
 
