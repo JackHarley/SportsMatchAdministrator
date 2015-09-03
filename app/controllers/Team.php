@@ -91,7 +91,7 @@ class Team {
 	public static function edit() {
 		Controller::requirePermissions(["RegisterTeamsForOwnOrganization"]);
 
-		$team = current(TeamModel::get($_GET["id"]));
+		$team = current(TeamModel::get($_POST["id"]));
 		if ($team->organizationId != User::getVisitor()->organizationId)
 			ErrorHandler::forbidden();
 
@@ -109,7 +109,7 @@ class Team {
 		Controller::requireFields("post", ["name", "team"], "/acp/team");
 		Controller::requirePermissions(["RegisterTeamsForOwnOrganization"]);
 
-		$team = current(TeamModel::get($_GET["team"]));
+		$team = current(TeamModel::get($_POST["team"]));
 		if ($team->organizationId != User::getVisitor()->organizationId)
 			ErrorHandler::forbidden();
 
