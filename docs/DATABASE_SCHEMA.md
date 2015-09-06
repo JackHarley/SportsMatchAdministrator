@@ -53,14 +53,19 @@ Match fixtures with play-by dates
 
 * **id** - Primary key identifier
 * **home_team_id** - Home team
+* **home_team_assigned_number** - Allows multiple home teams to be specified in a single fixture by using the "assigned number" property of teams in leagues
 * **away_team_id** - Away team
+* **home_team_assigned_number** - Allows multiple away teams to be specified in a single fixture by using the "assigned number" property of teams in leagues
+* **league_id** - League
 * **play_by_date** - Play by date
 
 ```sql
 CREATE TABLE `fixtures` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `home_team_id` bigint(20) unsigned NOT NULL,
-  `away_team_id` bigint(20) unsigned NOT NULL,
+  `home_team_id` bigint(20) unsigned DEFAULT NULL,
+  `home_team_assigned_number` bigint(20) unsigned DEFAULT NULL,
+  `away_team_id` bigint(20) unsigned DEFAULT NULL,
+  `away_team_assigned_number` bigint(20) unsigned DEFAULT NULL,
   `league_id` bigint(20) unsigned NOT NULL,
   `play_by_date` date NOT NULL,
   PRIMARY KEY (`id`)

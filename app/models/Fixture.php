@@ -42,6 +42,11 @@ class Fixture {
 	public $homeTeamId;
 
 	/**
+	 * @var int home team assigned number
+	 */
+	public $homeTeamAssignedNumber;
+
+	/**
 	 * @var \sma\models\Team away team
 	 */
 	public $awayTeam;
@@ -50,6 +55,11 @@ class Fixture {
 	 * @var int away team id
 	 */
 	public $awayTeamId;
+
+	/**
+	 * @var int away team assigned number
+	 */
+	public $awayTeamAssignedNumber;
 
 	/**
 	 * @var int league id (if applicable)
@@ -69,6 +79,26 @@ class Fixture {
 	}
 
 	/**
+	 * Get formatted home team information
+	 *
+	 * @return string home team string
+	 */
+	public function getHomeTeamString() {
+		return ($this->homeTeamId) ? $this->homeTeam->organization->name . " " . $this->homeTeam->designation : 
+				"Team " . $this->homeTeamAssignedNumber;
+	}
+
+	/**
+	 * Get formatted home team information
+	 *
+	 * @return string away team string
+	 */
+	public function getAwayTeamString() {
+		return ($this->awayTeamId) ? $this->awayTeam->organization->name . " " . $this->awayTeam->designation :
+				"Team " . $this->awayTeamAssignedNumber;
+	}
+
+	/**
 	 * Get objects
 	 *
 	 * @param int $id id
@@ -76,97 +106,64 @@ class Fixture {
 	 * @return \sma\models\Fixture[] teams
 	 */
 	public static function get($id=null, $leagueId=null) {
-
 		$q = (new SelectQuery(Database::getConnection()))
-				->from("teams t")
-				->fields(["t.id", "t.designation", "t.organization_id", "t.league_section_id",
-						"t.registrant_id", "t.epoch_registered"])
-				->join("LEFT JOIN organizations o ON o.id=t.organization_id")
-				->fields(["o.id AS org_id", "o.name AS organization_name"])
-				->join("LEFT JOIN users u ON u.id=t.registrant_id")
-				->fields(["u.id AS u_id", "u.full_name"]);
+				->from("fixtures f")
+				->fields(["f.id", "f.play_by_date", "f.home_team_id", "f.home_team_assigned_number",
+						"f.away_team_id", "f.away_team_assigned_number", "f.league_id"])
+				->orderby("f.play_by_date")
+				->join("LEFT JOIN teams ht ON ht.id=f.home_team_id")
+				->join("LEFT JOIN organizations ho ON ho.id=ht.organization_id")
+				->fields(["ht.designation AS ht_designation", "ho.name AS ho_name"])
+				->join("LEFT JOIN teams at ON at.id=f.away_team_id")
+				->join("LEFT JOIN organizations ao ON ao.id=at.organization_id")
+				->fields(["at.designation AS at_designation", "ao.name AS ao_name"]);
 
 		if ($id)
-			$q->where("t.id = ?", $id);
-		if ($organizationId)
-			$q->where("t.organization_id = ?", $organizationId);
-		if ($designation)
-			$q->where("t.designation = ?", $designation);
-		if ($leagueSectionId !== null) {
-			if ($leagueSectionId === false)
-				$q->where("t.league_section_id IS NULL");
-			else
-				$q->where("t.league_section_id = ?", $leagueSectionId);
-		}
+			$q->where("f.id = ?", $id);
+		if ($leagueId)
+			$q->where("f.league_id = ?", $leagueId);
 
 		$stmt = $q->prepare();
 		$stmt->execute();
 
-		$teams = [];
-		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$team = new self;
-			$team->organization = new Organization();
-			$team->registrant = new User();
-			list($team->id, $team->designation, $team->organizationId, $team->leagueSectionId,
-					$team->registrantId, $team->epochRegistered, $team->organization->id,
-					$team->organization->name, $team->registrant->id, $team->registrant->fullName) = $row;
-			$teams[] = $team;
+		$fixtures = [];
+		while($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$f = new self;
+			$f->homeTeam = new Team();
+			$f->homeTeam->organization = new Organization();
+			list($f->id, $f->playByDate, $f->homeTeamId, $f->homeTeamAssignedNumber, $f->awayTeamId,
+					$f->awayTeamAssignedNumber, $f->leagueId, $f->homeTeam->designation,
+					$f->homeTeam->organization->name, $f->awayTeam->designation,
+					$f->awayTeam->organization->name) = $row;
+
+			$fixtures[] = $f;
 		}
 
-		return $teams;
+		return $fixtures;
+
 	}
 
 	/**
 	 * Add a new fixture
 	 *
-	 * @param int $organizationId organization
-	 * @param string $designation designation
-	 * @param int $registrantId registrant
-	 * @return int new id
-	 * @throws \sma\exceptions\DuplicateException if a team already exists with the same designation
-	 * for the specified organization
+	 * @param string $playByDate YYYY-MM-DD
+	 * @param int $leagueId league
+	 * @param int $homeTeamId home team
+	 * @param int $awayTeamId away team
+	 * @param int $homeTeamNumber home team assigned number
+	 * @param int $awayTeamNumber away team assigned number
 	 */
-	public static function add($organizationId, $designation, $registrantId) {
-		if (count(self::get(null, $organizationId, $designation)) > 0)
-			throw new DuplicateException();
+	public static function add($playByDate, $leagueId, $homeTeamId=null, $awayTeamId=null,
+			$homeTeamNumber=null, $awayTeamNumber=null) {
 
-		(new InsertQuery(Database::getConnection()))
-				->into("teams")
-				->fields(["organization_id", "designation", "registrant_id", "epoch_registered"])
-				->values("(?,?,?,?)", [$organizationId, $designation, $registrantId, time()])
-				->prepare()
-				->execute();
 
-		return Database::getConnection()->lastInsertId();
 	}
 
 	/**
-	 * Update a team
+	 * Update a fixture
 	 *
-	 * @param int $id team id to update
-	 * @param int $organizationId organization
-	 * @param string $designation designation
-	 * @param int $leagueSectionId league section
 	 */
-	public static function update($id, $organizationId=null, $designation=null,
-			$leagueSectionId=null) {
+	public static function update() {
 
-		$q = (new UpdateQuery(Database::getConnection()))
-				->table("teams")
-				->where("id = ?", $id)
-				->limit(1);
-
-		if ($organizationId)
-			$q->set("organization_id = ?", $organizationId);
-		if ($designation)
-			$q->set("designation = ?", $designation);
-		if ($leagueSectionId !== null) {
-			if ($leagueSectionId == 0)
-				$q->set("league_section_id = NULL");
-			else
-				$q->set("league_section_id = ?", $leagueSectionId);
-		}
-
-		$q->prepare()->execute();
 	}
 }

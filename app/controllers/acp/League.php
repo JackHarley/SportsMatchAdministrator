@@ -9,6 +9,7 @@ namespace sma\controllers\acp;
 
 use sma\Controller;
 use sma\models\Alert;
+use sma\models\Fixture;
 use sma\models\League as LeagueModel;
 use sma\models\User;
 use sma\models\Team;
@@ -53,8 +54,12 @@ class League {
 			Controller::addAlert(new Alert("success", "Team assigned numbers updated successfully"));
 		}
 
+		// construct fixtures
+		$fixtures = Fixture::get(null, $league->id);
+
 		View::load("acp/league_manage.twig", [
 			"league" => $league,
+			"fixtures" => $fixtures,
 			"unassignedTeams" => Team::get(null, null, null, false, $_GET["id"])
 		]);
 	}
