@@ -21,6 +21,9 @@ use sma\query\UpdateQuery;
  */
 class Fixture {
 
+	const TYPE_ASSIGNED_NUMBERS = 1;
+	const TYPE_SPECIFIC_TEAMS = 2;
+
 	/**
 	 * @var int id
 	 */
@@ -79,6 +82,15 @@ class Fixture {
 	}
 
 	/**
+	 * Get league
+	 *
+	 * @return \sma\models\League league
+	 */
+	public function getLeague() {
+		return current(League::get($this->leagueId));
+	}
+
+	/**
 	 * Get formatted home team information
 	 *
 	 * @return string home team string
@@ -131,6 +143,8 @@ class Fixture {
 			$f = new self;
 			$f->homeTeam = new Team();
 			$f->homeTeam->organization = new Organization();
+			$f->awayTeam = new Team();
+			$f->awayTeam->organization = new Organization();
 			list($f->id, $f->playByDate, $f->homeTeamId, $f->homeTeamAssignedNumber, $f->awayTeamId,
 					$f->awayTeamAssignedNumber, $f->leagueId, $f->homeTeam->designation,
 					$f->homeTeam->organization->name, $f->awayTeam->designation,
@@ -146,6 +160,7 @@ class Fixture {
 	/**
 	 * Add a new fixture
 	 *
+	 * @param int $type TYPE_ASSIGNED_NUMBERS or TYPE_SPECIFIC_TEAMS
 	 * @param string $playByDate YYYY-MM-DD
 	 * @param int $leagueId league
 	 * @param int $homeTeamId home team
@@ -153,10 +168,21 @@ class Fixture {
 	 * @param int $homeTeamNumber home team assigned number
 	 * @param int $awayTeamNumber away team assigned number
 	 */
-	public static function add($playByDate, $leagueId, $homeTeamId=null, $awayTeamId=null,
+	public static function add($type, $playByDate, $leagueId, $homeTeamId=null, $awayTeamId=null,
 			$homeTeamNumber=null, $awayTeamNumber=null) {
 
+		$q = (new InsertQuery(Database::getConnection()))->into("fixtures");
 
+		if ($type == self::TYPE_ASSIGNED_NUMBERS) {
+			$q->fields(["play_by_date", "league_id", "home_team_assigned_number", "away_team_assigned_number"]);
+			$q->values("(?,?,?,?)", [$playByDate, $leagueId, $homeTeamNumber, $awayTeamNumber]);
+		}
+		else if ($type == self::TYPE_SPECIFIC_TEAMS) {
+			$q->fields(["play_by_date", "league_id", "home_team_id", "away_team_id"]);
+			$q->values("(?,?,?,?)", [$playByDate, $leagueId, $homeTeamId, $awayTeamId]);
+		}
+
+		$q->prepare()->execute();
 	}
 
 	/**

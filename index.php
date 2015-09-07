@@ -77,6 +77,8 @@ Router::setRoutes([
 		"/acp/player/delete" => ["acp\Player", "delete"],
 		"/acp/player/update" => ["acp\Player", "update"],
 		"/acp/player/exempt" => ["acp\Player", "exempt"],
+		"/acp/fixture/add" => ["acp\Fixture", "add"],
+		"/acp/fixture/delete" => ["acp\Fixture", "delete"],
 		"/acp" => ["acp\Dashboard", "index"],
 		"" => ["Index", "index"]
 ]);
