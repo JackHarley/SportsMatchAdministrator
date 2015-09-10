@@ -12,6 +12,7 @@ use sma\Database;
 use sma\query\DeleteQuery;
 use sma\query\InsertQuery;
 use sma\query\SelectQuery;
+use sma\query\UpdateQuery;
 
 /**
  * League
@@ -138,5 +139,27 @@ class League {
 				->execute();
 
 		return Database::getConnection()->lastInsertId();
+	}
+
+	/**
+	 * Update a league
+	 *
+	 * @param int $id league id
+	 * @param string $name league name
+	 * @param int $managerId manager id
+	 * @return int new id
+	 */
+	public static function update($id, $name=null, $managerId=null) {
+		$q = (new UpdateQuery(Database::getConnection()))
+				->table("leagues")
+				->where("id = ?", $id)
+				->limit(1);
+
+		if ($name)
+			$q->set("name = ?", $name);
+		if ($managerId)
+			$q->set("manager_id = ?", $managerId);
+
+		$q->prepare()->execute();
 	}
 }

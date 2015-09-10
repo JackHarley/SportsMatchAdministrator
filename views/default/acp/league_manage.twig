@@ -53,10 +53,24 @@
 					</div><!-- /.box-header -->
 
 					<div class="box-body">
-						<p>
-							<strong>League Name:</strong> {{ league.name }}<br>
-							<strong>League Manager:</strong> {{ league.getManager().fullName }} - {{ league.getManager().phoneNumber }} - {{ league.getManager().email }}
-						</p>
+						<form action="" method="post">
+							<input type="hidden" name="update-league-details" value="update-league-details">
+							<input type="hidden" name="id" value="{{ league.id }}">
+
+							<label for="name">Name:</label>
+							<input class="form-control" type="text" id="name" name="name" value="{{ league.name }}"><br>
+
+							<label for="manager">
+								Manager:<br>
+							</label>
+							<select class="form-control" id="manager" name="manager">
+								{% for user in users %}
+									<option {% if user.id==league.managerId %}selected{% endif %} value="{{ user.id }}">{{ user.fullName }}</option>
+								{% endfor %}
+							</select><br>
+
+							<button type="submit" class="btn btn-block btn-success"><i class="fa fa-save"></i> Save Changes</button>
+						</form>
 					</div><!-- /.box-body -->
 				</div><!-- /.box -->
 			</div><!-- /.col -->
@@ -100,6 +114,7 @@
 
 		<div class="row">
 			<form action="" method="post">
+				<input type="hidden" name="update-team-numbers" value="update-team-numbers">
 				<input type="hidden" name="league" value="{{ league.id }}">
 
 				{% for section in league.sections %}

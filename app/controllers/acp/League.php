@@ -44,20 +44,28 @@ class League {
 			Controller::requirePermissions(["AdminAllLeagues"]);
 
 		if (!empty($_POST)) {
-			$teams = $league->getAssignedTeams();
+			if (array_key_exists("update-team-numbers", $_POST)) {
+				$teams = $league->getAssignedTeams();
 
-			foreach($teams as $team) {
-				if (array_key_exists("team" . $team->id . "number", $_POST))
-					Team::update($team->id, null, null, null, null, $_POST["team" . $team->id . "number"]);
+				foreach ($teams as $team) {
+					if (array_key_exists("team" . $team->id . "number", $_POST))
+						Team::update($team->id, null, null, null, null, $_POST["team" . $team->id . "number"]);
+				}
+
+				Controller::addAlert(new Alert("success", "Team assigned numbers updated successfully"));
 			}
-
-			Controller::addAlert(new Alert("success", "Team assigned numbers updated successfully"));
+			else if (array_key_exists("update-league-details", $_POST)) {
+				LeagueModel::update($_POST["id"], $_POST["name"], $_POST["manager"]);
+				Controller::addAlert(new Alert("success", "League details updated successfully"));
+				$league = current(LeagueModel::get($_POST["id"]));
+			}
 		}
 
 		// construct fixtures
 		$fixtures = Fixture::get(null, $league->id);
 
 		View::load("acp/league_manage.twig", [
+			"users" => User::get(),
 			"league" => $league,
 			"fixtures" => $fixtures,
 			"unassignedTeams" => Team::get(null, null, null, false, $_GET["id"])
