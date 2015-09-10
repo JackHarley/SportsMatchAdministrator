@@ -90,29 +90,35 @@ class Team {
 	}
 
 	public static function edit() {
-		Controller::requirePermissions(["RegisterTeamsForOwnOrganization"]);
-
 		$team = current(TeamModel::get($_GET["id"]));
-		if ($team->organizationId != User::getVisitor()->organizationId)
-			ErrorHandler::forbidden();
+
+		if (!User::getVisitor()->checkPermissions(["RegisterTeamsForAnyOrganization"])) {
+			Controller::requirePermissions(["RegisterTeamsForOwnOrganization"]);
+			if ($team->organizationId != User::getVisitor()->organizationId)
+				ErrorHandler::forbidden();
+		}
 
 		if (!empty($_POST)) {
 			TeamModel::update($_POST["id"], null, $_POST["designation"]);
 			Controller::addAlert(new Alert("success", "Team details updated successfully"));
+			$team = current(TeamModel::get($_GET["id"]));
 		}
 
 		View::load("team/edit.twig", [
-				"team" => current(TeamModel::get($_GET["id"]))
+				"team" => $team
 		]);
 	}
 
 	public static function addplayer() {
 		Controller::requireFields("post", ["name", "team"], "/acp/team");
-		Controller::requirePermissions(["RegisterTeamsForOwnOrganization"]);
 
 		$team = current(TeamModel::get($_POST["team"]));
-		if ($team->organizationId != User::getVisitor()->organizationId)
-			ErrorHandler::forbidden();
+
+		if (!User::getVisitor()->checkPermissions(["RegisterTeamsForAnyOrganization"])) {
+			Controller::requirePermissions(["RegisterTeamsForOwnOrganization"]);
+			if ($team->organizationId != User::getVisitor()->organizationId)
+				ErrorHandler::forbidden();
+		}
 
 		Player::add($_POST["name"], $team->id, false);
 
@@ -122,11 +128,14 @@ class Team {
 
 	public static function updateplayer() {
 		Controller::requireFields("get", ["id"], "/acp/team");
-		Controller::requirePermissions(["RegisterTeamsForOwnOrganization"]);
 
 		$player = current(Player::get($_GET["id"]));
-		if ($player->getTeam()->organizationId != User::getVisitor()->organizationId)
-			ErrorHandler::forbidden();
+
+		if (!User::getVisitor()->checkPermissions(["RegisterTeamsForAnyOrganization"])) {
+			Controller::requirePermissions(["RegisterTeamsForOwnOrganization"]);
+			if ($player->getTeam()->organizationId != User::getVisitor()->organizationId)
+				ErrorHandler::forbidden();
+		}
 
 		if (($_GET["exempt"] == 1) && (!$player->exempt)) {
 			if ($player->getTeam()->getNumberOfExemptPlayers() >= MAX_EXEMPTS) {
