@@ -51,6 +51,7 @@
 							<li><a href="{{ base_links_url }}/user/login">Login</a></li>
 						{% else %}
 							<li><a href="{{ base_links_url }}/user">Logged in as {{ visitor.fullName }} ({{ visitor.group.name }})</a></li>
+							{% if visitor.checkPermissions("AdminAccessDashboard") %}<li><a href="{{ base_links_url }}/acp">ACP</a></li>{% endif %}
 							<li><a href="{{ base_links_url }}/user/logout">Logout</a></li>
 						{% endif %}
 					</ul>
