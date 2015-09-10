@@ -68,7 +68,15 @@
 
 							<label for="designation">Team Name:</label><br>
 							<p><i>This should be used to indicate the team's position within your {{ constant("ORGANIZATION_WORD") }}: e.g. Senior A, Senior B, Junior A, Junior B, First Year A, First Year B</i></p>
-							<input class="form-control" type="text" name="designation" id="designation" placeholder="Senior A">
+							{% if designations is same as(true) %}
+								<input class="form-control" type="text" name="designation" id="designation" placeholder="Senior A">
+							{% else %}
+								<select class="form-control" name="designation" id="designation">
+									{% for designation in designations %}
+										<option>{{ designation }}</option>
+									{% endfor %}
+								</select>
+							{% endif %}
 
 							<div class="clearfix" style="height: 20px;"></div>
 

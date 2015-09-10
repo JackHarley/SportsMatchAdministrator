@@ -286,4 +286,21 @@ class Team {
 
 		$q->prepare()->execute();
 	}
+
+	/**
+	 * Get valid designations
+	 *
+	 * @return string[]|bool either boolean true indicating any designation is acceptable or an
+	 * array of valid string designations
+	 */
+	public static function getValidDesignations() {
+		$q = (new SelectQuery(Database::getConnection()))
+				->from("valid_team_designations")
+				->fields(["designation"]);
+		$stmt = $q->prepare();
+		$stmt->execute();
+
+		$data = $stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
+		return (!empty($data)) ? $data : true;
+	}
 }

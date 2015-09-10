@@ -332,3 +332,16 @@ CREATE TABLE `users` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
+
+valid_team_designations
+-------------------------
+Valid team designations, if this table contains values then the designation field will become a drop-down and only the provided designations will be allowed to be submitted.
+
+* **designation** - Designation string, e.g. Senior 1, Senior 2, Junior 1, Junior 2, Minor A
+
+```sql
+CREATE TABLE `valid_team_designations` (
+  `designation` varchar(32) NOT NULL,
+  PRIMARY KEY (`designation`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```

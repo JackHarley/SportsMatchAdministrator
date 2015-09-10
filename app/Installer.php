@@ -195,6 +195,7 @@ class Installer {
 			$tables = [
 				"autologins",
 				"database_version",
+				"fixtures",
 				"league_sections",
 				"leagues",
 				"match_reports",
@@ -207,7 +208,8 @@ class Installer {
 				"teams",
 				"user_groups",
 				"user_groups_permissions",
-				"users"
+				"users",
+				"valid_team_designations"
 			];
 			$tableString = "`" . implode("`, `", $tables) . "`";
 			$db->query("DROP TABLE IF EXISTS " . $tableString);
@@ -414,6 +416,11 @@ class Installer {
 			  `organization_id` bigint(20) unsigned DEFAULT NULL,
 			  PRIMARY KEY (`id`),
 			  UNIQUE KEY `email` (`email`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+			CREATE TABLE `valid_team_designations` (
+			  `designation` varchar(32) NOT NULL,
+			  PRIMARY KEY (`designation`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 QUERY
 		);

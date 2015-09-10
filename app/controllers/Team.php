@@ -29,6 +29,7 @@ class Team {
 
 			View::load("team/register_form.twig", [
 					"organizations" => Organization::get(),
+					"designations" => TeamModel::getValidDesignations(),
 					"leagues" => League::get(),
 					"teams" => $teams
 			]);
