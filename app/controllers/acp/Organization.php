@@ -38,6 +38,30 @@ class Organization {
 		}
 	}
 
+	public static function edit() {
+		Controller::requirePermissions(["AdminAccessDashboard", "AdminOrganizations"]);
+
+		if (empty($_POST)) {
+			View::load("acp/organization_edit.twig", [
+				"object" => current(OrganizationModel::get($_GET["id"]))
+			]);
+		}
+		else {
+			Controller::requireFields("post", ["name"], "/acp/organization");
+			try {
+				OrganizationModel::update($_POST["id"], $_POST["name"]);
+
+				Controller::addAlert(new Alert("success", "Organization updated successfully"));
+				Controller::redirect("/acp/organization");
+			}
+			catch (DuplicateException $e) {
+				Controller::addAlert(new Alert("danger",
+						"Organization name is already used, please choose an alternative name and try again"));
+				Controller::redirect("/acp/organization");
+			}
+		}
+	}
+
 	public static function delete() {
 		Controller::requirePermissions(["AdminAccessDashboard", "AdminOrganizations",
 				"PerformDeletionOperations"]);

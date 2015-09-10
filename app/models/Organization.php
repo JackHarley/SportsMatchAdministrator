@@ -13,6 +13,7 @@ use sma\exceptions\DuplicateException;
 use sma\query\DeleteQuery;
 use sma\query\InsertQuery;
 use sma\query\SelectQuery;
+use sma\query\UpdateQuery;
 
 /**
  * Organization
@@ -93,5 +94,31 @@ class Organization {
 				->execute();
 
 		return Database::getConnection()->lastInsertId();
+	}
+
+	/**
+	 * Update object
+	 *
+	 * @param int $id org id
+	 * @param string $name
+	 * @return int object id
+	 * @throws \sma\exceptions\DuplicateException if name already exists
+	 */
+	public static function update($id, $name=null) {
+		$objs = self::get(null, $name);
+		if (count($objs) > 0) {
+			if (current($objs)->id != $id)
+				throw new DuplicateException();
+		}
+
+		$q = (new UpdateQuery(Database::getConnection()))
+				->table("organizations")
+				->where("id = ?", $id)
+				->limit(1);
+
+		if ($name)
+			$q->set("name = ?", $name);
+
+		$q->prepare()->execute();
 	}
 }
