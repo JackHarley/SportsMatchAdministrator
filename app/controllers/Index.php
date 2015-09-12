@@ -7,6 +7,7 @@
  */
 namespace sma\controllers;
 
+use sma\models\League;
 use sma\models\Setting;
 use sma\View;
 
@@ -14,7 +15,8 @@ class Index {
 
 	public static function index() {
 		View::load("index.twig", [
-				"info" => Setting::get("info_box_content")
+				"info" => Setting::get("info_box_content"),
+				"leagues" => League::get()
 		]);
 	}
 }
