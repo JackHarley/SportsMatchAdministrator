@@ -335,11 +335,11 @@ class Installer {
 			CREATE TABLE `matches` (
 			  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			  `date` date NOT NULL,
+			  `league_id` bigint(20) unsigned NOT NULL,
 			  `home_team_id` bigint(20) unsigned NOT NULL,
 			  `away_team_id` bigint(20) unsigned NOT NULL,
 			  `home_score` tinyint unsigned NOT NULL,
 			  `away_score` tinyint unsigned NOT NULL,
-			  `winner_team_id` bigint(20) unsigned DEFAULT NULL,
 			  PRIMARY KEY (`id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -368,7 +368,7 @@ class Installer {
 			CREATE TABLE `players` (
 			  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			  `full_name` varchar(128) NOT NULL,
-			  `team_id` bigint(20) unsigned NOT NULL,
+			  `team_id` bigint(20) unsigned DEFAULT NULL,
 			  `exempt` tinyint(1) unsigned NOT NULL,
 			  PRIMARY KEY (`id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -388,6 +388,12 @@ class Installer {
 			  `assigned_number` bigint(20) unsigned DEFAULT NULL,
 			  `epoch_registered` bigint(20) unsigned NOT NULL,
 			  `registrant_id` bigint(20) unsigned NOT NULL,
+			  `score_for` smallint(6) unsigned NOT NULL DEFAULT 0,
+			  `score_against` smallint(6) unsigned NOT NULL DEFAULT 0,
+			  `wins` smallint(6) unsigned NOT NULL DEFAULT 0,
+			  `draws` smallint(6) unsigned NOT NULL DEFAULT 0,
+			  `losses` smallint(6) unsigned NOT NULL DEFAULT 0,
+			  `points` smallint(6) unsigned NOT NULL DEFAULT 0,
 			  PRIMARY KEY (`id`),
 			  UNIQUE KEY `organization_designation` (`organization_id`,`designation`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -437,5 +443,7 @@ QUERY
 
 		Permission::add("Team", "RegisterTeamsForOwnOrganization", "Register teams for their own organization");
 		Permission::add("Team", "RegisterTeamsForAnyOrganization", "Register teams for any organization");
+
+		Permission::add("Match", "SubmitMatchReport", "Submit match reports for completed matches");
 	}
 }

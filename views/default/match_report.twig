@@ -1,0 +1,202 @@
+{#
+	Sports Match Administrator
+
+	Copyright © 2014-2015, Jack P. Harley, jackpharley.com
+	All Rights Reserved
+#}
+
+{% extends "base.twig" %}
+
+{% block pageTitle %}Submit Match Report{% endblock %}
+
+{% block javascript %}
+	<script type="text/javascript" src="{{ base_view_url }}/acp/plugins/datepicker/bootstrap-datepicker.js"></script>
+
+	<script type="text/javascript">
+		$('.datepicker').datepicker({
+			todayBtn: true,
+			format: 'yyyy-mm-dd',
+			endDate: "0d",
+			autoclose: true
+		});
+
+		function leagueChanged() {
+			var leagueInput = $("#league");
+
+			$.get(
+				"{{ base_links_url }}/ajax/teams",
+				{
+					league: leagueInput.val(),
+					organization: {{ visitor.organizationId }}
+				},
+				function(data) {
+					for(var team in data) {
+						$("#reporter-team").append('<option value="'+data[team].id+'">'+data[team].string+'</option>');
+					}
+
+					$.get(
+						"{{ base_links_url }}/ajax/teams",
+						{
+							league: leagueInput.val()
+						},
+						function(data) {
+							for(var team in data) {
+								$("#opposing-team").append('<option value="'+data[team].id+'">'+data[team].string+'</option>');
+							}
+							$("#post-league-selection").slideDown();
+						},
+						"json"
+					);
+				},
+				"json"
+			);
+		}
+
+		function teamChanged() {
+			var playersTable = $("#players-table");
+
+			$.get(
+				"{{ base_links_url }}/ajax/players",
+				{
+					team: $("#reporter-team").val()
+				},
+				function(data) {
+					playersTable.empty();
+					for(var player in data) {
+						playersTable.append('<tr><td style="width: 10px;"><input type="checkbox" name="player'+data[player].id+'" value="true"></td><td class="clickable">'+data[player].name+'</td></tr>');
+					}
+
+					$("#players-placeholder").hide();
+					$("#players").slideDown();
+					$("#submit-box").slideDown();
+				},
+				"json"
+			);
+		}
+	</script>
+{% endblock %}
+
+{% block css %}
+	<link rel="stylesheet" type="text/css" href="{{ base_view_url }}/acp/plugins/datepicker/datepicker3.css">
+{% endblock %}
+
+{% block body %}
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<ol class="breadcrumb">
+				<li><a href="{{ base_links_url }}">Home</a></li>
+				<li class="active">Submit Match Report</li>
+			</ol>
+
+			<h2 style="margin-bottom: 20px;"><i class="fa fa-send"></i> Submit Match Report</h2>
+		</div>
+		<form action="" method="post">
+			<div class="col-md-6 col-xs-12">
+				<div class="panel panel-primary">
+					<div class="panel-heading">1. Match Details</div>
+
+					<div class="panel-body">
+						<label for="date">Match Date:</label>
+						<input id="date" class="form-control datepicker" type="text" name="date">
+
+						<br>
+
+						<label for="league">League:</label>
+						<select class="form-control" name="league" id="league" onchange="leagueChanged();">
+							<option disabled selected value="0">Select League...</option>
+							{% for league in leagues %}
+								<option value="{{ league.id }}">{{ league.name }}</option>
+							{% endfor %}
+						</select>
+
+						<br>
+
+						<div id="post-league-selection" style="display: none;">
+							<label for="reporter-team">Your Team:</label>
+							<select class="form-control" name="reporter-team" id="reporter-team" onchange="teamChanged();">
+								<option disabled selected value="0">Select Team...</option>
+							</select>
+
+							<br>
+
+							<label>Are you playing at home or away? If this is not applicable simply select Home</label><br>
+							<label class="radio-inline">
+								<input type="radio" name="location" id="location-home" value="home"> Home
+							</label>
+							<label class="radio-inline">
+								<input type="radio" name="location" id="location-away" value="away"> Away
+							</label>
+
+							<br><br>
+
+							<label for="reporter-score">Your Score:</label>
+							<input id="reporter-score" type="number" name="reporter-score" class="form-control">
+
+							<br>
+
+							<label for="opposing-team">Opposing Team:</label>
+							<select class="form-control" name="opposing-team" id="opposing-team">
+								<option disabled selected value="0">Select Team...</option>
+							</select>
+
+							<br>
+
+							<label for="opposing-score">Opposing Team's Score:</label>
+							<input id="opposing-score" type="number" name="opposing-score" class="form-control">
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-6 col-xs-12">
+				<div class="panel panel-primary">
+					<div class="panel-heading">2. Participating Players</div>
+
+					<div class="panel-body">
+						<div id="players-placeholder">
+							<p style="font-style: italic;">
+								Please fill out the Match Details section first and then you will be able to select the participating players.
+							</p>
+						</div>
+
+						<div id="players" style="display: none;">
+							<p>
+								Please tick all of the below players who participated in this match, please note that players are listed alphabetically.
+							</p>
+
+							<table class="table">
+								<tbody id="players-table">
+								</tbody>
+							</table>
+
+							<h4>Additional Players</h4>
+							<p>
+								If any additional players not listed above played in this match please enter their names in the boxes below.<br>
+								<strong class="text-danger">YOU MUST SPELL THEIR NAMES CORRECTLY!</strong>
+							</p>
+							{% for i in 1..5 %}
+								<input class="form-control" type="text" name="additional-player{{ i }}" style="margin-bottom: 2px;" placeholder="Additional Player {{ i }}">
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-12 col-xs-12">
+				<div class="panel panel-primary" id="submit-box" style="display: none;">
+					<div class="panel-heading">3. Submit</div>
+
+					<div class="panel-body">
+						<p style="font-style: italic;">
+							Double check all of the details and then click the button below, you will not be able to modify your report after it has been submitted!
+						</p>
+
+						<button type="submit" class="btn btn-block btn-success"><i class="fa fa-send"></i> Submit Match Report</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock %}

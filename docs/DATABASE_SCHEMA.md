@@ -114,6 +114,7 @@ Reports from a match (each team manager will enter a report, they will be cross-
 * **id** - Primary key identifier
 * **match_id** - Match the report is for
 * **user_id** - User entering the report
+* **team_id** - Team entering the report
 * **epoch** - UNIX epoch timestamp for when the report was entered
 * **home_score** - Home team score (goals, points, etc.)
 * **away_score** - Away team score (goals, points, etc.)
@@ -123,6 +124,7 @@ CREATE TABLE `match_reports` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `match_id` bigint(20) unsigned NOT NULL,
   `user_id` bigint(20) unsigned NOT NULL,
+  `team_id` bigint(20) unsigned NOT NULL,
   `epoch` bigint(20) unsigned NOT NULL,
   `home_score` tinyint unsigned NOT NULL,
   `away_score` tinyint unsigned NOT NULL,
@@ -136,21 +138,21 @@ Matches (two teams playing against each other)
 
 * **id** - Primary key identifier
 * **date** - Date (YYYY-MM-DD) match is played
+* **league_id** - League
 * **home_team_id** - Home team
 * **away_team_id** - Away team
 * **home_score** - Home team score (goals, points, etc.) (field will not be filled until after match reports are cross-checked)
 * **away_score** - Away team score (goals, points, etc.) (field will not be filled until after match reports are cross-checked)
-* **winner_team_id** - If applicable, the winning team (field will not be filled until after match reports are cross-checked)
 
 ```sql
 CREATE TABLE `matches` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `date` date NOT NULL,
+  `league_id` bigint(20) unsigned NOT NULL,
   `home_team_id` bigint(20) unsigned NOT NULL,
   `away_team_id` bigint(20) unsigned NOT NULL,
   `home_score` tinyint unsigned NOT NULL,
   `away_score` tinyint unsigned NOT NULL,
-  `winner_team_id` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
@@ -223,7 +225,7 @@ players
 CREATE TABLE `players` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `full_name` varchar(128) NOT NULL,
-  `team_id` bigint(20) unsigned NOT NULL,
+  `team_id` bigint(20) unsigned DEFAULT NULL,
   `exempt` tinyint(1) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -256,6 +258,12 @@ Teams
 * **assigned_number** - Assigned number within a league used for fixture creation
 * **epoch_registered** - Epoch of when the team was initially registered
 * **registrant_id** - User who performed the initial registration
+* **score_for** - Total score for from matches
+* **score_against** - Total score against from matches
+* **wins** - Number of wins
+* **draws** - Number of draws
+* **losses** - Number of losses
+* **wins** - Number of points (win=3; draw=1; loss=0)
 
 ```sql
 CREATE TABLE `teams` (
@@ -267,6 +275,12 @@ CREATE TABLE `teams` (
   `assigned_number` bigint(20) unsigned DEFAULT NULL,
   `epoch_registered` bigint(20) unsigned NOT NULL,
   `registrant_id` bigint(20) unsigned NOT NULL,
+  `score_for` smallint(6) unsigned NOT NULL DEFAULT 0,
+  `score_against` smallint(6) unsigned NOT NULL DEFAULT 0,
+  `wins` smallint(6) unsigned NOT NULL DEFAULT 0,
+  `draws` smallint(6) unsigned NOT NULL DEFAULT 0,
+  `losses` smallint(6) unsigned NOT NULL DEFAULT 0,
+  `points` smallint(6) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `organization_designation` (`organization_id`,`designation`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

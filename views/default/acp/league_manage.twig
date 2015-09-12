@@ -224,7 +224,7 @@
 										<td>{{ fixture.playByDate }}</td>
 										<td>{{ fixture.getHomeTeamString() }}</td>
 										<td>{{ fixture.getAwayTeamString() }}</td>
-										<td><a class="btn btn-danger btn-xs" href="{{ base_links_url }}/acp/fixture/delete?id={{ fixture.id }}"><i class="fa fa-trash"></i> Delete</a></td>
+										<td class="text-right"><a class="btn btn-danger btn-xs" href="{{ base_links_url }}/acp/fixture/delete?id={{ fixture.id }}"><i class="fa fa-trash"></i> Delete</a></td>
 									</tr>
 								{% endfor %}
 							</tbody>

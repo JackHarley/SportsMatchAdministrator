@@ -128,12 +128,16 @@ class Player {
 		if (count(self::get(null, $fullName, $teamId)) > 0)
 			throw new DuplicateException();
 
-		(new InsertQuery(Database::getConnection()))
+		$q = (new InsertQuery(Database::getConnection()))
 				->into("players")
-				->fields(["full_name", "team_id", "exempt"])
-				->values("(?,?,?)", [ucwords($fullName), $teamId, (int) $exempt])
-				->prepare()
-				->execute();
+				->fields(["full_name", "team_id", "exempt"]);
+
+		if ($teamId)
+			$q->values("(?,?,?)", [ucwords($fullName), $teamId, (int) $exempt]);
+		else
+			$q->values("(?,NULL,?)", [ucwords($fullName), (int) $exempt]);
+
+		$q->prepare()->execute();
 
 		return Database::getConnection()->lastInsertId();
 	}
