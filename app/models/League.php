@@ -105,7 +105,8 @@ class League {
 	public static function get($id=null) {
 		$q = (new SelectQuery(Database::getConnection()))
 				->from("leagues l")
-				->fields(["l.id", "l.name", "l.manager_id"]);
+				->fields(["l.id", "l.name", "l.manager_id"])
+				->orderby("l.name");
 
 		if ($id)
 			$q->where("l.id = ?", $id);
