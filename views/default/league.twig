@@ -1,0 +1,79 @@
+{#
+	Sports Match Administrator
+
+	Copyright © 2014-2015, Jack P. Harley, jackpharley.com
+	All Rights Reserved
+#}
+
+{% extends "base.twig" %}
+
+{% block pageTitle %}{{ league.name }} League{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<ol class="breadcrumb">
+					<li><a href="{{ base_links_url }}">Home</a></li>
+					<li class="active">Leagues</li>
+					<li class="active">{{ league.name }}</li>
+				</ol>
+
+				<h2 style="margin-bottom: 20px;"><span class="glyphicon glyphicon-tasks"></span> {{ league.name }} League</h2>
+			</div>
+
+			{% for section in league.sections %}
+				<div class="col-md-6 col-sm-12 col-xs-12">
+					<div class="panel panel-primary">
+						<div class="panel-heading">Section {{ section.letter }}</div>
+
+						<table class="table">
+							<tr>
+								<th></th>
+								<th>Team</th>
+								<th>W</th>
+								<th>D</th>
+								<th>L</th>
+								<th>SF</th>
+								<th>SA</th>
+								<th>SD</th>
+								<th>P</th>
+							</tr>
+
+							{% for team in section.getAssignedTeams() %}
+								<tr>
+									<td>{{ loop.index }}</td>
+									<td>{{ team.organization.name }} {{ team.designation }} ({{ team.assignedNumber }})</td>
+									<td>0</td>
+									<td>0</td>
+									<td>0</td>
+									<td>0</td>
+									<td>0</td>
+									<td>0</td>
+									<td>0</td>
+								</tr>
+							{% else %}
+								<tr><td>There are no teams assigned to this section</td></tr>
+							{% endfor %}
+						</table>
+					</div><!-- /.box -->
+				</div>
+			{% endfor %}
+
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="panel panel-success">
+					<div class="panel-heading">Fixtures</div>
+
+					<div class="panel-body">
+						{% for date,strings in fixtures %}
+							<h4>{{ date }}</h4>
+							{% for string in strings %}
+								{{ string }}<br>
+							{% endfor %}
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

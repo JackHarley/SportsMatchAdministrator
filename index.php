@@ -45,6 +45,7 @@ Router::setRoutes([
 		"/install/install" => ["Installer", "install"],
 		"/install/upgrade" => ["Installer", "upgrade"],
 		"/install" => ["Installer", "index"],
+		"/league" => ["League", "index"],
 		"/user/login" => ["User", "login"],
 		"/user/logout" => ["User", "logout"],
 		"/user" => ["User", "index"],

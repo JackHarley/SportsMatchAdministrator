@@ -97,6 +97,72 @@ class League {
 	}
 
 	/**
+	 * Construct a nice array of dates to fixtures
+	 *
+	 * @return array like such:
+	 * [
+	 *   "18/09/2015" => [
+	 *     "Lorem Ipsum A vs. Dolor Sit C",
+	 *     "Dolor Sit A vs. Lorem Ipsum"
+	 *   ],
+	 *   "20/09/2015" => [
+	 *     "Lorem Ipsum A vs. Dolor Sit C",
+	 *     "Dolor Sit A vs. Lorem Ipsum"
+	 *   ],
+	 * ]
+	 */
+	public function constructFixtures() {
+		// first we grab all fixtures for the league
+		$fixtures = Fixture::get(null, $this->id);
+		// we'll also be needing all sections
+		$sections = LeagueSection::get(null, $this->id);
+
+		// now we iterate over and expand them into teams
+		/**
+		 * @var $returnData
+		 * struc:
+		 * [
+		 *   "18/09/2015" => [
+		 *     "Lorem Ipsum A vs. Dolor Sit C",
+		 *     "Dolor Sit A vs. Lorem Ipsum"
+		 *   ]
+		 * ]
+		 */
+		$returnData = [];
+		foreach($fixtures as $fixture) {
+			if (!array_key_exists($fixture->playByDate, $returnData))
+				$returnData[$fixture->playByDate] = [];
+
+			if (($fixture->homeTeamId) && ($fixture->awayTeamId)) { // id vs id are easy peasy
+				$returnData[$fixture->playByDate][] =
+						$fixture->homeTeam->organization->name . " " .
+						$fixture->homeTeam->designation . " vs. " .
+						$fixture->awayTeam->organization->name . " " .
+						$fixture->awayTeam->designation;
+			}
+			else {
+				foreach($sections as &$section) { // pass by reference is important! otherwise we lose the assigned teams on the next loop and have to re-query (very costly!)
+					$homeTeam = false;
+					$awayTeam = false;
+					$potentialTeams = $section->getAssignedTeams(); // dwbi this is quick cached
+
+					foreach($potentialTeams as $potentialTeam) {
+						if ($fixture->homeTeamAssignedNumber == $potentialTeam->assignedNumber)
+							$homeTeam = $potentialTeam->organization->name . " " . $potentialTeam->designation;
+						else if ($fixture->awayTeamAssignedNumber == $potentialTeam->assignedNumber)
+							$awayTeam = $potentialTeam->organization->name . " " . $potentialTeam->designation;
+					}
+
+					if (($homeTeam) && ($awayTeam))
+						$returnData[$fixture->playByDate][] = $homeTeam . " vs. " . $awayTeam;
+				}
+			}
+		}
+
+		return $returnData;
+	}
+
+	/**
 	 * Get objects
 	 *
 	 * @param int $id id

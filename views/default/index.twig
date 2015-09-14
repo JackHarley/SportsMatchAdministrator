@@ -40,7 +40,7 @@
 
 				<div class="panel-body">
 					{% for league in leagues %}
-						<p><a class="btn btn-default"><span class="glyphicon glyphicon-tasks"></span> {{ league.name }}</a></p>
+						<p><a href="{{ base_links_url }}/league?id={{ league.id }}" class="btn btn-default"><span class="glyphicon glyphicon-tasks"></span> {{ league.name }}</a></p>
 					{% endfor %}
 				</div>
 			</div>
