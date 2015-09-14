@@ -102,13 +102,15 @@ class League {
 	 * @return array like such:
 	 * [
 	 *   "18/09/2015" => [
-	 *     "Lorem Ipsum A vs. Dolor Sit C",
-	 *     "Dolor Sit A vs. Lorem Ipsum"
-	 *   ],
-	 *   "20/09/2015" => [
-	 *     "Lorem Ipsum A vs. Dolor Sit C",
-	 *     "Dolor Sit A vs. Lorem Ipsum"
-	 *   ],
+	 *     \stdClass(
+	 *       $homeTeam,
+	 *       $awayTeam
+	 *     ),
+	 *     \stdClass(
+	 *       $homeTeam,
+	 *       $awayTeam
+	 *     )
+	 *   ]
 	 * ]
 	 */
 	public function constructFixtures() {
@@ -123,8 +125,14 @@ class League {
 		 * struc:
 		 * [
 		 *   "18/09/2015" => [
-		 *     "Lorem Ipsum A vs. Dolor Sit C",
-		 *     "Dolor Sit A vs. Lorem Ipsum"
+		 *     \stdClass(
+		 *       $homeTeam,
+		 *       $awayTeam
+		 *     ),
+		 *     \stdClass(
+		 *       $homeTeam,
+		 *       $awayTeam
+		 *     )
 		 *   ]
 		 * ]
 		 */
@@ -134,11 +142,10 @@ class League {
 				$returnData[$fixture->playByDate] = [];
 
 			if (($fixture->homeTeamId) && ($fixture->awayTeamId)) { // id vs id are easy peasy
-				$returnData[$fixture->playByDate][] =
-						$fixture->homeTeam->organization->name . " " .
-						$fixture->homeTeam->designation . " vs. " .
-						$fixture->awayTeam->organization->name . " " .
-						$fixture->awayTeam->designation;
+				$obj = new \stdClass();
+				$obj->homeTeam = $fixture->homeTeam->organization->name . " " . $fixture->homeTeam->designation;
+				$obj->awayTeam = $fixture->awayTeam->organization->name . " " . $fixture->awayTeam->designation;
+				$returnData[$fixture->playByDate][] = $obj;
 			}
 			else {
 				foreach($sections as &$section) { // pass by reference is important! otherwise we lose the assigned teams on the next loop and have to re-query (very costly!)
@@ -153,8 +160,12 @@ class League {
 							$awayTeam = $potentialTeam->organization->name . " " . $potentialTeam->designation;
 					}
 
-					if (($homeTeam) && ($awayTeam))
-						$returnData[$fixture->playByDate][] = $homeTeam . " vs. " . $awayTeam;
+					if (($homeTeam) && ($awayTeam)) {
+						$obj = new \stdClass();
+						$obj->homeTeam = $homeTeam;
+						$obj->awayTeam = $awayTeam;
+						$returnData[$fixture->playByDate][] = $obj;
+					}
 				}
 			}
 		}

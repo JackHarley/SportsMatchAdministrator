@@ -65,11 +65,17 @@
 					<div class="panel-heading">Fixtures</div>
 
 					<div class="panel-body">
-						{% for date,strings in fixtures %}
-							<h4>{{ date }}</h4>
-							{% for string in strings %}
-								{{ string }}<br>
-							{% endfor %}
+						{% for date,objects in fixtures %}
+							<h4>Play by: {{ date }}</h4>
+							<table class="table">
+								{% for object in objects %}
+									<tr>
+										<td style="width: 40%;">{{ object.homeTeam }}</td>
+										<td style="width: 15%;" class="text-center">vs.</td>
+										<td style="width: 40%;" class="text-right">{{ object.awayTeam }}</td>
+									</tr>
+								{% endfor %}
+							</table>
 						{% endfor %}
 					</div>
 				</div>
