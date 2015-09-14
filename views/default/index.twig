@@ -41,9 +41,13 @@
 				<div class="panel-heading"><span class="glyphicon glyphicon-eye-open"></span> Leagues</div>
 
 				<div class="panel-body">
-					{% for league in leagues %}
-						<p><a href="{{ base_links_url }}/league?id={{ league.id }}" class="btn btn-default"><span class="glyphicon glyphicon-tasks"></span> {{ league.name }}</a></p>
-					{% endfor %}
+					<div class="row">
+						{% for league in leagues %}
+							<div class="col-md-4">
+								<a href="{{ base_links_url }}/league?id={{ league.id }}" class="btn btn-default"><span class="glyphicon glyphicon-tasks"></span> {{ league.name }}</a>
+							</div>
+						{% endfor %}
+					</div>
 				</div>
 			</div>
 		</div>
