@@ -12,6 +12,7 @@ use sma\Database;
 use sma\exceptions\DuplicateException;
 use sma\models\League;
 use sma\models\MatchReport;
+use sma\models\Player;
 use sma\models\Team;
 use sma\models\User;
 use sma\models\Alert;
@@ -26,7 +27,8 @@ class Match {
 
 		if (empty($_POST)) {
 			View::load("match_report.twig", [
-					"leagues" => League::get()
+					"leagues" => League::get(),
+					"players" => Player::get()
 			]);
 		}
 		else {

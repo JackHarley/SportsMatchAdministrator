@@ -7,10 +7,11 @@
 
 {% extends "base.twig" %}
 
-{% block pageTitle %}Submit Match Report{% endblock %}
+{% block pageTitle %}Submit Match Report{% endblock %} 
 
 {% block javascript %}
 	<script type="text/javascript" src="{{ base_view_url }}/acp/plugins/datepicker/bootstrap-datepicker.js"></script>
+	<script type="text/javascript" src="{{ base_view_url }}/js/jquery-ui.min.js"></script>
 
 	<script type="text/javascript">
 		$('.datepicker').datepicker({
@@ -74,10 +75,23 @@
 			);
 		}
 	</script>
+
+	<script type="text/javascript">
+		var allRegisteredPlayers = [{% for player in players %}"{{ player.fullName }}"{% if not loop.last %},{% endif %}{% endfor %}];
+
+		$(".additional-player").autocomplete({
+			source: allRegisteredPlayers,
+			messages: {
+				noResults: '',
+				results: function() {}
+			}
+		});
+</script>
 {% endblock %}
 
 {% block css %}
 	<link rel="stylesheet" type="text/css" href="{{ base_view_url }}/acp/plugins/datepicker/datepicker3.css">
+	<link rel="stylesheet" type="text/css" href="{{ base_view_url }}/css/jquery-ui.min.css">
 {% endblock %}
 
 {% block body %}
@@ -176,7 +190,7 @@
 								<strong class="text-danger">YOU MUST SPELL THEIR NAMES CORRECTLY!</strong>
 							</p>
 							{% for i in 1..5 %}
-								<input class="form-control" type="text" name="additional-player{{ i }}" style="margin-bottom: 2px;" placeholder="Additional Player {{ i }}">
+								<input class="form-control additional-player" type="text" name="additional-player{{ i }}" style="margin-bottom: 2px;" placeholder="Additional Player {{ i }}">
 							{% endfor %}
 						</div>
 					</div>
