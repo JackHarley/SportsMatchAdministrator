@@ -117,9 +117,13 @@ class Match {
 	 * Get objects
 	 *
 	 * @param int $id id
-	 * @return \sma\models\MatchReport[] match reports
+	 * @param string $date date to filter by
+	 * @param int $league league to filter by
+	 * @param int $homeTeamId home team id to filter by
+	 * @param int $awayTeamId away team id to filter by
+	 * @return MatchReport[] match reports
 	 */
-	public static function get($id=null) {
+	public static function get($id=null, $date=null, $league=null, $homeTeamId=null, $awayTeamId=null) {
 		$q = (new SelectQuery(Database::getConnection()))
 				->from("matches")
 				->fields(["id", "date", "league_id", "home_team_id", "away_team_id", "home_score",
@@ -128,6 +132,14 @@ class Match {
 
 		if ($id)
 			$q->where("id = ?", $id);
+		if ($date)
+			$q->where("date = ?", $date);
+		if ($league)
+			$q->where("league_id = ?", $league);
+		if ($homeTeamId)
+			$q->where("home_team_id = ?", $homeTeamId);
+		if ($awayTeamId)
+			$q->where("away_team_id = ?", $awayTeamId);
 
 		$stmt = $q->prepare();
 		$stmt->execute();

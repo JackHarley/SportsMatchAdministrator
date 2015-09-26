@@ -111,8 +111,9 @@ class Controller {
 	 * @param string $type input type (post or get)
 	 * @param string[] $fields required field names
 	 * @param string $redirectPath path to redirect to in case of missing fields
+	 * @param callback $handler function to run if fields are not available
 	 */
-	public static function requireFields($type, $fields, $redirectPath="") {
+	public static function requireFields($type, $fields, $redirectPath="", $handler=null) {
 		switch($type) {
 			case "post":
 				$arrayToCheck = $_POST;
@@ -126,8 +127,14 @@ class Controller {
 
 		foreach($fields as $name) {
 			if ((!array_key_exists($name, $arrayToCheck)) || (trim($arrayToCheck[$name]) === "")) {
-				static::addAlert(new Alert("danger", "You did not complete all of the required fields, please try again"));
-				static::redirect($redirectPath);
+				if (!$handler) {
+					static::addAlert(new Alert("danger",
+							"You did not complete all of the required fields, please try again"));
+					static::redirect($redirectPath);
+				}
+				else {
+					$handler();
+				}
 			}
 		}
 	}
