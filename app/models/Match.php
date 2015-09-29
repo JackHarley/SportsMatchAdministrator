@@ -80,7 +80,7 @@ class Match {
 		if (!$playerId) {
 			$players = Player::get(null, $playerName);
 			if ($players)
-				$playerId = current($players);
+				$playerId = current($players)->id;
 			else
 				$playerId = Player::add($playerName, null, false);
 		}
