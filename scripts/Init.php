@@ -11,13 +11,19 @@ if (!defined('STDIN'))
 define("START_REQUEST", microtime(true));
 
 require_once(__DIR__ . "/../config.php");
-require_once(__DIR__ . "/../lib/sma/Autoloader.php");
-require_once(__DIR__ . "/../lib/Twig/Autoloader.php");
+
+if (!defined("ORGANIZATION_WORD"))
+	define("ORGANIZATION_WORD", "organization");
+
+require_once(__DIR__ . "/../app/Autoloader.php");
+require_once(__DIR__ . "/../vendor/autoload.php");
 
 use sma\Autoloader;
 use sma\Installer;
 
-ini_set("display_errors", "On");
+date_default_timezone_set(TIMEZONE);
+
+ini_set("display_errors", (DISPLAY_ERRORS) ? "On" : "Off");
 error_reporting(E_ALL);
 
 Autoloader::setup();

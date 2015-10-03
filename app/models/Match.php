@@ -11,6 +11,7 @@ use PDO;
 use sma\Database;
 use sma\query\InsertQuery;
 use sma\query\SelectQuery;
+use sma\query\UpdateQuery;
 
 /**
  * Match
@@ -42,7 +43,7 @@ class Match {
 	/**
 	 * @var \sma\models\Team home team
 	 */
-	protected $homeTeam;
+	public $homeTeam;
 
 	/**
 	 * @var int home team id
@@ -52,7 +53,7 @@ class Match {
 	/**
 	 * @var \sma\models\Team away team
 	 */
-	protected $awayTeam;
+	public $awayTeam;
 
 	/**
 	 * @var int away team id
@@ -94,6 +95,86 @@ class Match {
 	}
 
 	/**
+	 * Attempts to reconcile the match reports for the match
+	 *
+	 * @return bool true if a reconciliation was completed/not needed/not able to be performed yet
+	 * or false if the reconciliation failed due to a mismatch
+	 */
+	public function attemptReportReconciliation() {
+		// if scores are already entered, we can't reconcile
+		if (($this->homeScore) || ($this->awayScore))
+			return true;
+
+		// attempt to get both reports
+		$reports = MatchReport::get(null, $this->id);
+		if (count($reports) != 2)
+			return true;
+
+		// check if scores match
+		$homeScore = null;
+		$awayScore = null;
+		foreach($reports as $report) {
+			if (!$homeScore)
+				$homeScore = $report->homeScore;
+			if (!$awayScore)
+				$awayScore = $report->awayScore;
+
+			if (($report->homeScore != $homeScore) || ($report->awayScore != $awayScore))
+				return false;
+		}
+
+		// update match record
+		(new UpdateQuery(Database::getConnection()))
+				->table("matches")
+				->set("home_score = ?", $homeScore)
+				->set("away_score = ?", $awayScore)
+				->where("id = ?", $this->id)
+				->limit(1)
+				->prepare()
+				->execute();
+
+		// update team records
+		if ($homeScore != $awayScore) {
+			$winnerTeamId = ($homeScore > $awayScore) ? $this->homeTeamId : $this->awayTeamId;
+			$loserTeamId = ($homeScore < $awayScore) ? $this->homeTeamId : $this->awayTeamId;
+			$winnerScore = ($homeScore > $awayScore) ? $homeScore : $awayScore;
+			$loserScore = ($homeScore < $awayScore) ? $homeScore : $awayScore;
+
+			(new UpdateQuery(Database::getConnection()))
+				->table("teams")
+				->set("wins = wins+1")
+				->set("score_for = score_for+?", $winnerScore)
+				->set("score_against = score_against+?", $loserScore)
+				->set("points = points+3")
+				->where("id = ?", $winnerTeamId)
+				->prepare()
+				->execute();
+
+			(new UpdateQuery(Database::getConnection()))
+				->table("teams")
+				->set("losses = losses+1")
+				->set("score_for = score_for+?", $loserScore)
+				->set("score_against = score_against+?", $winnerScore)
+				->where("id = ?", $loserTeamId)
+				->prepare()
+				->execute();
+		}
+		else {
+			(new UpdateQuery(Database::getConnection()))
+					->table("teams")
+					->set("draws = draws+1")
+					->set("score_for = score_for+?", $homeScore)
+					->set("score_against = score_against+?", $homeScore)
+					->set("points = points+1")
+					->whereInArray("id", [$this->homeTeamId, $this->awayTeamId])
+					->prepare()
+					->execute();
+		}
+
+		return true;
+	}
+
+	/**
 	 * Add a new match
 	 *
 	 * @param string $date date played (YYYY-MM-DD)
@@ -121,14 +202,30 @@ class Match {
 	 * @param int $league league to filter by
 	 * @param int $homeTeamId home team id to filter by
 	 * @param int $awayTeamId away team id to filter by
-	 * @return MatchReport[] match reports
+	 * @param bool $reconciled set to true to only fetch reconciled matches, false to only fetch
+	 * unreconciled matches
+	 * @param int $limit maximum number of records to fetch
+	 * @return Match[] matches
 	 */
-	public static function get($id=null, $date=null, $league=null, $homeTeamId=null, $awayTeamId=null) {
+	public static function get($id=null, $date=null, $league=null, $homeTeamId=null, $awayTeamId=null,
+			$reconciled=null, $limit=null) {
+
 		$q = (new SelectQuery(Database::getConnection()))
-				->from("matches")
-				->fields(["id", "date", "league_id", "home_team_id", "away_team_id", "home_score",
-						"away_score"])
+				->from("matches m")
+				->fields(["m.id", "m.date", "m.league_id", "m.home_team_id", "m.away_team_id", "m.home_score",
+						"m.away_score"])
+				->join("LEFT JOIN teams ht ON ht.id=m.home_team_id")
+				->fields(["ht.designation AS ht_designation"])
+				->join("LEFT JOIN organizations ho ON ho.id=ht.organization_id")
+				->fields(["ho.name AS ht_org_name"])
+				->join("LEFT JOIN teams at ON at.id=m.away_team_id")
+				->fields(["at.designation AS at_designation"])
+				->join("LEFT JOIN organizations ao ON ao.id=at.organization_id")
+				->fields(["ao.name AS at_org_name"])
 				->orderby("date", "DESC");
+
+		if ($limit)
+			$q->limit($limit);
 
 		if ($id)
 			$q->where("id = ?", $id);
@@ -140,6 +237,12 @@ class Match {
 			$q->where("home_team_id = ?", $homeTeamId);
 		if ($awayTeamId)
 			$q->where("away_team_id = ?", $awayTeamId);
+		if ($reconciled !== null) {
+			if ($reconciled)
+				$q->where("home_score IS NOT NULL AND away_score IS NOT NULL");
+			else
+				$q->where("home_score IS NULL OR away_score IS NULL");
+		}
 
 		$stmt = $q->prepare();
 		$stmt->execute();
@@ -147,8 +250,13 @@ class Match {
 		$matches = [];
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$m = new self;
-			list($m->id, $m->date, $m->leagueId, $m->homeTeamId, $m->awayTeamid, $m->homeScore,
-					$m->awayScore) = $row;
+			$m->homeTeam = new Team();
+			$m->awayTeam = new Team();
+			$m->homeTeam->organization = new Organization();
+			$m->awayTeam->organization = new Organization();
+			list($m->id, $m->date, $m->leagueId, $m->homeTeamId, $m->awayTeamId, $m->homeScore,
+					$m->awayScore, $m->homeTeam->designation, $m->homeTeam->organization->name,
+					$m->awayTeam->designation, $m->awayTeam->organization->name) = $row;
 			$matches[] = $m;
 		}
 

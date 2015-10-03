@@ -115,9 +115,10 @@ class Fixture {
 	 *
 	 * @param int $id id
 	 * @param int $leagueId league to get fixtures for
-	 * @return \sma\models\Fixture[] teams
+	 * @param bool $includeOld set to true to include old fixtures (play by date in the past)
+	 * @return Fixture[] teams
 	 */
-	public static function get($id=null, $leagueId=null) {
+	public static function get($id=null, $leagueId=null, $includeOld=false) {
 		$q = (new SelectQuery(Database::getConnection()))
 				->from("fixtures f")
 				->fields(["f.id", "f.play_by_date", "f.home_team_id", "f.home_team_assigned_number",
@@ -129,7 +130,8 @@ class Fixture {
 				->join("LEFT JOIN teams at ON at.id=f.away_team_id")
 				->join("LEFT JOIN organizations ao ON ao.id=at.organization_id")
 				->fields(["at.designation AS at_designation", "ao.name AS ao_name"]);
-
+		if (!$includeOld)
+			$q->where("play_by_date >= CURDATE()");
 		if ($id)
 			$q->where("f.id = ?", $id);
 		if ($leagueId)

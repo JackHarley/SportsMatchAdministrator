@@ -44,13 +44,13 @@
 								<tr>
 									<td>{{ loop.index }}</td>
 									<td>{{ team.organization.name }} {{ team.designation }} ({{ team.assignedNumber }})</td>
-									<td>0</td>
-									<td>0</td>
-									<td>0</td>
-									<td>0</td>
-									<td>0</td>
-									<td>0</td>
-									<td>0</td>
+									<td>{{ team.wins }}</td>
+									<td>{{ team.draws }}</td>
+									<td>{{ team.losses }}</td>
+									<td>{{ team.scoreFor }}</td>
+									<td>{{ team.scoreAgainst }}</td>
+									<td>{{ team.getScoreDifference() }}</td>
+									<td>{{ team.points }}</td>
 								</tr>
 							{% else %}
 								<tr><td>There are no teams assigned to this section</td></tr>
@@ -59,15 +59,44 @@
 					</div><!-- /.box -->
 				</div>
 			{% endfor %}
+		</div>
 
-			<div class="col-md-12 col-sm-12 col-xs-12">
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 				<div class="panel panel-success">
-					<div class="panel-heading">Fixtures</div>
+					<div class="panel-heading">Recent Match Results</div>
+
+					<div class="panel-body">
+						<p style="font-style: italic; font-size: 0.9em;">
+							<strong>Note:</strong> Only confirmed match results will be shown here, match results are automatically confirmed once both teams have submitted a result for a match and the entered scores are identical.
+						</p>
+
+						<table class="table table-striped">
+							{% for match in matches %}
+								<tr>
+									<td class="hidden-xs">{{ match.date }}</td>
+									<td>{{ match.homeTeam.organization.name }} {{ match.homeTeam.designation }}</td>
+									<td class="text-right">{{ match.homeScore }}</td>
+									<td class="text-center">vs.</td>
+									<td class="text-left">{{ match.awayScore }}</td>
+									<td class="text-right">{{ match.awayTeam.organization.name }} {{ match.awayTeam.designation }}</td>
+								</tr>
+							{% else %}
+								<p>There are currently no confirmed match results for this league, check back later.</p>
+							{% endfor %}
+						</table>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="panel panel-success">
+					<div class="panel-heading">Upcoming Fixtures</div>
 
 					<div class="panel-body">
 						{% for date,objects in fixtures %}
 							<h4>Play by: {{ date }}</h4>
-							<table class="table">
+							<table class="table table-striped">
 								{% for object in objects %}
 									<tr>
 										<td style="width: 40%;">{{ object.homeTeam }}</td>
@@ -76,6 +105,8 @@
 									</tr>
 								{% endfor %}
 							</table>
+						{% else %}
+							<p>There are currently no scheduled fixtures for this league, check back later.</p>
 						{% endfor %}
 					</div>
 				</div>

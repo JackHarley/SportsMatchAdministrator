@@ -98,8 +98,12 @@ class Match {
 			// commit
 			Database::getConnection()->commit();
 
+			// attempt reconciliation
+			$matches = MatchModel::get($matchId);
+			current($matches)->attemptReportReconciliation();
+
 			Controller::addAlert(new Alert("success", "Match report submitted successfully!"));
-			Controller::redirect("");
+			//Controller::redirect("");
 		}
 	}
 }

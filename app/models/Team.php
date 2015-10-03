@@ -83,6 +83,16 @@ class Team {
 	public $epochRegistered;
 
 	/**
+	 * Score related variables
+	 */
+	public $scoreFor;
+	public $scoreAgainst;
+	public $wins;
+	public $draws;
+	public $losses;
+	public $points;
+
+	/**
 	 * Delete the team
 	 */
 	public function delete() {
@@ -148,6 +158,15 @@ class Team {
 	}
 
 	/**
+	 * Get score difference
+	 *
+	 * @return int score difference
+	 */
+	public function getScoreDifference() {
+		return $this->scoreFor - $this->scoreAgainst;
+	}
+
+	/**
 	 * Get objects
 	 *
 	 * @param int $id id
@@ -163,7 +182,8 @@ class Team {
 		$q = (new SelectQuery(Database::getConnection()))
 				->from("teams t")
 				->fields(["t.id", "t.designation", "t.organization_id", "t.league_section_id",
-						"t.league_id", "t.assigned_number", "t.registrant_id", "t.epoch_registered"])
+						"t.league_id", "t.assigned_number", "t.registrant_id", "t.epoch_registered",
+						"t.score_for", "t.score_against", "t.wins", "t.draws", "t.losses", "t.points"])
 				->join("LEFT JOIN organizations o ON o.id=t.organization_id")
 				->fields(["o.id AS org_id", "o.name AS organization_name"])
 				->join("LEFT JOIN users u ON u.id=t.registrant_id")
@@ -194,14 +214,15 @@ class Team {
 
 		$teams = [];
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-			$team = new self;
-			$team->organization = new Organization();
-			$team->registrant = new User();
-			list($team->id, $team->designation, $team->organizationId, $team->leagueSectionId,
-					$team->leagueId, $team->assignedNumber, $team->registrantId, $team->epochRegistered,
-					$team->organization->id, $team->organization->name, $team->registrant->id,
-					$team->registrant->fullName) = $row;
-			$teams[] = $team;
+			$t = new self;
+			$t->organization = new Organization();
+			$t->registrant = new User();
+			list($t->id, $t->designation, $t->organizationId, $t->leagueSectionId,
+					$t->leagueId, $t->assignedNumber, $t->registrantId, $t->epochRegistered,
+					$t->scoreFor, $t->scoreAgainst, $t->wins, $t->draws, $t->losses, $t->points,
+					$t->organization->id, $t->organization->name, $t->registrant->id,
+					$t->registrant->fullName) = $row;
+			$teams[] = $t;
 		}
 
 		return $teams;

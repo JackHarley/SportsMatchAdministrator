@@ -7,8 +7,7 @@
  */
 namespace sma\controllers;
 
-use sma\models\Fixture;
-use sma\models\LeagueSection;
+use sma\models\Match;
 use sma\View;
 use sma\models\League as LeagueModel;
 
@@ -19,7 +18,8 @@ class League {
 
 		View::load("league.twig", [
 			"league" => $league,
-			"fixtures" => $league->constructFixtures()
+			"fixtures" => $league->constructFixtures(),
+			"matches" => Match::get(null, null, null, null, null, true, 10)
 		]);
 	}
 }
