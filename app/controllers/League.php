@@ -8,6 +8,7 @@
 namespace sma\controllers;
 
 use sma\models\Match;
+use sma\models\Team;
 use sma\View;
 use sma\models\League as LeagueModel;
 

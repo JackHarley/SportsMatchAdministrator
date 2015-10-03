@@ -75,11 +75,12 @@ class LeagueSection {
 	/**
 	 * Get assigned teams
 	 *
-	 * @return \sma\models\Team[]
+	 * @param int $orderMethod one of the order method constants (ASSIGNED_NUMBER, POINTS)
+	 * @return Team[]
 	 */
-	public function getAssignedTeams() {
+	public function getAssignedTeams($orderMethod=Team::ASSIGNED_NUMBER) {
 		if (!$this->assignedTeams)
-			$this->assignedTeams = Team::get(null, null, null, $this->id);
+			$this->assignedTeams = Team::get(null, null, null, $this->id, null, $orderMethod);
 		return $this->assignedTeams;
 	}
 

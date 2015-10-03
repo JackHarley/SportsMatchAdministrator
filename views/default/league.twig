@@ -40,7 +40,7 @@
 								<th>P</th>
 							</tr>
 
-							{% for team in section.getAssignedTeams() %}
+							{% for team in section.getAssignedTeams(constant("\\sma\\models\\Team::POINTS")) %}
 								<tr>
 									<td>{{ loop.index }}</td>
 									<td>{{ team.organization.name }} {{ team.designation }} ({{ team.assignedNumber }})</td>

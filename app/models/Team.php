@@ -174,10 +174,13 @@ class Team {
 	 * @param string $designation designation
 	 * @param int|bool $leagueSectionId league section or boolean false to fetch unassigned teams only
 	 * @param int|bool $leagueId league or boolean false to fetch unassigned teams only
+	 * @param int $orderMethod one of the order method constants (ASSIGNED_NUMBER, POINTS)
 	 * @return \sma\models\Team[] teams
 	 */
+	const ASSIGNED_NUMBER = 1;
+	const POINTS = 2;
 	public static function get($id=null, $organizationId=null, $designation=null,
-			$leagueSectionId=null, $leagueId=null) {
+			$leagueSectionId=null, $leagueId=null, $orderMethod=self::ASSIGNED_NUMBER) {
 
 		$q = (new SelectQuery(Database::getConnection()))
 				->from("teams t")
@@ -187,8 +190,15 @@ class Team {
 				->join("LEFT JOIN organizations o ON o.id=t.organization_id")
 				->fields(["o.id AS org_id", "o.name AS organization_name"])
 				->join("LEFT JOIN users u ON u.id=t.registrant_id")
-				->fields(["u.id AS u_id", "u.full_name"])
-				->orderby("t.assigned_number");
+				->fields(["u.id AS u_id", "u.full_name"]);
+
+		if ($orderMethod == self::ASSIGNED_NUMBER)
+			$q->orderby("t.assigned_number");
+		else if ($orderMethod == self::POINTS) {
+			$q->fields("(CAST(t.score_for AS SIGNED)-CAST(t.score_against AS SIGNED)) AS score_difference");
+			$q->orderby("t.points", "DESC");
+			$q->orderby("score_difference", "DESC");
+		}
 
 		if ($id)
 			$q->where("t.id = ?", $id);
