@@ -19,7 +19,7 @@ class League {
 		View::load("league.twig", [
 			"league" => $league,
 			"fixtures" => $league->constructFixtures(),
-			"matches" => Match::get(null, null, null, null, null, true, 10)
+			"matches" => Match::get(null, null, $league->id, null, null, true, 10)
 		]);
 	}
 }
