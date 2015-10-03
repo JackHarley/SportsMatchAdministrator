@@ -228,20 +228,20 @@ class Match {
 			$q->limit($limit);
 
 		if ($id)
-			$q->where("id = ?", $id);
+			$q->where("m.id = ?", $id);
 		if ($date)
-			$q->where("date = ?", $date);
+			$q->where("m.date = ?", $date);
 		if ($league)
-			$q->where("league_id = ?", $league);
+			$q->where("m.league_id = ?", $league);
 		if ($homeTeamId)
-			$q->where("home_team_id = ?", $homeTeamId);
+			$q->where("m.home_team_id = ?", $homeTeamId);
 		if ($awayTeamId)
-			$q->where("away_team_id = ?", $awayTeamId);
+			$q->where("m.away_team_id = ?", $awayTeamId);
 		if ($reconciled !== null) {
 			if ($reconciled)
-				$q->where("home_score IS NOT NULL AND away_score IS NOT NULL");
+				$q->where("m.home_score IS NOT NULL AND m.away_score IS NOT NULL");
 			else
-				$q->where("home_score IS NULL OR away_score IS NULL");
+				$q->where("m.home_score IS NULL OR m.away_score IS NULL");
 		}
 
 		$stmt = $q->prepare();
