@@ -167,7 +167,7 @@ class Match {
 					->set("score_for = score_for+?", $homeScore)
 					->set("score_against = score_against+?", $homeScore)
 					->set("points = points+" . ($homeScore == 0) ? POINTS_FOR_DRAW : POINTS_FOR_SCORING_DRAW)
-					->whereInArray("id=? OR id=?", [$this->homeTeamId, $this->awayTeamId])
+					->where("id=? OR id=?", [$this->homeTeamId, $this->awayTeamId])
 					->prepare()
 					->execute();
 		}
