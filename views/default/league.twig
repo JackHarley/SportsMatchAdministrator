@@ -20,6 +20,18 @@
 				</ol>
 
 				<h2 style="margin-bottom: 20px;"><span class="glyphicon glyphicon-tasks"></span> {{ league.name }} League</h2>
+
+				<div class="well">
+					<span style="font-size: 1.2em;"><strong>League Manager: {{ league.manager.fullName }}</strong></span><br>
+					{% if visitor.checkPermissions("ViewManagerContactInfo") %}
+						Contact Number: {{ league.manager.phoneNumber }}<br>
+						Contact Email: {{ league.manager.email }}
+					{% elseif not visitor.id %}
+						If you wish to see contact info for the league manager and you have permission, <a href="{{ base_links_url }}/user/login?r=/league?id={{ league.id }}">please click here to login</a>.
+					{% else %}
+						If you wish to contact the league manager please contact an administrator, you do not currently have permission to view manager contact information.
+					{% endif %}
+				</div>
 			</div>
 
 			{% for section in league.sections %}

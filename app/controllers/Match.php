@@ -90,7 +90,7 @@ class Match {
 					$match->addParticipatingPlayer($reporterTeam->id, $player->id);
 			}
 
-			for($i=1;$i<=5;$i++) {
+			for($i=1;$i<=8;$i++) {
 				if ((array_key_exists("additional-player" . $i, $_POST)) && ($_POST["additional-player" . $i]))
 					$match->addParticipatingPlayer($reporterTeam->id, null, $_POST["additional-player" . $i]);
 			}

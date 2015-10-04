@@ -12,7 +12,6 @@ use sma\Database;
 use sma\query\DeleteQuery;
 use sma\query\InsertQuery;
 use sma\query\SelectQuery;
-use sma\query\UpdateQuery;
 
 /**
  * Fixture

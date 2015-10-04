@@ -444,6 +444,8 @@ QUERY
 		Permission::add("Team", "RegisterTeamsForOwnOrganization", "Register teams for their own organization");
 		Permission::add("Team", "RegisterTeamsForAnyOrganization", "Register teams for any organization");
 
+		Permission::add("Info", "ViewManagerContactInfo", "View contact information for league managers");
+
 		Permission::add("Match", "SubmitMatchReport", "Submit match reports for completed matches");
 	}
 }
