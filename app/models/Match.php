@@ -145,7 +145,7 @@ class Match {
 				->set("wins = wins+1")
 				->set("score_for = score_for+?", $winnerScore)
 				->set("score_against = score_against+?", $loserScore)
-				->set("points = points+3")
+				->set("points = points+" . POINTS_FOR_WIN)
 				->where("id = ?", $winnerTeamId)
 				->prepare()
 				->execute();
@@ -155,6 +155,7 @@ class Match {
 				->set("losses = losses+1")
 				->set("score_for = score_for+?", $loserScore)
 				->set("score_against = score_against+?", $winnerScore)
+				->set("points = points+" . POINTS_FOR_LOSS)
 				->where("id = ?", $loserTeamId)
 				->prepare()
 				->execute();
@@ -165,7 +166,7 @@ class Match {
 					->set("draws = draws+1")
 					->set("score_for = score_for+?", $homeScore)
 					->set("score_against = score_against+?", $homeScore)
-					->set("points = points+1")
+					->set("points = points+" . ($homeScore == 0) ? POINTS_FOR_DRAW : POINTS_FOR_SCORING_DRAW)
 					->whereInArray("id", [$this->homeTeamId, $this->awayTeamId])
 					->prepare()
 					->execute();

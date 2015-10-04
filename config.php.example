@@ -13,6 +13,12 @@ define("COOKIE_DOMAIN", "dev.jackpharley.com"); // usually your domain with no w
 
 // Settings
 define("ALLOW_TEAM_REGISTRANTS_TO_SELECT_LEAGUE", false);
+define("ORGANIZATION_WORD", "club");
+define("MAX_EXEMPTS", 3);
+define("POINTS_FOR_WIN", 3); // e.g 3-0, 2-1, etc.
+define("POINTS_FOR_SCORING_DRAW", 2); // any draw except a 0-0 draw, e.g. 1-1, 2-2
+define("POINTS_FOR_DRAW", 1); // nil-all draw (0-0)
+define("POINTS_FOR_LOSS", 0); // e.g. 0-3, 1-2, etc.
 
 // Timezone
 define("TIMEZONE", "UTC");
