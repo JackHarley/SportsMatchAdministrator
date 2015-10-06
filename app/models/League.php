@@ -115,7 +115,7 @@ class League {
 	 */
 	public function constructFixtures() {
 		// first we grab all fixtures for the league
-		$fixtures = Fixture::get(null, $this->id);
+		$fixtures = Fixture::get(null, $this->id, true);
 		// we'll also be needing all sections
 		$sections = LeagueSection::get(null, $this->id);
 

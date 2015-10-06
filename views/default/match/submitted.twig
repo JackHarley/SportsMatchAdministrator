@@ -1,0 +1,90 @@
+{#
+	Sports Match Administrator
+
+	Copyright © 2014-2015, Jack P. Harley, jackpharley.com
+	All Rights Reserved
+#}
+
+{% extends "base.twig" %}
+
+{% block pageTitle %}Submitted Match Reports{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<ol class="breadcrumb">
+					<li><a href="{{ base_links_url }}">Home</a></li>
+					<li class="active">Submitted Match Reports</li>
+				</ol>
+
+				<h2 style="margin-bottom: 20px;"><i class="fa fa-list"></i> Submitted Match Reports</h2>
+			</div>
+			<form action="" method="post">
+				<div class="col-md-12 col-xs-12">
+					<div class="panel panel-primary">
+						<div class="panel-heading">{{ visitor.organization.name }}'s Latest 25 Submitted Match Reports</div>
+
+						<table class="table">
+							<tr>
+								<th>Match Date</th>
+								<th>Teams</th>
+								<th class="hidden-xs">Submitter / Date Submitted</th>
+								<th class="hidden-xs">Recorded Score</th>
+								<th class="hidden-xs">Confirmed?</th>
+								<th></th>
+							</tr>
+
+							{% for report in organizationReports %}
+								<tr>
+									<td>{{ report.getMatch().date }}</td>
+									<td>
+										{{ report.getMatch().homeTeam.organization.name }} {{ report.getMatch().homeTeam.designation }}
+										vs.
+										{{ report.getMatch().awayTeam.organization.name }} {{ report.getMatch().awayTeam.designation }}
+									</td>
+									<td class="hidden-xs">{{ report.getUser().fullName }} / {{ report.epoch|epochtoisodate }}</td>
+									<td class="hidden-xs">{{ report.homeScore }}-{{ report.awayScore }}</td>
+									<td class="hidden-xs">{% if report.getMatch().homeScore %}Yes{% else %}No{% endif %}</td>
+									<td class="text-right"><a href="{{ base_links_url }}/match/record?id={{ report.matchId }}" class="btn btn-xs btn-primary"><i class="fa fa-chevron-right"></i></a></td>
+								</tr>
+							{% endfor %}
+						</table>
+					</div>
+				</div>
+
+				<div class="col-md-12 col-xs-12">
+					<div class="panel panel-primary">
+						<div class="panel-heading">{{ visitor.fullName }}'s Latest 25 Submitted Match Reports</div>
+
+						<table class="table">
+							<tr>
+								<th>Match Date</th>
+								<th>Teams</th>
+								<th class="hidden-xs">Date Submitted</th>
+								<th class="hidden-xs">Recorded Score</th>
+								<th class="hidden-xs">Confirmed?</th>
+								<th></th>
+							</tr>
+
+							{% for report in userReports %}
+								<tr>
+									<td>{{ report.getMatch().date }}</td>
+									<td>
+										{{ report.getMatch().homeTeam.organization.name }} {{ report.getMatch().homeTeam.designation }}
+										vs.
+										{{ report.getMatch().awayTeam.organization.name }} {{ report.getMatch().awayTeam.designation }}
+									</td>
+									<td class="hidden-xs">{{ report.epoch|epochtoisodate }}</td>
+									<td class="hidden-xs">{{ report.homeScore }}-{{ report.awayScore }}</td>
+									<td class="hidden-xs">{% if report.getMatch().homeScore %}Yes{% else %}No{% endif %}</td>
+									<td class="text-right"><a href="{{ base_links_url }}/match/record?id={{ report.matchId }}" class="btn btn-xs btn-primary"><i class="fa fa-chevron-right"></i></a></td>
+								</tr>
+							{% endfor %}
+						</table>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+{% endblock %}

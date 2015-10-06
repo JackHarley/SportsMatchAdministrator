@@ -162,6 +162,11 @@ class View {
 		});
 		$twig->addFilter($filter);
 
+		$filter = new \Twig_SimpleFilter('epochtoisodate', function($epoch) {
+			return date("Y-m-d", $epoch);
+		});
+		$twig->addFilter($filter);
+
 		$filter = new \Twig_SimpleFilter('epochtodatetime', function($epoch) {
 			return date("d/m/y H:i", $epoch);
 		});

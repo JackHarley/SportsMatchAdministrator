@@ -26,7 +26,7 @@ class Match {
 		Controller::requirePermissions(["SubmitMatchReports"]);
 
 		if (empty($_POST)) {
-			View::load("match_report.twig", [
+			View::load("match/submit.twig", [
 					"leagues" => League::get(),
 					"players" => Player::get()
 			]);
@@ -105,5 +105,29 @@ class Match {
 			Controller::addAlert(new Alert("success", "Match report submitted successfully!"));
 			Controller::redirect("");
 		}
+	}
+
+	public static function submitted() {
+		Controller::requirePermissions(["SubmitMatchReports"]);
+
+		$visitor = User::getVisitor();
+		$teams = Team::get(null, $visitor->organizationId);
+		$teamIds = [];
+		foreach($teams as $team)
+			$teamIds[] = $team->id;
+		$reports = MatchReport::get(null, null, null, $teamIds, 25);
+
+		View::load("match/submitted.twig", [
+			"organizationReports" => $reports,
+			"userReports" => MatchReport::get(null, null, $visitor->id, null, 25)
+		]);
+	}
+
+	public static function record() {
+		$match = current(MatchModel::get($_GET["id"]));
+
+		View::load("match/record.twig", [
+			"match" => $match
+		]);
 	}
 }

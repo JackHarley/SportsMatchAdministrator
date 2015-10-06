@@ -1,0 +1,93 @@
+{#
+	Sports Match Administrator
+
+	Copyright © 2014-2015, Jack P. Harley, jackpharley.com
+	All Rights Reserved
+#}
+
+{% extends "base.twig" %}
+
+{% block pageTitle %}Match Record{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<ol class="breadcrumb">
+					<li><a href="{{ base_links_url }}">Home</a></li>
+					<li class="active">Match Record</li>
+				</ol>
+
+				<h2 style="margin-bottom: 20px;"><i class="fa fa-briefcase"></i> Match Record</h2>
+
+				<div class="panel panel-primary">
+					<div class="panel-heading">Match Details</div>
+
+					<div class="panel-body">
+						<p>
+							<strong>Date:</strong> {{ match.date }}<br>
+							<strong>Home Team:</strong> {{ match.homeTeam.organization.name }} {{ match.homeTeam.designation }}<br>
+							<strong>Away Team:</strong> {{ match.awayTeam.organization.name }} {{ match.awayTeam.designation }}<br>
+							<strong>Score (H-A):</strong> {% if match.homeScore %}{{ match.homeScore }}-{{ match.awayScore }}{% else %}TBC{% endif %}
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6 col-xs-12">
+				<div class="panel panel-{% if match.getHomeTeamMatchReport() %}success{% else %}danger{% endif %}">
+					<div class="panel-heading"><i class="fa fa-{% if match.getHomeTeamMatchReport() %}check{% else %}times{% endif %}"></i> Home Team Report</div>
+
+					<div class="panel-body">
+						{% if match.getHomeTeamMatchReport() %}
+							<p>
+								<strong>Submitted by:</strong> {{ match.getHomeTeamMatchReport().getUser().fullName }} ({{ match.getHomeTeamMatchReport().getUser().group.name }})<br>
+								<strong>Date Submitted:</strong> {{ match.getHomeTeamMatchReport().epoch|epochtoisodate }}<br>
+								<strong>Recorded Score (H-A):</strong> {{ match.getHomeTeamMatchReport().homeScore }}-{{ match.getHomeTeamMatchReport().awayScore }}
+							</p>
+
+							<h4>Players: ({{ match.getHomeTeamPlayers()|length }})</h4>
+
+							<table class="table-striped">
+								{% for player in match.getHomeTeamPlayers() %}
+									<tr><td><i class="fa fa-check"></i> {{ player.fullName }}</td></tr>
+								{% endfor %}
+							</table>
+						{% else %}
+							<p style="font-style: italic;">
+								The home team has not yet submitted a match report/result, please check back later.
+							</p>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-6 col-xs-12">
+				<div class="panel panel-{% if match.getAwayTeamMatchReport() %}success{% else %}danger{% endif %}">
+					<div class="panel-heading"><i class="fa fa-{% if match.getAwayTeamMatchReport() %}check{% else %}times{% endif %}"></i> Away Team Report</div>
+
+					<div class="panel-body">
+						{% if match.getAwayTeamMatchReport() %}
+							<p>
+								<strong>Submitted by:</strong> {{ match.getAwayTeamMatchReport().getUser().fullName }} ({{ match.getAwayTeamMatchReport().getUser().group.name }})<br>
+								<strong>Date Submitted:</strong> {{ match.getAwayTeamMatchReport().epoch|epochtoisodate }}<br>
+								<strong>Recorded Score (H-A):</strong> {{ match.getAwayTeamMatchReport().homeScore }}-{{ match.getAwayTeamMatchReport().awayScore }}
+							</p>
+
+							<h4>Players: ({{ match.getAwayTeamPlayers()|length }})</h4>
+
+							<table class="table-striped">
+								{% for player in match.getAwayTeamPlayers() %}
+									<tr><td><i class="fa fa-check"></i> {{ player.fullName }}</td></tr>
+								{% endfor %}
+							</table>
+						{% else %}
+							<p style="font-style: italic;">
+								The away team has not yet submitted a match report/result, please check back later.
+							</p>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

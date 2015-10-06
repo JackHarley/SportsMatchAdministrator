@@ -162,4 +162,35 @@ class Player {
 
 		$q->prepare()->execute();
 	}
+
+	/**
+	 * Get players from a match
+	 *
+	 * @param int $matchId match id to get players for
+	 * @param int $teamId team id to restrict players to or null for both teams
+	 * @return Player[] players
+	 */
+	public static function getMatchPlayers($matchId, $teamId=null) {
+		$q = (new SelectQuery(Database::getConnection()))
+				->from("matches_players mp")
+				->where("mp.match_id = ?", $matchId)
+				->join("LEFT JOIN players p ON mp.player_id=p.id")
+				->fields(["p.id", "p.full_name", "p.team_id", "p.exempt"])
+				->orderby("p.full_name");
+
+		if ($teamId)
+			$q->where("mp.team_id = ?", $teamId);
+
+		$stmt = $q->prepare();
+		$stmt->execute();
+
+		$players = [];
+		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+			$player = new Player();
+			list($player->id, $player->fullName, $player->teamId, $player->exempt) = $row;
+			$players[] = $player;
+		}
+
+		return $players;
+	}
 }

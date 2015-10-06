@@ -71,6 +71,44 @@ class Match {
 	public $awayScore;
 
 	/**
+	 * @var MatchReport[] associated match reports
+	 */
+	protected $matchReports;
+
+	/**
+	 * Get reports for the match
+	 *
+	 * @return MatchReport[] match reports associated with this match
+	 */
+	public function getMatchReports() {
+		if (!$this->matchReports)
+			$this->matchReports = MatchReport::get(null, $this->id);
+		return $this->matchReports;
+	}
+
+	public function getHomeTeamMatchReport() {
+		foreach($this->getMatchReports() as $report)
+			if ($report->teamId == $this->homeTeamId)
+				return $report;
+		return null;
+	}
+
+	public function getAwayTeamMatchReport() {
+		foreach($this->getMatchReports() as $report)
+			if ($report->teamId == $this->awayTeamId)
+				return $report;
+		return null;
+	}
+
+	public function getHomeTeamPlayers() {
+		return Player::getMatchPlayers($this->id, $this->homeTeamId);
+	}
+
+	public function getAwayTeamPlayers() {
+		return Player::getMatchPlayers($this->id, $this->awayTeamId);
+	}
+
+	/**
 	 * Add player to match
 	 *
 	 * @param int $teamId team
@@ -106,7 +144,7 @@ class Match {
 			return true;
 
 		// attempt to get both reports
-		$reports = MatchReport::get(null, $this->id);
+		$reports = $this->getMatchReports();
 		if (count($reports) != 2)
 			return true;
 

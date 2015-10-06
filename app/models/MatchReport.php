@@ -33,7 +33,7 @@ class MatchReport {
 	/**
 	 * @var \sma\models\Match match
 	 */
-	public $match;
+	protected $match;
 
 	/**
 	 * @var int match id
@@ -76,7 +76,9 @@ class MatchReport {
 	 * @return \sma\models\Match match
 	 */
 	public function getMatch() {
-		return Match::get($this->matchId);
+		if (!$this->match)
+			$this->match = current(Match::get($this->matchId));
+		return $this->match;
 	}
 
 	/**
@@ -85,7 +87,7 @@ class MatchReport {
 	 * @return \sma\models\User user
 	 */
 	public function getUser() {
-		return User::get($this->userId);
+		return current(User::get($this->userId));
 	}
 
 	/**
@@ -94,10 +96,11 @@ class MatchReport {
 	 * @param int $id id
 	 * @param int $matchId match id to get reports for
 	 * @param int $userId user id to restrict reports to
-	 * @param int $teamId submitting team id to restrict reports to
+	 * @param int|int[] $teamId submitting team id(s) to restrict reports to
+	 * @param int $limit maximum number of rows to fetch or null for no limit
 	 * @return \sma\models\MatchReport[] match reports
 	 */
-	public static function get($id=null, $matchId=null, $userId=null, $teamId=null) {
+	public static function get($id=null, $matchId=null, $userId=null, $teamId=null, $limit=null) {
 		$q = (new SelectQuery(Database::getConnection()))
 				->from("match_reports mr")
 				->fields(["mr.id", "mr.epoch", "mr.match_id", "mr.user_id", "mr.team_id",
@@ -110,8 +113,14 @@ class MatchReport {
 			$q->where("mr.match_id = ?", $matchId);
 		if ($userId)
 			$q->where("mr.user_id = ?", $userId);
-		if ($teamId)
-			$q->where("mr.team_id = ?", $teamId);
+		if ($teamId) {
+			if (is_array($teamId))
+				$q->whereInArray("mr.team_id", $teamId);
+			else
+				$q->where("mr.team_id = ?", $teamId);
+		}
+		if ($limit)
+			$q->limit($limit);
 
 		$stmt = $q->prepare();
 		$stmt->execute();
