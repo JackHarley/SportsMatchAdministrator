@@ -15,9 +15,7 @@ Requirements
 
 Installation
 --------------------------
-1. Copy files to web directory
-2. Copy [config.php.example](config.php.example) to ```config.php``` and edit as required
-3. Access the application through a web browser and follow the installation prompts
+Contact jackpharley@gmail.com for installation instructions.
 
 Legal
 --------------------------
