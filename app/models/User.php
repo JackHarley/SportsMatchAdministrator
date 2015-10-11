@@ -439,6 +439,8 @@ class User {
 		$passwordHash = password_hash($password, self::HASHING_ALGORITHM,
 				["cost" => self::HASHING_COST]);
 
+		$fullName = ucwords($fullName);
+
 		(new InsertQuery(Database::getConnection()))
 				->into("users")
 				->fields(["email", "full_name", "phone_number", "password_hash", "group_id",
