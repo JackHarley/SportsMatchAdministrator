@@ -36,7 +36,8 @@ class Match {
 			Controller::requireFields("post", ["date", "league", "reporter-team", "reporter-score",
 					"opposing-team", "opposing-score"], "/match/submit");
 			$datetime = DateTime::createFromFormat("Y-m-d", $_POST["date"]);
-			if (($datetime === false) || (array_sum($datetime->getLastErrors()))) {
+			$epoch = $datetime->getTimestamp();
+			if (($datetime === false) || (array_sum($datetime->getLastErrors())) || ($epoch > time()) || ((time()-$epoch)>(3600*24*365))) {
 				Controller::addAlert(new Alert("danger", "You did not enter a valid date, please try again."));
 				Controller::redirect("/match/submit");
 			}
