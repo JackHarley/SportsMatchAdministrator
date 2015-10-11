@@ -143,6 +143,7 @@ Matches (two teams playing against each other)
 * **away_team_id** - Away team
 * **home_score** - Home team score (goals, points, etc.) (field will not be filled until after match reports are cross-checked)
 * **away_score** - Away team score (goals, points, etc.) (field will not be filled until after match reports are cross-checked)
+* **status** - Match status constant (pending, reconciled, mismatch)
 
 ```sql
 CREATE TABLE `matches` (
@@ -153,6 +154,7 @@ CREATE TABLE `matches` (
   `away_team_id` bigint(20) unsigned NOT NULL,
   `home_score` tinyint unsigned NOT NULL,
   `away_score` tinyint unsigned NOT NULL,
+  `status` tinyint unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```

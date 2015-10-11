@@ -71,6 +71,14 @@ class Match {
 	public $awayScore;
 
 	/**
+	 * @var int status code
+	 */
+	public $status;
+	const STATUS_PENDING = 0;
+	const STATUS_RECONCILED = 1;
+	const STATUS_MISMATCH = 2;
+
+	/**
 	 * @var MatchReport[] associated match reports
 	 */
 	protected $matchReports;
@@ -139,8 +147,8 @@ class Match {
 	 * or false if the reconciliation failed due to a mismatch
 	 */
 	public function attemptReportReconciliation() {
-		// if scores are already entered, we can't reconcile
-		if (($this->homeScore) || ($this->awayScore))
+		// if reconciled, we can't do it again
+		if ($this->status == self::STATUS_RECONCILED)
 			return true;
 
 		// attempt to get both reports
@@ -157,8 +165,16 @@ class Match {
 			if (!$awayScore)
 				$awayScore = $report->awayScore;
 
-			if (($report->homeScore != $homeScore) || ($report->awayScore != $awayScore))
+			if (($report->homeScore != $homeScore) || ($report->awayScore != $awayScore)) {
+				(new UpdateQuery(Database::getConnection()))
+						->table("matches")
+						->set("status = ?", self::STATUS_MISMATCH)
+						->where("id = ?", $this->id)
+						->limit(1)
+						->prepare()
+						->execute();
 				return false;
+			}
 		}
 
 		// update match record
@@ -210,6 +226,13 @@ class Match {
 					->execute();
 		}
 
+		(new UpdateQuery(Database::getConnection()))
+				->table("matches")
+				->set("status = ?", self::STATUS_RECONCILED)
+				->where("id = ?", $this->id)
+				->limit(1)
+				->prepare()
+				->execute();
 		return true;
 	}
 
@@ -252,7 +275,7 @@ class Match {
 		$q = (new SelectQuery(Database::getConnection()))
 				->from("matches m")
 				->fields(["m.id", "m.date", "m.league_id", "m.home_team_id", "m.away_team_id", "m.home_score",
-						"m.away_score"])
+						"m.away_score", "m.status"])
 				->join("LEFT JOIN teams ht ON ht.id=m.home_team_id")
 				->fields(["ht.designation AS ht_designation"])
 				->join("LEFT JOIN organizations ho ON ho.id=ht.organization_id")
@@ -294,7 +317,7 @@ class Match {
 			$m->homeTeam->organization = new Organization();
 			$m->awayTeam->organization = new Organization();
 			list($m->id, $m->date, $m->leagueId, $m->homeTeamId, $m->awayTeamId, $m->homeScore,
-					$m->awayScore, $m->homeTeam->designation, $m->homeTeam->organization->name,
+					$m->awayScore, $m->status, $m->homeTeam->designation, $m->homeTeam->organization->name,
 					$m->awayTeam->designation, $m->awayTeam->organization->name) = $row;
 			$matches[] = $m;
 		}

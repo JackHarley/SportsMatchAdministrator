@@ -340,6 +340,7 @@ class Installer {
 			  `away_team_id` bigint(20) unsigned NOT NULL,
 			  `home_score` tinyint unsigned NOT NULL,
 			  `away_score` tinyint unsigned NOT NULL,
+			  `status` tinyint unsigned NOT NULL,
 			  PRIMARY KEY (`id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

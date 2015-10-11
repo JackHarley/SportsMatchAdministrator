@@ -14,3 +14,33 @@
 .dataTables_filter input {
 	margin-left: 10px;
 }
+
+.sc {
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
+	display: inline-block;
+	margin-right: 3px;
+}
+
+.sc-danger {
+	background: #d9534f;
+}
+
+.sc-success {
+	background: #5cb85c;
+}
+
+.sc-warning {
+	background: #f0ad4e;
+}
+
+.big-score {
+	font-size: 4em;
+	text-align: center;
+	margin-top: 0;
+}
+
+.big-score-team {
+	font-size: 0.3em;
+}

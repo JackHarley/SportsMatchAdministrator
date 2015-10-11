@@ -1,0 +1,105 @@
+{#
+	Sports Match Administrator
+
+	Copyright © 2014-2015, Jack P. Harley, jackpharley.com
+	All Rights Reserved
+#}
+
+{% extends "acp/base.twig" %}
+
+{% block javascript %}
+	<script src="{{ base_view_url }}/acp/plugins/datatables/jquery.dataTables.min.js" type="text/javascript"></script>
+	<script src="{{ base_view_url }}/acp/plugins/datatables/dataTables.bootstrap.min.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+		$(function () {
+			$('#report-table').DataTable({
+				"order": [[ 4, "desc" ]],
+				"lengthMenu": [[50, 100, 200, -1], [50, 100, 200, "All"]],
+				"paging": true,
+				"ordering": true,
+				"info": true,
+				"autoWidth": false
+			});
+		});
+	</script>
+
+{% endblock %}
+
+{% block page %}
+	<!-- Content Header (Page header) -->
+	<section class="content-header">
+		<h1>Match Reports</h1>
+	</section>
+
+	<!-- Main content -->
+	<section class="content">
+		<div class="row">
+			<!-- right column -->
+			<div class="col-sm-12 col-xs-12 pull-right">
+
+				<div class="box box-info">
+					<div class="box-header with-border">
+						<h3 class="box-title"><i class="fa fa-question-circle"></i> What gets shown here?</h3>
+					</div><!-- /.box-header -->
+					<!-- form start -->
+					<div class="box-body">
+						All match reports submitted by authorized members from the main site will show up on this page, there are three possible colours for a report. Green indicates that a report from the opposing team was also submitted and it matched, orange indicates the opposing team has not yet filed a report, red indicates that the opposing team has filed a report but it does not match and administrator action is required to update the incorrect report.
+					</div>
+				</div><!-- /.box -->
+
+			</div><!-- /.col -->
+
+			<!-- left column -->
+			<div class="col-sm-12 col-xs-12">
+				<div class="box box-primary">
+					<div class="box-header with-border">
+						<h3 class="box-title"><i class="fa fa-list"></i></h3>
+					</div><!-- /.box-header -->
+
+					<div class="box-body">
+						<table id="report-table" class="table table-bordered table-striped">
+							<thead>
+								<tr>
+									<th></th>
+									<th>Match Date</th>
+									<th>Teams</th>
+									<th>Submitter</th>
+									<th>Date Submitted</th>
+									<th>Recorded Score</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for report in objects %}
+									<tr>
+										<td>
+											{% if report.getMatch().status == constant("\\sma\\models\\Match::STATUS_PENDING") %}
+												<div class="sc sc-warning"></div> Pending
+											{% elseif report.getMatch().status == constant("\\sma\\models\\Match::STATUS_RECONCILED") %}
+												<div class="sc sc-success"></div> Reconciled
+											{% else %}
+												<div class="sc sc-danger"></div> Mismatch
+											{% endif %}
+										</td>
+										<td>{{ report.getMatch().date }}</td>
+										<td>
+											{{ report.getMatch().homeTeam.organization.name }} {{ report.getMatch().homeTeam.designation }}
+											vs.
+											{{ report.getMatch().awayTeam.organization.name }} {{ report.getMatch().awayTeam.designation }}
+										</td>
+										<td>{{ report.getUser().fullName }}</td>
+										<td>{{ report.epoch|epochtoisodate }}</td>
+										<td>{{ report.homeScore }}-{{ report.awayScore }}</td>
+										<td class="text-right"><a class="btn btn-primary btn-xs" href="{{ base_links_url }}/acp/match/manage?id={{ report.matchId }}"><i class="fa fa-edit"></i> Manage</a></td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div><!-- /.box -->
+			</div><!-- /.col -->
+
+		</div><!-- ./row -->
+	</section><!-- /.content -->
+{% endblock %}

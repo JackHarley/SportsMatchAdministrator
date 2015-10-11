@@ -10,6 +10,7 @@ namespace sma\models;
 use PDO;
 use sma\Database;
 use sma\exceptions\DuplicateException;
+use sma\query\DeleteQuery;
 use sma\query\InsertQuery;
 use sma\query\SelectQuery;
 
@@ -88,6 +89,18 @@ class MatchReport {
 	 */
 	public function getUser() {
 		return current(User::get($this->userId));
+	}
+
+	/**
+	 * Permanently delete report
+	 */
+	public function delete() {
+		(new DeleteQuery(Database::getConnection()))
+			->from("match_reports")
+			->where("id = ?", $this->id)
+			->limit(1)
+			->prepare()
+			->execute();
 	}
 
 	/**

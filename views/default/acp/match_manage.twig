@@ -1,0 +1,156 @@
+{#
+	Sports Match Administrator
+
+	Copyright © 2014-2015, Jack P. Harley, jackpharley.com
+	All Rights Reserved
+#}
+
+{% extends "acp/base.twig" %}
+
+{% block page %}
+	<!-- Content Header (Page header) -->
+	<section class="content-header">
+		{% if match.status == constant("\\sma\\models\\Match::STATUS_MISMATCH") %}
+			<div class="alert alert-danger">
+				<h4><i class="icon fa fa-ban"></i> Score Mismatch Detected!</h4>
+
+				The system has detected that there has been a score mismatch for this match. Both teams have entered a report but the scores differ. Please check both reports and click the "Mark as Correct Report" button underneath the correct report. This will update the other report's score to match it and the match will be reconciled.
+			</div>
+		{% elseif match.status == constant("\\sma\\models\\Match::STATUS_PENDING") %}
+			<div class="alert alert-warning">
+				<h4><i class="icon fa fa-warning"></i> Pending Second Report...</h4>
+
+				Only one report has currently been filed for this match, the system is waiting for the second one before it can finalise the result.
+			</div>
+		{% elseif match.status == constant("\\sma\\models\\Match::STATUS_RECONCILED") %}
+			<div class="alert alert-success">
+				<h4><i class="icon fa fa-check"></i> Match Reconciled!</h4>
+
+				Both reports have been filed for this match and they match each other, the result has been finalised and added to the public league tables.
+			</div>
+		{% endif %}
+
+		<h1>Match</h1>
+	</section>
+
+	<!-- Main content -->
+	<section class="content">
+		<div class="row">
+			<div class="col-sm-12 col-xs-12">
+				<div class="box box-primary">
+					<div class="box-header with-border">
+						<h3 class="box-title">Match Info</h3>
+					</div>
+
+					<div class="box-body">
+						<p>
+							<strong>Date:</strong> {{ match.date }}<br>
+							<strong>Home Team:</strong> {{ match.homeTeam.organization.name }} {{ match.homeTeam.designation }}<br>
+							<strong>Away Team:</strong> {{ match.awayTeam.organization.name }} {{ match.awayTeam.designation }}<br>
+							<strong>Score (H-A):</strong> {% if match.homeScore %}{{ match.homeScore }}-{{ match.awayScore }}{% else %}TBC{% endif %}
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<!-- right column -->
+			<div class="col-sm-6 col-xs-12">
+				<div class="box box-info">
+					<div class="box-header with-border">
+						<h3 class="box-title"><i class="fa fa-{% if match.getHomeTeamMatchReport() %}check{% else %}times{% endif %}"></i> Home Team Report ({{ match.homeTeam.organization.name }})</h3>
+					</div><!-- /.box-header -->
+					<!-- form start -->
+					<div class="box-body">
+						{% if match.getHomeTeamMatchReport() %}
+							<strong>Recorded Score (H-A):</strong>
+							<h1 class="big-score">
+								<span class="big-score-team">{{ match.homeTeam.organization.name }}</span>
+								{{ match.getHomeTeamMatchReport().homeScore }}-{{ match.getHomeTeamMatchReport().awayScore }}
+								<span class="big-score-team">{{ match.awayTeam.organization.name }}</span>
+							</h1>
+
+							<p>
+								<strong>Submitted by:</strong> {{ match.getHomeTeamMatchReport().getUser().fullName }} ({{ match.getHomeTeamMatchReport().getUser().group.name }})<br>
+								<strong>Date Submitted:</strong> {{ match.getHomeTeamMatchReport().epoch|epochtoisodate }}<br>
+							</p>
+
+							<h4>Players: ({{ match.getHomeTeamPlayers()|length }})</h4>
+
+							<table class="table-striped">
+								{% for player in match.getHomeTeamPlayers() %}
+									<tr><td><i class="fa fa-check"></i> {{ player.fullName }}</td></tr>
+								{% endfor %}
+							</table>
+
+							{% if match.status == constant("\\sma\\models\\Match::STATUS_MISMATCH") %}
+								<br>
+								<a class="btn btn-success btn-block"><i class="fa fa-check"></i> Mark as Correct Report</a>
+							{% endif %}
+						{% else %}
+							<p style="font-style: italic;">
+								The home team has not yet submitted a match report/result, please check back later.
+							</p>
+						{% endif %}
+					</div>
+				</div><!-- /.box -->
+			</div><!-- /.col -->
+
+			<!-- left column -->
+			<div class="col-sm-6 col-xs-12">
+				<div class="box box-info">
+					<div class="box-header with-border">
+						<h3 class="box-title"><i class="fa fa-{% if match.getAwayTeamMatchReport() %}check{% else %}times{% endif %}"></i> Away Team Report ({{ match.awayTeam.organization.name }})</h3>
+					</div><!-- /.box-header -->
+					<!-- form start -->
+					<div class="box-body">
+						{% if match.getAwayTeamMatchReport() %}
+							<strong>Recorded Score (H-A):</strong>
+							<h1 class="big-score">
+								<span class="big-score-team">{{ match.homeTeam.organization.name }}</span>
+								{{ match.getAwayTeamMatchReport().homeScore }}-{{ match.getAwayTeamMatchReport().awayScore }}
+								<span class="big-score-team">{{ match.awayTeam.organization.name }}</span>
+							</h1>
+
+							<p>
+								<strong>Submitted by:</strong> {{ match.getAwayTeamMatchReport().getUser().fullName }} ({{ match.getAwayTeamMatchReport().getUser().group.name }})<br>
+								<strong>Date Submitted:</strong> {{ match.getAwayTeamMatchReport().epoch|epochtoisodate }}<br>
+							</p>
+
+							<h4>Players: ({{ match.getAwayTeamPlayers()|length }})</h4>
+
+							<table class="table-striped">
+								{% for player in match.getAwayTeamPlayers() %}
+									<tr><td><i class="fa fa-check"></i> {{ player.fullName }}</td></tr>
+								{% endfor %}
+							</table>
+
+							{% if match.status == constant("\\sma\\models\\Match::STATUS_MISMATCH") %}
+								<br>
+								<a class="btn btn-success btn-block"><i class="fa fa-check"></i> Mark as Correct Report</a>
+							{% endif %}
+						{% else %}
+							<p style="font-style: italic;">
+								The away team has not yet submitted a match report/result, please check back later.
+							</p>
+						{% endif %}
+					</div>
+				</div><!-- /.box -->
+			</div><!-- /.col -->
+
+			<div class="col-sm-12 col-xs-12">
+				<div class="box box-danger">
+					<div class="box-header">
+						<h3 class="box-title">DangerZone™</h3>
+					</div><!-- /.box-header -->
+
+					<div class="box-body">
+						<p>
+							<strong class="text-danger">Be careful! If you click the button then this match record will be cleared along with the reports in each box above.</strong>
+						</p>
+						<a class="btn btn-danger btn-block" href="{{ base_links_url }}/acp/match/delete?id={{ match.id }}">Delete Match and Reports</a>
+					</div>
+				</div>
+			</div>
+		</div><!-- ./row -->
+	</section><!-- /.content -->
+{% endblock %}
