@@ -7,7 +7,7 @@
  */
 require_once(__DIR__ . "/Init.php");
 
-$matches = \sma\models\Match::get(null, null, null, null, null, false);
+$matches = \sma\models\Match::get(null, null, null, null, null, \sma\models\Match::STATUS_PENDING);
 
 foreach($matches as $match) {
 	echo "Attempting reconciliation of match #" . $match->id . "...";

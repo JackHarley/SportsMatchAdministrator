@@ -321,13 +321,12 @@ class Match {
 	 * @param int $league league to filter by
 	 * @param int $homeTeamId home team id to filter by
 	 * @param int $awayTeamId away team id to filter by
-	 * @param bool $reconciled set to true to only fetch reconciled matches, false to only fetch
-	 * unreconciled matches
+	 * @param int $status match status constant
 	 * @param int $limit maximum number of records to fetch
 	 * @return Match[] matches
 	 */
 	public static function get($id=null, $date=null, $league=null, $homeTeamId=null, $awayTeamId=null,
-			$reconciled=null, $limit=null) {
+			$status=null, $limit=null) {
 
 		$q = (new SelectQuery(Database::getConnection()))
 				->from("matches m")
@@ -356,12 +355,8 @@ class Match {
 			$q->where("m.home_team_id = ?", $homeTeamId);
 		if ($awayTeamId)
 			$q->where("m.away_team_id = ?", $awayTeamId);
-		if ($reconciled !== null) {
-			if ($reconciled)
-				$q->where("m.home_score IS NOT NULL AND m.away_score IS NOT NULL");
-			else
-				$q->where("m.home_score IS NULL OR m.away_score IS NULL");
-		}
+		if ($status !== null)
+			$q->where("m.status = ?", $status);
 
 		$stmt = $q->prepare();
 		$stmt->execute();

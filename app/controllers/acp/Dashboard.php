@@ -8,6 +8,7 @@
 namespace sma\controllers\acp;
 
 use sma\Controller;
+use sma\models\Match;
 use sma\models\Organization;
 use sma\models\Setting;
 use sma\models\Team;
@@ -26,7 +27,8 @@ class Dashboard {
 			"organizationCount" => count(Organization::get()),
 			"teamCount" => count(Team::get()),
 			"unassignedTeams" => Team::get(null, null, null, false, false),
-			"info" => Setting::get("info_box_content")
+			"info" => Setting::get("info_box_content"),
+			"mismatches" => Match::get(null, null, null, null, null, Match::STATUS_MISMATCH)
 		]);
 	}
 }

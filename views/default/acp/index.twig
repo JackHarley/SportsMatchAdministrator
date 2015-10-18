@@ -136,6 +136,47 @@
 						{% endif %}
 					</div>
 				</div><!-- /.box -->
+
+				<div class="box box-{% if mismatches %}danger{% else %}success{% endif %}">
+					<div class="box-header with-border">
+						<h3 class="box-title"><i class="fa fa-list"></i> Match Reports Pending Administrative Action</h3>
+					</div><!-- /.box-header -->
+
+					<div class="box-body">
+						{% if mismatches %}
+							<p>
+								These matches have had conflicting reports entered by each team, click "Manage" beside a match and follow the instructions to fix the incorrect report.
+							</p>
+
+							<table id="team-table" class="table table-bordered table-striped">
+								<thead>
+								<tr>
+									<th>Date</th>
+									<th>Teams</th>
+									<th></th>
+								</tr>
+								</thead>
+								<tbody>
+								{% for object in mismatches %}
+									<tr>
+										<td>{{ object.date }}</td>
+										<td>
+											{{ object.homeTeam.organization.name }} {{ object.homeTeam.designation }}
+											vs.
+											{{ object.awayTeam.organization.name }} {{ object.awayTeam.designation }}
+										</td>
+										<td class="text-right">
+											<a class="btn-sm btn-danger" href="{{ base_links_url }}/acp/match/manage?id={{ object.id }}"><i class="fa fa-edit"></i> Manage</a>
+										</td>
+									</tr>
+								{% endfor %}
+								</tbody>
+							</table>
+						{% else %}
+							<p>There are no conflicting match reports!</p>
+						{% endif %}
+					</div>
+				</div><!-- /.box -->
 			</div><!-- /.col -->
 
 			<div class="col-sm-6 col-xs-12">
