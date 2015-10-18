@@ -59,6 +59,7 @@ Router::setRoutes([
 		"/ajax/teams" => ["Ajax", "teams"],
 		"/ajax/players" => ["Ajax", "players"],
 		"/acp/match/manage" => ["acp\Match", "manage"],
+		"/acp/match/delete" => ["acp\Match", "delete"],
 		"/acp/match" => ["acp\Match", "index"],
 		"/acp/organization/add" => ["acp\Organization", "add"],
 		"/acp/organization/edit" => ["acp\Organization", "edit"],

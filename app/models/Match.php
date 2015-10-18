@@ -9,6 +9,7 @@ namespace sma\models;
 
 use PDO;
 use sma\Database;
+use sma\query\DeleteQuery;
 use sma\query\InsertQuery;
 use sma\query\SelectQuery;
 use sma\query\UpdateQuery;
@@ -114,6 +115,32 @@ class Match {
 
 	public function getAwayTeamPlayers() {
 		return Player::getMatchPlayers($this->id, $this->awayTeamId);
+	}
+
+	/**
+	 * Permanently delete match, reports and participating players
+	 */
+	public function delete() {
+		if ($this->status == self::STATUS_RECONCILED)
+			return;
+
+		(new DeleteQuery(Database::getConnection()))
+			->from("matches")
+			->where("id = ?", $this->id)
+			->limit(1)
+			->prepare()
+			->execute();
+		(new DeleteQuery(Database::getConnection()))
+			->from("match_reports")
+			->where("match_id = ?", $this->id)
+			->limit(2)
+			->prepare()
+			->execute();
+		(new DeleteQuery(Database::getConnection()))
+			->from("matches_players")
+			->where("match_id = ?", $this->id)
+			->prepare()
+			->execute();
 	}
 
 	/**

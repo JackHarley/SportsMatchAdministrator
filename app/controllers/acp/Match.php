@@ -8,26 +8,45 @@
 namespace sma\controllers\acp;
 
 use sma\Controller;
+use sma\models\Alert;
 use sma\models\Match as MatchModel;
 use sma\models\MatchReport;
-use sma\models\User;
 use sma\View;
 
 class Match {
 
 	public static function index() {
-		Controller::requirePermissions(["AdminAccessDashboard"]);
+		Controller::requirePermissions(["AdminAccessDashboard", "AdminMatches"]);
 		View::load("acp/match.twig", [
 			"objects" => MatchReport::get()
 		]);
 	}
 
 	public static function manage() {
-		Controller::requirePermissions(["AdminAccessDashboard"]);
+		Controller::requirePermissions(["AdminAccessDashboard", "AdminMatches"]);
 		$match = current(MatchModel::get($_GET["id"]));
 
 		View::load("acp/match_manage.twig", [
 			"match" => $match
 		]);
+	}
+
+	public static function delete() {
+		Controller::requirePermissions(["AdminAccessDashboard", "AdminMatches"]);
+
+		$match = current(MatchModel::get($_GET["id"]));
+
+		if ($match->status == MatchModel::STATUS_RECONCILED) {
+			Controller::addAlert(new Alert("danger", "You cannot delete a match that has already " .
+					"been reconciled and added to the league tables."));
+			Controller::redirect("/acp/match");
+		}
+		else {
+			$match->delete();
+
+			Controller::addAlert(new Alert("success",
+					"Match, match reports and participating player records deleted"));
+			Controller::redirect("/acp/match");
+		}
 	}
 }

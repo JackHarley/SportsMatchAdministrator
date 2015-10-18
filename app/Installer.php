@@ -437,6 +437,7 @@ QUERY
 		Permission::add("Admin", "AdminUserGroups", "Administrate user groups and their assigned permissions");
 		Permission::add("Admin", "AdminOrganizations", "Administrate organizations");
 		Permission::add("Admin", "AdminTeams", "Administrate teams");
+		Permission::add("Admin", "AdminMatches", "Administrate matches and match reports");
 		Permission::add("Admin", "AdminPlayers", "Administrate players");
 		Permission::add("Admin", "AdminAllLeagues", "Administrate all leagues (users always have permission to administrate leagues they are assigned as the manager of)");
 		Permission::add("Admin", "AdminAccessMaintenance", "Access the admin maintenance area and use the maintenance tools");
