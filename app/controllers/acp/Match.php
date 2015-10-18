@@ -49,4 +49,21 @@ class Match {
 			Controller::redirect("/acp/match");
 		}
 	}
+
+	public static function correct() {
+		Controller::requirePermissions(["AdminAccessDashboard", "AdminMatches"]);
+
+		$report = MatchReport::get($_GET["report"])[0];
+		$match = $report->getMatch();
+
+		if ($match->status == MatchModel::STATUS_MISMATCH) {
+			$match->correctReports($report->id);
+			Controller::addAlert(new Alert("success", "Correction completed"));
+		}
+		else {
+			Controller::addAlert(new Alert("danger", "This match cannot be corrected as it is not currently in a mismatched state"));
+		}
+
+		Controller::redirect("/acp/match/manage?id=" . $match->id);
+	}
 }

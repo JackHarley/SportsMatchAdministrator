@@ -264,6 +264,36 @@ class Match {
 	}
 
 	/**
+	 * Correct the reports so that they match
+	 *
+	 * @param int $correctReportId id of the correct report
+	 * @param bool $reconcile when set to true, attempts to reconcile the reports after correcting them
+	 */
+	public function correctReports($correctReportId, $reconcile=true) {
+		$correctReport = current(MatchReport::get($correctReportId));
+
+		$reports = $this->getMatchReports();
+
+		foreach($reports as $report) {
+			if ($report->id != $correctReportId) {
+				(new UpdateQuery(Database::getConnection()))
+					->table("match_reports")
+					->where("id = ?", $report->id)
+					->set("home_score = ?", $correctReport->homeScore)
+					->set("away_score = ?", $correctReport->awayScore)
+					->prepare()
+					->execute();
+			}
+		}
+
+		// invalidate quick cache
+		$this->matchReports = null;
+
+		if ($reconcile)
+			$this->attemptReportReconciliation();
+	}
+
+	/**
 	 * Add a new match
 	 *
 	 * @param string $date date played (YYYY-MM-DD)

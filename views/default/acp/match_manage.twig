@@ -84,7 +84,7 @@
 
 							{% if match.status == constant("\\sma\\models\\Match::STATUS_MISMATCH") %}
 								<br>
-								<a class="btn btn-success btn-block"><i class="fa fa-check"></i> Mark as Correct Report</a>
+								<a class="btn btn-success btn-block" href="{{ base_links_url }}/acp/match/correct?report={{ match.getHomeTeamMatchReport().id }}"><i class="fa fa-check"></i> Mark as Correct Report</a>
 							{% endif %}
 						{% else %}
 							<p style="font-style: italic;">
@@ -126,7 +126,7 @@
 
 							{% if match.status == constant("\\sma\\models\\Match::STATUS_MISMATCH") %}
 								<br>
-								<a class="btn btn-success btn-block"><i class="fa fa-check"></i> Mark as Correct Report</a>
+								<a class="btn btn-success btn-block" href="{{ base_links_url }}/acp/match/correct?report={{ match.getAwayTeamMatchReport().id }}"><i class="fa fa-check"></i> Mark as Correct Report</a>
 							{% endif %}
 						{% else %}
 							<p style="font-style: italic;">
