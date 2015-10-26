@@ -167,6 +167,15 @@ class Team {
 	}
 
 	/**
+	 * Get number of matches played
+	 *
+	 * @return int score difference
+	 */
+	public function getMatchesPlayed() {
+		return $this->wins + $this->draws + $this->losses;
+	}
+
+	/**
 	 * Get objects
 	 *
 	 * @param int $id id
