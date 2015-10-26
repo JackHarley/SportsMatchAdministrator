@@ -9,6 +9,7 @@ namespace sma\controllers\acp;
 
 use sma\Controller;
 use sma\models\Alert;
+use sma\models\League;
 use sma\models\Match as MatchModel;
 use sma\models\MatchReport;
 use sma\View;
@@ -17,8 +18,27 @@ class Match {
 
 	public static function index() {
 		Controller::requirePermissions(["AdminAccessDashboard", "AdminMatches"]);
+
+		$reports = MatchReport::get();
+
+		if ((array_key_exists("league", $_GET)) && ($_GET["league"] != 0)) {
+			foreach($reports as $key => $report) {
+				if ($reports[$key]->getMatch()->leagueId != $_GET["league"])
+					unset($reports[$key]);
+			}
+		}
+		if ((array_key_exists("status", $_GET)) && ($_GET["status"] !== "")) {
+			foreach($reports as $key => $report) {
+				if ($reports[$key]->getMatch()->status != $_GET["status"])
+					unset($reports[$key]);
+			}
+		}
+
 		View::load("acp/match.twig", [
-			"objects" => MatchReport::get()
+			"objects" => $reports,
+			"leagues" => League::get(),
+			"selectedLeagueId" => (array_key_exists("league", $_GET)) ? $_GET["league"] : 0,
+			"selectedStatus" => ((array_key_exists("status", $_GET)) && ($_GET["status"] !== '')) ? $_GET["status"] : -1,
 		]);
 	}
 

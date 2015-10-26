@@ -35,9 +35,8 @@
 	<!-- Main content -->
 	<section class="content">
 		<div class="row">
-			<!-- right column -->
-			<div class="col-sm-12 col-xs-12 pull-right">
-
+			<!-- left column -->
+			<div class="col-sm-6 col-xs-12">
 				<div class="box box-info">
 					<div class="box-header with-border">
 						<h3 class="box-title"><i class="fa fa-question-circle"></i> What gets shown here?</h3>
@@ -47,10 +46,50 @@
 						All match reports submitted by authorized members from the main site will show up on this page, there are three possible colours for a report. Green indicates that a report from the opposing team was also submitted and it matched, orange indicates the opposing team has not yet filed a report, red indicates that the opposing team has filed a report but it does not match and administrator action is required to update the incorrect report.
 					</div>
 				</div><!-- /.box -->
-
 			</div><!-- /.col -->
 
-			<!-- left column -->
+			<!-- right column -->
+			<div class="col-sm-6 col-xs-12">
+				<div class="box box-info">
+					<div class="box-header with-border">
+						<h3 class="box-title"><i class="fa fa-check"></i> Filters</h3>
+					</div><!-- /.box-header -->
+					<!-- form start -->
+					<div class="box-body">
+						<form class="form-horizontal" method="get" action="">
+							<div class="form-group">
+								<label for="league" class="col-sm-2 control-label">League</label>
+								<div class="col-sm-10">
+									<select class="form-control" id="league" name="league">
+										<option value="0">Any Leagues</option>
+										{% for league in leagues %}
+											<option {% if league.id == selectedLeagueId %}selected{% endif %} value="{{ league.id }}">{{ league.name }}</option>
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="status" class="col-sm-2 control-label">Status</label>
+								<div class="col-sm-10">
+									<select class="form-control" id="status" name="status">
+										<option value="">Any Status</option>
+										<option {% if constant("\\sma\\models\\Match::STATUS_PENDING") == selectedStatus %}selected{% endif %} value="{{ constant("\\sma\\models\\Match::STATUS_PENDING") }}">Pending</option>
+										<option {% if constant("\\sma\\models\\Match::STATUS_RECONCILED") == selectedStatus %}selected{% endif %} value="{{ constant("\\sma\\models\\Match::STATUS_RECONCILED") }}">Reconciled</option>
+										<option {% if constant("\\sma\\models\\Match::STATUS_MISMATCH") == selectedStatus %}selected{% endif %} value="{{ constant("\\sma\\models\\Match::STATUS_MISMATCH") }}">Mismatch</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-offset-2 col-sm-10">
+									<button type="submit" class="btn btn-default">Filter</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div><!-- /.box -->
+			</div><!-- /.col -->
+
+			<!-- main column -->
 			<div class="col-sm-12 col-xs-12">
 				<div class="box box-primary">
 					<div class="box-header with-border">
