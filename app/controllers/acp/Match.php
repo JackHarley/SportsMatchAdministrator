@@ -47,6 +47,11 @@ class Match {
 		Controller::requirePermissions(["AdminAccessDashboard", "AdminMatches"]);
 		$match = current(MatchModel::get($_GET["id"]));
 
+		if (!$match) {
+			Controller::addAlert(new Alert("danger", "The match you specified could not be found."));
+			Controller::redirect("/acp/match");
+		}
+
 		View::load("acp/match_manage.twig", [
 			"match" => $match
 		]);
