@@ -122,8 +122,47 @@ class Match {
 	 * Permanently delete match, reports and participating players
 	 */
 	public function delete() {
-		if ($this->status == self::STATUS_RECONCILED)
-			return;
+		if ($this->status == self::STATUS_RECONCILED) {
+			// we have to reverse the league tables as well as deleting
+			// TODO: build this out into a function
+			if ($this->homeScore != $this->awayScore) {
+				$winnerTeamId = ($this->homeScore > $this->awayScore) ? $this->homeTeamId : $this->awayTeamId;
+				$loserTeamId = ($this->homeScore < $this->awayScore) ? $this->homeTeamId : $this->awayTeamId;
+				$winnerScore = ($this->homeScore > $this->awayScore) ? $this->homeScore : $this->awayScore;
+				$loserScore = ($this->homeScore < $this->awayScore) ? $this->homeScore : $this->awayScore;
+
+				(new UpdateQuery(Database::getConnection()))
+					->table("teams")
+					->set("wins = wins-1")
+					->set("score_for = score_for-?", $winnerScore)
+					->set("score_against = score_against-?", $loserScore)
+					->set("points = points-" . POINTS_FOR_WIN)
+					->where("id = ?", $winnerTeamId)
+					->prepare()
+					->execute();
+
+				(new UpdateQuery(Database::getConnection()))
+					->table("teams")
+					->set("losses = losses-1")
+					->set("score_for = score_for-?", $loserScore)
+					->set("score_against = score_against-?", $winnerScore)
+					->set("points = points-" . POINTS_FOR_LOSS)
+					->where("id = ?", $loserTeamId)
+					->prepare()
+					->execute();
+			}
+			else {
+				(new UpdateQuery(Database::getConnection()))
+					->table("teams")
+					->set("draws = draws-1")
+					->set("score_for = score_for-?", $this->homeScore)
+					->set("score_against = score_against-?", $this->homeScore)
+					->set("points = points-" . (($this->homeScore == 0) ? POINTS_FOR_DRAW : POINTS_FOR_SCORING_DRAW))
+					->where("id=? OR id=?", [$this->homeTeamId, $this->awayTeamId])
+					->prepare()
+					->execute();
+			}
+		}
 
 		(new DeleteQuery(Database::getConnection()))
 			->from("matches")

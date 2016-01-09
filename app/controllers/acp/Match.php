@@ -61,19 +61,10 @@ class Match {
 		Controller::requirePermissions(["AdminAccessDashboard", "AdminMatches"]);
 
 		$match = current(MatchModel::get($_GET["id"]));
+		$match->delete();
 
-		if ($match->status == MatchModel::STATUS_RECONCILED) {
-			Controller::addAlert(new Alert("danger", "You cannot delete a match that has already " .
-					"been reconciled and added to the league tables."));
-			Controller::redirect("/acp/match");
-		}
-		else {
-			$match->delete();
-
-			Controller::addAlert(new Alert("success",
-					"Match, match reports and participating player records deleted"));
-			Controller::redirect("/acp/match");
-		}
+		Controller::addAlert(new Alert("success", "Match, match reports and participating player records deleted"));
+		Controller::redirect("/acp/match");
 	}
 
 	public static function correct() {
