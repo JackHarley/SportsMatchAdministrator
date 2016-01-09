@@ -94,13 +94,13 @@ class Match {
 		$match = current(MatchModel::get($_POST["id"]));
 
 		try {
-			$match->correctDate($match->id, $_POST["date"]);
+			$id = $match->correctDate($match->id, $_POST["date"]);
 			Controller::addAlert(new Alert("success", "Correction completed"));
 		}
 		catch (DuplicateException $e) {
 			Controller::addAlert(new Alert("danger", "The report cannot be moved to the specified date as there is already another report filed for the team for the match on that date"));
 		}
 
-		Controller::redirect("/acp/match/manage?id=" . $match->id);
+		Controller::redirect("/acp/match/manage?id=" . $id);
 	}
 }

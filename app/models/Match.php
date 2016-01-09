@@ -299,6 +299,7 @@ class Match {
 	 *
 	 * @param int $id match id to correct
 	 * @param string $date correct date YYYY-MM-DD
+	 * @return int corrected match id (it may have changed in order to re-assign reports)
 	 */
 	public function correctDate($id, $date) {
 		$currentMatch = current(self::get($id));
@@ -307,7 +308,7 @@ class Match {
 		if (count($currentMatchReports) == 2) {
 			// we can update the date by simply modifying the match record
 			self::updateDate($id, $date);
-			return;
+			return $id;
 		}
 		else {
 			$currentMatchReport = current($currentMatchReports);
@@ -329,7 +330,7 @@ class Match {
 			// the old match record
 			$newMatchId = $candidateMatch->id;
 			(new UpdateQuery(Database::getConnection()))
-				->table("match_records")
+				->table("match_reports")
 				->where("id = ?", $currentMatchReport->id)
 				->set("match_id = ?", $newMatchId)
 				->prepare()
@@ -350,11 +351,13 @@ class Match {
 			// finally trigger a reconciliation attempt
 			$candidateMatch = current(self::get($candidateMatch->id));
 			$candidateMatch->attemptReportReconciliation();
+
+			return $candidateMatch->id;
 		}
 		else {
 			// we can update the date by simply modifying the match record
 			self::updateDate($id, $date);
-			return;
+			return $id;
 		}
 	}
 
