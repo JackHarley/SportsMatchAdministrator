@@ -23,6 +23,7 @@
 
 		function leagueChanged() {
 			var leagueInput = $("#league");
+			var reporterTeamInput = $("#reporter-team");
 
 			$.get(
 				"{{ base_links_url }}/ajax/teams",
@@ -31,8 +32,10 @@
 					organization: {{ visitor.organizationId }}
 				},
 				function(data) {
+					reporterTeamInput.empty();
+					reporterTeamInput.append('<option disabled selected value="0">Select Team...</option>');
 					for(var team in data) {
-						$("#reporter-team").append('<option value="'+data[team].id+'">'+data[team].string+'</option>');
+						reporterTeamInput.append('<option value="'+data[team].id+'">'+data[team].string+'</option>');
 					}
 
 					$("#post-league-selection").slideDown();
@@ -45,7 +48,7 @@
 			var playersTable = $("#players-table");
 			var reporterTeam = $("#reporter-team").val();
 			var leagueInput = $("#league");
-			var opposingTeamField = $("#opposing-team");
+			var opposingTeamInput = $("#opposing-team");
 
 			$.get(
 				"{{ base_links_url }}/ajax/players",
@@ -72,10 +75,10 @@
 					team: reporterTeam
 				},
 				function(data) {
-					opposingTeamField.empty();
-					opposingTeamField.append('<option disabled selected value="0">Select Team...</option>');
+					opposingTeamInput.empty();
+					opposingTeamInput.append('<option disabled selected value="0">Select Team...</option>');
 					for(var team in data) {
-						opposingTeamField.append('<option value="'+data[team].id+'">'+data[team].string+'</option>');
+						opposingTeamInput.append('<option value="'+data[team].id+'">'+data[team].string+'</option>');
 					}
 				},
 				"json"
