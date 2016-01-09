@@ -61,6 +61,7 @@ Router::setRoutes([
 		"/acp/match/manage" => ["acp\Match", "manage"],
 		"/acp/match/delete" => ["acp\Match", "delete"],
 		"/acp/match/correct" => ["acp\Match", "correct"],
+		"/acp/match/alter" => ["acp\Match", "alter"],
 		"/acp/match" => ["acp\Match", "index"],
 		"/acp/organization/add" => ["acp\Organization", "add"],
 		"/acp/organization/edit" => ["acp\Organization", "edit"],

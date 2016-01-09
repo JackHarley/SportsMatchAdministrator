@@ -9,6 +9,7 @@ namespace sma\models;
 
 use PDO;
 use sma\Database;
+use sma\exceptions\DuplicateException;
 use sma\query\DeleteQuery;
 use sma\query\InsertQuery;
 use sma\query\SelectQuery;
@@ -294,6 +295,70 @@ class Match {
 	}
 
 	/**
+	 * Correct the date on a match if it is incorrect
+	 *
+	 * @param int $id match id to correct
+	 * @param string $date correct date YYYY-MM-DD
+	 */
+	public function correctDate($id, $date) {
+		$currentMatch = current(self::get($id));
+
+		$currentMatchReports = $currentMatch->getMatchReports();
+		if (count($currentMatchReports) == 2) {
+			// we can update the date by simply modifying the match record
+			self::updateDate($id, $date);
+			return;
+		}
+		else {
+			$currentMatchReport = current($currentMatchReports);
+		}
+
+		// check if there is a match record for the correct date that we can reassign the report(s) to
+		$candidateMatch = current(self::get(null, $date, $currentMatch->leagueId,
+				$currentMatch->homeTeamId, $currentMatch->awayTeamId));
+
+		if ($candidateMatch) {
+			// check this match has a free spot for this report to be merged into it
+			$candidateMatchReports = $candidateMatch->getMatchReports();
+			foreach($candidateMatchReports as $report) {
+				if ($report->teamId == $currentMatchReport->teamId)
+					throw new DuplicateException();
+			}
+
+			// we reassign the old report to the new match record, reassign the player records, then purge
+			// the old match record
+			$newMatchId = $candidateMatch->id;
+			(new UpdateQuery(Database::getConnection()))
+				->table("match_records")
+				->where("id = ?", $currentMatchReport->id)
+				->set("match_id = ?", $newMatchId)
+				->prepare()
+				->execute();
+			(new UpdateQuery(Database::getConnection()))
+				->table("matches_players")
+				->where("match_id = ?", $currentMatch->id)
+				->set("match_id = ?", $newMatchId)
+				->prepare()
+				->execute();
+			(new DeleteQuery(Database::getConnection()))
+				->from("matches")
+				->where("id = ?", $currentMatch->id)
+				->limit(1)
+				->prepare()
+				->execute();
+
+			// finally trigger a reconciliation attempt
+			$candidateMatch = current(self::get($candidateMatch->id));
+			$candidateMatch->attemptReportReconciliation();
+		}
+		else {
+			// we can update the date by simply modifying the match record
+			self::updateDate($id, $date);
+			return;
+		}
+	}
+
+	/**
 	 * Add a new match
 	 *
 	 * @param string $date date played (YYYY-MM-DD)
@@ -375,5 +440,21 @@ class Match {
 		}
 
 		return $matches;
+	}
+
+	/**
+	 * Change the date on a match record
+	 *
+	 * @param int $id match id
+	 * @param string $date correct date YYYY-MM-DD
+	 */
+	protected function updateDate($id, $date) {
+		(new UpdateQuery(Database::getConnection()))
+				->table("matches")
+				->where("id = ?", $id)
+				->set("date = ?", $date)
+				->limit(1)
+				->prepare()
+				->execute();
 	}
 }

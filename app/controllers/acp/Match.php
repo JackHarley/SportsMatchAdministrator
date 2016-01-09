@@ -8,6 +8,7 @@
 namespace sma\controllers\acp;
 
 use sma\Controller;
+use sma\exceptions\DuplicateException;
 use sma\models\Alert;
 use sma\models\League;
 use sma\models\Match as MatchModel;
@@ -82,6 +83,22 @@ class Match {
 		}
 		else {
 			Controller::addAlert(new Alert("danger", "This match cannot be corrected as it is not currently in a mismatched state"));
+		}
+
+		Controller::redirect("/acp/match/manage?id=" . $match->id);
+	}
+
+	public static function alter() {
+		Controller::requirePermissions(["AdminAccessDashboard", "AdminMatches"]);
+
+		$match = current(MatchModel::get($_POST["id"]));
+
+		try {
+			$match->correctDate($match->id, $_POST["date"]);
+			Controller::addAlert(new Alert("success", "Correction completed"));
+		}
+		catch (DuplicateException $e) {
+			Controller::addAlert(new Alert("danger", "The report cannot be moved to the specified date as there is already another report filed for the team for the match on that date"));
 		}
 
 		Controller::redirect("/acp/match/manage?id=" . $match->id);
