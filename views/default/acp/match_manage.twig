@@ -47,7 +47,7 @@
 							<strong>Date:</strong> {{ match.date }}<br>
 							<strong>Home Team:</strong> {{ match.homeTeam.organization.name }} {{ match.homeTeam.designation }}<br>
 							<strong>Away Team:</strong> {{ match.awayTeam.organization.name }} {{ match.awayTeam.designation }}<br>
-							<strong>Score (H-A):</strong> {% if match.homeScore %}{{ match.homeScore }}-{{ match.awayScore }}{% else %}TBC{% endif %}
+							<strong>Score (H-A):</strong> {% if match.homeScore is not null %}{{ match.homeScore }}-{{ match.awayScore }}{% else %}TBC{% endif %}
 						</p>
 					</div>
 				</div>
