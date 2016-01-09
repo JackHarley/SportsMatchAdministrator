@@ -15,8 +15,12 @@ class Ajax {
 	public static function teams() {
 		$leagueId = array_key_exists("league", $_GET) ? $_GET["league"] : null;
 		$organizationId = array_key_exists("organization", $_GET) ? $_GET["organization"] : null;
+		if (array_key_exists("team", $_GET))
+			$leagueSectionId = current(Team::get($_GET["team"]))->leagueSectionId;
+		else
+			$leagueSectionId = null;
 
-		$teams = Team::get(null, $organizationId, null, null, $leagueId);
+		$teams = Team::get(null, $organizationId, null, $leagueSectionId, $leagueId);
 
 		$return = [];
 		foreach($teams as $team) {
