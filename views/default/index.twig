@@ -73,6 +73,18 @@
 					<a href="{{ base_links_url }}/acp" class="btn btn-default"><span class="glyphicon glyphicon-dashboard"></span> View Admin Dashboard</a>
 				</div>
 			</div>
+
+			{% if downloads %}
+				<div class="panel panel-primary">
+					<div class="panel-heading"><span class="glyphicon glyphicon-save"></span> Downloads</div>
+
+					<div class="panel-body">
+						{% for dl in downloads %}
+							<a href="{{ base_links_url }}/download/trigger?id={{ dl.id }}" class="btn btn-default">{{ dl.title }}</a>
+						{% endfor %}
+					</div>
+				</div>
+			{% endif %}
 		</div>
 	</div>
 </div>

@@ -4,6 +4,7 @@
 /cache/*
 /install/*
 /vendor/*
+/data/*
 !.gitkeep
 /phpdoc
 node_modules

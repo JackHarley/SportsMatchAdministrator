@@ -296,6 +296,17 @@ class Installer {
 			  PRIMARY KEY (`id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+			CREATE TABLE `downloads` (
+			  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			  `extension` varchar(8) NOT NULL,
+			  `title` varchar(128) NOT NULL,
+			  `description` varchar(255) DEFAULT NULL,
+			  `type` tinyint unsigned NOT NULL,
+			  `league_id` bigint(20) unsigned DEFAULT NULL,
+			  `restricted` tinyint(1) unsigned NOT NULL,
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 			CREATE TABLE `fixtures` (
 			  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			  `home_team_id` bigint(20) unsigned DEFAULT NULL,
