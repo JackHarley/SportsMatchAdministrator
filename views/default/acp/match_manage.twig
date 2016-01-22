@@ -52,8 +52,9 @@
 					</div>
 				</div>
 			</div>
-
-			<!-- right column -->
+		</div>
+		<div class="row">
+			<!-- left column -->
 			<div class="col-sm-6 col-xs-12">
 				<div class="box box-info">
 					<div class="box-header with-border">
@@ -136,7 +137,8 @@
 					</div>
 				</div><!-- /.box -->
 			</div><!-- /.col -->
-
+		</div>
+		<div class="row">
 			<div class="col-md-6 col-sm-12 col-xs-12">
 				<div class="box box-primary">
 					<div class="box-header">
@@ -151,7 +153,34 @@
 
 							<br>
 
-							<button type="submit" class="btn btn-block btn-primary">Save</button>
+							<button type="submit" class="btn btn-block btn-primary">Update Date</button>
+						</form>
+
+						<br>
+
+						<form action="{{ base_links_url }}/acp/match/alter" method="post">
+							<input type="hidden" name="id" value="{{ match.id }}">
+
+							<label for="home_team_id">Home Team:</label>
+							<select id="home_team_id" name="home_team_id" class="form-control">
+								<option value="0">No Change</option>
+								{% for team in teams %}
+									<option value="{{ team.id }}">{{ team.organization.name }} {{ team.designation }}</option>
+								{% endfor %}
+							</select>
+							<br>
+
+							<label for="away_team_id">Away Team:</label>
+							<select id="away_team_id" name="away_team_id" class="form-control">
+								<option value="0">No Change</option>
+								{% for team in teams %}
+									<option value="{{ team.id }}">{{ team.organization.name }} {{ team.designation }}</option>
+								{% endfor %}
+							</select>
+
+							<br>
+
+							<button type="submit" class="btn btn-block btn-primary">Update Teams</button>
 						</form>
 					</div>
 				</div>

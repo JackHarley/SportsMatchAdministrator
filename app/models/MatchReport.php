@@ -13,6 +13,7 @@ use sma\exceptions\DuplicateException;
 use sma\query\DeleteQuery;
 use sma\query\InsertQuery;
 use sma\query\SelectQuery;
+use sma\query\UpdateQuery;
 
 /**
  * Match Report
@@ -174,5 +175,17 @@ class MatchReport {
 
 		return Database::getConnection()->lastInsertId();
 
+	}
+
+	public function update($teamId=null) {
+		$q = (new UpdateQuery(Database::getConnection()))
+			->table("match_reports")
+			->where("id = ?", $this->id)
+			->limit(1);
+
+		if ($teamId)
+			$q->set("team_id = ?", $teamId);
+
+		$q->prepare()->execute();
 	}
 }

@@ -401,6 +401,110 @@ class Match {
 	}
 
 	/**
+	 * Correct the date on a match if it is incorrect
+	 *
+	 * @param int $id match id to correct
+	 * @param int $homeTeamId new home team id
+	 * @param int $awayTeamId new away team id
+	 * @return int corrected match id (it may have changed in order to re-assign reports)
+	 */
+	public function correctTeams($id, $homeTeamId=null, $awayTeamId=null) {
+		$currentMatch = current(self::get($id));
+		$oldHomeTeamId = $currentMatch->homeTeamId;
+		$oldAwayTeamId = $currentMatch->awayTeamId;
+		$newHomeTeamId = ($homeTeamId) ? $homeTeamId : $currentMatch->homeTeamId;
+		$newAwayTeamId = ($awayTeamId) ? $awayTeamId : $currentMatch->awayTeamId;
+
+		/**
+		 * @var $currentMatchReports MatchReport[]
+		 */
+		$currentMatchReports = $currentMatch->getMatchReports();
+
+		if (count($currentMatchReports) == 2) {
+			// we can update the team(s) by modifying the match record, and then changing the
+			// report submitter team ids (we'll do this at the end because it has to be done regardless)
+			$newId = $id;
+			self::updateTeams($id, $homeTeamId, $awayTeamId);
+		}
+		else {
+			$currentMatchReport = current($currentMatchReports);
+
+			// check if there is a match record for the correct teams that we can reassign the report(s) to
+			$candidateMatch = current(self::get(null, $currentMatch->date, $currentMatch->leagueId,
+				$newHomeTeamId, $newAwayTeamId));
+
+			if ($candidateMatch) {
+				// check this match has a free spot for this report to be merged into it
+				$candidateMatchReports = $candidateMatch->getMatchReports();
+				foreach ($candidateMatchReports as $report) {
+					if ($report->teamId == $currentMatchReport->teamId)
+						throw new DuplicateException();
+				}
+
+				// we reassign the old report to the new match record, reassign the player records, then purge
+				// the old match record
+				$newMatchId = $candidateMatch->id;
+				(new UpdateQuery(Database::getConnection()))
+					->table("match_reports")
+					->where("id = ?", $currentMatchReport->id)
+					->set("match_id = ?", $newMatchId)
+					->prepare()
+					->execute();
+				(new UpdateQuery(Database::getConnection()))
+					->table("matches_players")
+					->where("match_id = ?", $currentMatch->id)
+					->set("match_id = ?", $newMatchId)
+					->prepare()
+					->execute();
+				(new DeleteQuery(Database::getConnection()))
+					->from("matches")
+					->where("id = ?", $currentMatch->id)
+					->limit(1)
+					->prepare()
+					->execute();
+
+				// finally trigger a reconciliation attempt
+				$candidateMatch = current(self::get($candidateMatch->id));
+				$candidateMatch->attemptReportReconciliation();
+
+				$newId = $candidateMatch->id;
+			}
+			else {
+				// we can update the date by simply modifying the match record
+				$newId = $id;
+				self::updateTeams($id, $homeTeamId, $awayTeamId);
+			}
+		}
+
+		// now we update the reporter team since that could also be incorrect if a team managed
+		// to somehow incorrectly enter themselves (lusers)
+		foreach ($currentMatchReports as $report) {
+			if (($report->teamId == $oldHomeTeamId) && ($homeTeamId))
+				$report->update($homeTeamId);
+			else if (($report->teamId == $oldAwayTeamId) && ($awayTeamId))
+				$report->update($awayTeamId);
+		}
+
+		// finally we run queries to update player records so that they belong to the changed team id
+		(new UpdateQuery(Database::getConnection()))
+			->table("matches_players")
+			->where("match_id = ?", $newId)
+			->where("team_id = ?", $oldHomeTeamId)
+			->set("team_id = ?", $newHomeTeamId)
+			->prepare()
+			->execute();
+		(new UpdateQuery(Database::getConnection()))
+			->table("matches_players")
+			->where("match_id = ?", $newId)
+			->where("team_id = ?", $oldAwayTeamId)
+			->set("team_id = ?", $newAwayTeamId)
+			->prepare()
+			->execute();
+
+		return $newId;
+	}
+
+	/**
 	 * Add a new match
 	 *
 	 * @param string $date date played (YYYY-MM-DD)
@@ -498,5 +602,26 @@ class Match {
 				->limit(1)
 				->prepare()
 				->execute();
+	}
+
+	/**
+	 * Change the teams on a match record
+	 *
+	 * @param int $id match id
+	 * @param int $homeTeamId home team id
+	 * @param int $awayTeamId away team id
+	 */
+	protected function updateTeams($id, $homeTeamId, $awayTeamId) {
+		$q = (new UpdateQuery(Database::getConnection()))
+			->table("matches")
+			->where("id = ?", $id)
+			->limit(1);
+
+		if ($homeTeamId)
+			$q->set("home_team_id = ?", $homeTeamId);
+		if ($awayTeamId)
+			$q->set("away_team_id = ?", $awayTeamId);
+
+		$q->prepare()->execute();
 	}
 }

@@ -8,6 +8,7 @@
 namespace sma\controllers\acp;
 
 use sma\Controller;
+use sma\models\Team;
 use sma\exceptions\DuplicateException;
 use sma\models\Alert;
 use sma\models\League;
@@ -53,7 +54,8 @@ class Match {
 		}
 
 		View::load("acp/match_manage.twig", [
-			"match" => $match
+			"match" => $match,
+			"teams" => Team::get(null, null, null, null, $match->leagueId)
 		]);
 	}
 
@@ -87,14 +89,31 @@ class Match {
 	public static function alter() {
 		Controller::requirePermissions(["AdminAccessDashboard", "AdminMatches"]);
 
+		$id = $_POST["id"];
 		$match = current(MatchModel::get($_POST["id"]));
 
-		try {
-			$id = $match->correctDate($match->id, $_POST["date"]);
-			Controller::addAlert(new Alert("success", "Correction completed"));
+		if (array_key_exists("date", $_POST)) {
+			try {
+				$id = $match->correctDate($match->id, $_POST["date"]);
+				Controller::addAlert(new Alert("success", "Correction completed"));
+			}
+			catch (DuplicateException $e) {
+				Controller::addAlert(new Alert("danger",
+					"The report cannot be moved to the specified date as there is already another report filed for the team for the match on that date"));
+			}
 		}
-		catch (DuplicateException $e) {
-			Controller::addAlert(new Alert("danger", "The report cannot be moved to the specified date as there is already another report filed for the team for the match on that date"));
+		else if (array_key_exists("home_team_id", $_POST)) {
+			try {
+				$homeTeamId = ($_POST["home_team_id"] != 0) ? $_POST["home_team_id"] : null;
+				$awayTeamId = ($_POST["away_team_id"] != 0) ? $_POST["away_team_id"] : null;
+
+				$id = $match->correctTeams($match->id, $homeTeamId, $awayTeamId);
+				Controller::addAlert(new Alert("success", "Correction completed"));
+			}
+			catch (DuplicateException $e) {
+				Controller::addAlert(new Alert("danger",
+					"The report cannot be updated with those team(s) as there is already another report filed for the team for the match on that date"));
+			}
 		}
 
 		Controller::redirect("/acp/match/manage?id=" . $id);
