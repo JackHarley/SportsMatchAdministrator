@@ -86,6 +86,10 @@
 
 					<div class="box-body">
 						<p>
+							<a class="btn btn-block btn-primary" href="#participation">View Player Participation Analysis</a>
+						</p>
+
+						<p>
 							To update a player's name simply change the name in the box and click Update, to delete a player completely click the Delete button beside the correct player. <span class="text-danger"><strong>Please note that deleting a player is irreversible!</strong></span>
 						</p>
 
@@ -132,7 +136,72 @@
 					</div><!-- /.box-body -->
 				</div><!-- /.box -->
 			</div><!-- /.col -->
+		</div>
 
+		<div class="row" id="participation">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="box box-primary">
+					<div class="box-header">
+						<h3 class="box-title">Player Participation</h3>
+					</div><!-- /.box-header -->
+
+					<div class="box-body">
+						<table id="participation-table" class="table table-bordered table-striped">
+							<thead>
+							<tr>
+								<th>Match Details</th>
+								{% for match in matches %}
+									<th>
+										<a href="{{ base_links_url }}/acp/match/manage?id={{ match.id }}">
+											#{{ match.id }}<br>
+											{{ match.date }}<br>
+											{% if match.homeTeamId == team.id %}
+											{{ match.awayTeam.organization.name }}<br>
+											{{ match.awayTeam.designation }}
+										{% else %}
+											{{ match.homeTeam.organization.name }}<br>
+											{{ match.homeTeam.designation }}
+											{% endif %}<br>
+											<br>
+											{% if match.status == constant("\\sma\\models\\Match::STATUS_RECONCILED") %}
+												<span style="color: lime; font-weight: bold;">Reconciled</span>
+											{% elseif match.status == constant("\\sma\\models\\Match::STATUS_PENDING") %}
+												<span style="color: orange; font-weight: bold;">Pending Second Report</span>
+											{% elseif match.status == constant("\\sma\\models\\Match::STATUS_MISMATCH") %}
+												<span style="color: red; font-weight: bold;">Mismatch</span>
+											{% endif %}
+										</a>
+									</th>
+								{% endfor %}
+							</tr>
+							</thead>
+							<tbody>
+							{% for player in players %}
+								<tr>
+									<td {% if player.teamId != team.id %}style="background-color: #ffdb99"{% endif %}>
+										<strong>{{ player.fullName }}</strong>
+										{% if player.teamId != team.id %}
+											<br>
+											{{ player.team.designation }}
+										{% endif %}
+									</td>
+									{% for value in player.matchTicks %}
+										{% if value %}
+											<td style="background-color: #99ff99;">✓</td>
+										{% else %}
+											<td style="background-color: #ff9999">✗</td>
+										{% endif %}
+									{% endfor %}
+								</tr>
+							{% endfor %}
+							</tbody>
+						</table>
+					</div><!-- /.box-body -->
+				</div><!-- /.box -->
+			</div><!-- /.col -->
+		</div><!-- /.row -->
+
+		<div class="row">
 			<div class="col-sm-12 col-xs-12">
 				<div class="box box-danger">
 					<div class="box-header">

@@ -120,6 +120,34 @@ class Team {
 	}
 
 	/**
+	 * Get all players who have played for this team at any point during the season or are registered
+	 * as a part of it
+	 *
+	 * @return \sma\models\Player[]
+	 */
+	public function getAllRelatedPlayers() {
+		$players = $this->getPlayers();
+
+		$q = (new SelectQuery(Database::getConnection()))
+			->from("matches_players")
+			->fields(["player_id"])
+			->where("team_id = ?", $this->id);
+		$stmt = $q->prepare();
+		$stmt->execute();
+		$participatingPlayerIds = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+		$participatingPlayerIds = array_unique($participatingPlayerIds, SORT_NUMERIC);
+
+		$additionalPlayers = Player::get($participatingPlayerIds);
+
+		foreach($additionalPlayers as $player) {
+			if (!array_key_exists($player->id, $players))
+				$players[] = $player;
+		}
+
+		return $players;
+	}
+
+	/**
 	 * Get number of players marked as exempt
 	 *
 	 * @return int number of exempt players
@@ -173,6 +201,64 @@ class Team {
 	 */
 	public function getMatchesPlayed() {
 		return $this->wins + $this->draws + $this->losses;
+	}
+
+	/**
+	 * Get matches played
+	 *
+	 * @param bool $mustBeReconciled set to true to only retrieve reconciled (finalised) matches
+	 * @return \sma\models\Match[] match
+	 */
+	public function getMatches($order="DESC", $mustBeReconciled=false) {
+		$status = ($mustBeReconciled === true) ? Match::STATUS_RECONCILED : null;
+		return Match::get(null, null, null, null, null, $status, null, $this->id, $order);
+	}
+
+	/**
+	 * Constructs the team match participation data, returns an object with two properties:
+	 *  ->matches is an array of the matches for which participation data is included in that order
+	 *  ->players is an array of the players each having a ->matchTicks array which is a basic array
+	 *      of true/false values indicating if the player participated in each match, in the same
+	 *      order provided in ->matches
+	 * These properties together allow the construction of a table with checks/crosses marking
+	 * player participation
+	 *
+	 * This is a specialised method for a specialised purpose and is designed to be as efficient
+	 * as possible, it should not be generalised
+	 *
+	 * @return \stdClass as explained in method description
+	 */
+	public function constructMatchParticipationData() {
+		$players = $this->getAllRelatedPlayers();
+		foreach($players as $key => $player)
+			$players[$key]->matchTicks = []; // prepare a property
+
+		$matches = $this->getMatches("ASC");
+		foreach($matches as $key => $match)
+			$matches[$key]->participatingPlayerIds = []; // prepare a property
+
+		$q = (new SelectQuery(Database::getConnection()))
+			->from("matches_players")
+			->fields(["match_id", "player_id"])
+			->where("team_id = ?", $this->id);
+		$stmt = $q->prepare();
+		$stmt->execute();
+
+		while($row = $stmt->fetchObject()) {
+			if (array_key_exists($row->match_id, $matches))
+				$matches[$row->match_id]->participatingPlayerIds[] = $row->player_id;
+		}
+
+		foreach($matches as $key => $match) {
+			foreach($players as $pkey => $player) {
+				$players[$pkey]->matchTicks[] = (bool) (in_array($player->id, $match->participatingPlayerIds));
+			}
+		}
+
+		$return = new \stdClass();
+		$return->matches = $matches;
+		$return->players = $players;
+		return $return;
 	}
 
 	/**

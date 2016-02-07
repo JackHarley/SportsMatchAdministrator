@@ -74,7 +74,7 @@ class Player {
 	/**
 	 * Get objects
 	 *
-	 * @param int $id id
+	 * @param int|array $id id or array of ids
 	 * @param int $fullName search by full name
 	 * @param int $teamId team id to fetch players for
 	 * @return \sma\models\Team[] teams
@@ -89,8 +89,12 @@ class Player {
 				->fields(["o.id AS org_id", "o.name AS organization_name"])
 				->orderby("p.full_name");
 
-		if ($id)
-			$q->where("p.id = ?", $id);
+		if ($id) {
+			if (is_array($id))
+				$q->whereInArray("p.id", $id);
+			else
+				$q->where("p.id = ?", $id);
+		}
 		if ($fullName)
 			$q->where("p.full_name LIKE ?", $fullName);
 		if ($teamId)
@@ -108,7 +112,7 @@ class Player {
 			list($player->id, $player->fullName, $player->teamId, $player->exempt, $player->team->id,
 					$player->team->designation, $player->team->organizationId, $player->team->organization->id,
 					$player->team->organization->name) = $row;
-			$players[] = $player;
+			$players[$player->id] = $player;
 		}
 
 		return $players;

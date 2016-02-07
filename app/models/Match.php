@@ -534,10 +534,12 @@ class Match {
 	 * @param int $awayTeamId away team id to filter by
 	 * @param int $status match status constant
 	 * @param int $limit maximum number of records to fetch
+	 * @param int $teamId return all matches with this team id as home OR away
+	 * @param string $order either DESC or ASC depending on which order you want matches in (based on date)
 	 * @return Match[] matches
 	 */
 	public static function get($id=null, $date=null, $league=null, $homeTeamId=null, $awayTeamId=null,
-			$status=null, $limit=null) {
+			$status=null, $limit=null, $teamId=null, $order="DESC") {
 
 		$q = (new SelectQuery(Database::getConnection()))
 				->from("matches m")
@@ -551,7 +553,7 @@ class Match {
 				->fields(["at.designation AS at_designation"])
 				->join("LEFT JOIN organizations ao ON ao.id=at.organization_id")
 				->fields(["ao.name AS at_org_name"])
-				->orderby("date", "DESC");
+				->orderby("date", $order);
 
 		if ($limit)
 			$q->limit($limit);
@@ -568,6 +570,8 @@ class Match {
 			$q->where("m.away_team_id = ?", $awayTeamId);
 		if ($status !== null)
 			$q->where("m.status = ?", $status);
+		if ($teamId)
+			$q->where("(m.home_team_id = ? OR m.away_team_id = ?)", [$teamId, $teamId]);
 
 		$stmt = $q->prepare();
 		$stmt->execute();
@@ -582,7 +586,7 @@ class Match {
 			list($m->id, $m->date, $m->leagueId, $m->homeTeamId, $m->awayTeamId, $m->homeScore,
 					$m->awayScore, $m->status, $m->homeTeam->designation, $m->homeTeam->organization->name,
 					$m->awayTeam->designation, $m->awayTeam->organization->name) = $row;
-			$matches[] = $m;
+			$matches[$m->id] = $m;
 		}
 
 		return $matches;

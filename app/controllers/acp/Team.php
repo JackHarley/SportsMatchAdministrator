@@ -36,11 +36,14 @@ class Team {
 
 		$team = current(TeamModel::get($_GET["id"]));
 		$sections = ($team->leagueId) ? LeagueSection::get(null, $team->leagueId) : null;
+		$data = $team->constructMatchParticipationData();
 
 		View::load("acp/team_manage.twig", [
 				"team" => $team,
 				"leagues" => League::get(),
-				"sections" => $sections
+				"sections" => $sections,
+				"matches" => $data->matches,
+				"players" => $data->players
 		]);
 	}
 
